@@ -30,7 +30,8 @@ module.exports = StyleSheet.create({
     fontSize: AppConfig.baseFontSize * 1.25,
   },
   errorText: {
-    color: AppConfig.errorColor
+    color: AppConfig.errorColor,
+    fontSize: AppConfig.baseFontSize * 0.70
   },
   linkText: {
     color: AppConfig.linkColor

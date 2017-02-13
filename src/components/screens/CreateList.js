@@ -19,6 +19,8 @@ import * as ListController from '../../models/controllers/list'
 import * as ListStorage from '../../models/storage/list-storage'
 import * as UserController from '../../models/controllers/user'
 
+import Validator from 'validator'
+
 import AppStyles from '../../styles'
 import MultiTaskPage from './MultiTaskPage'
 
@@ -31,7 +33,8 @@ class CreateList extends Component {
     this.state = {
       isCreatingList: false,
       creationError: '',
-      listName: ''
+      listName: '',
+      nameValidationError: ''
     }
   }
 
@@ -43,13 +46,27 @@ class CreateList extends Component {
       return;
     }
 
-    let listName = this.state.listName
+    let listName = this.state.listName || ''
 
-    // TODO - validate
+    let nameValidationError = ''
+
+    if (!Validator.isLength(listName, {min: 2, max: 100})) {
+      nameValidationError = 'Name must be between 2 and 100 characters'
+    }
+
+    if (nameValidationError) {
+      this.setState({ nameValidationError: nameValidationError })
+
+      return; // validation failed; cannot create list
+    }
+
     if (UserController.canAccessNetwork(this.props.profile)) {
 
-      this.setState({isCreatingList: true,
-         creationError: ''}, () => {
+      this.setState({
+        isCreatingList: true,
+        creationError: '',
+        nameValidationError: ''
+       }, () => {
 
         ListController.createList(listName, this.props.profile.id,
            this.props.profile.password)
@@ -116,13 +133,19 @@ class CreateList extends Component {
         contentContainerStyle={[AppStyles.containerStretched]}>
         <View style={[AppStyles.padding]}>
 
-        <Text style={[AppStyles.baseText]}>Name</Text>
-        <TextInput
-          style={[AppStyles.baseText]}
-          onChangeText={(updatedName) => {
-            this.setState({ listName: updatedName })
-          }}
-          value={this.state.listName}/>
+          <View style={[AppStyles.paddingVertical]}>
+            <Text style={[AppStyles.baseText]}>Name</Text>
+            <TextInput
+              style={[AppStyles.baseText]}
+              onChangeText={(updatedName) => {
+                this.setState({ listName: updatedName })
+              }}
+              value={this.state.listName}/>
+
+            <Text style={[AppStyles.errorText]}>
+              {this.state.nameValidationError}
+            </Text>
+          </View>
 
           <View style={[AppStyles.row]}>
 

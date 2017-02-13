@@ -52,9 +52,9 @@ class Signup extends Component {
         return ;
     }
 
-    let email = this.state.email
-    let password = this.state.password
-    let confirmPassword = this.state.confirmPassword
+    let email = this.state.email || ''
+    let password = this.state.password || ''
+    let confirmPassword = this.state.confirmPassword || ''
 
     let emailValidationError = ''
     let passwordValidationError = ''
@@ -127,18 +127,22 @@ class Signup extends Component {
         contentContainerStyle={[AppStyles.containerStretched]}>
         <View style={[AppStyles.padding]}>
 
-          <Text style={[AppStyles.baseText]}>Email</Text>
-          <TextInput
-            keyboardType="email-address"
-            style={[AppStyles.baseText]}
-            onChangeText={(updatedEmail) => {
-              this.setState({ email: updatedEmail })
-            }}
-            value={this.state.email}/>
+          <View style={[AppStyles.paddingVertical]}>
+            <Text style={[AppStyles.baseText]}>Email</Text>
+            <TextInput
+              keyboardType="email-address"
+              style={[AppStyles.baseText]}
+              onChangeText={(updatedEmail) => {
+                this.setState({ email: updatedEmail })
+              }}
+              value={this.state.email}/>
 
-          <Text style={[AppStyles.errorText]}>
-            {this.state.emailValidationError}
-          </Text>
+            <Text style={[AppStyles.errorText]}>
+              {this.state.emailValidationError}
+            </Text>
+          </View>
+
+          <View style={[AppStyles.paddingVertical]}>
 
             <Text style={[AppStyles.baseText]}>Password</Text>
             <TextInput
@@ -152,7 +156,9 @@ class Signup extends Component {
             <Text style={[AppStyles.errorText]}>
               {this.state.passwordValidationError}
             </Text>
+          </View>
 
+          <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>Confirm Password</Text>
             <TextInput
               secureTextEntry={true}
@@ -165,14 +171,14 @@ class Signup extends Component {
             <Text style={[AppStyles.errorText]}>
               {this.state.confirmPasswordValidationError}
             </Text>
+          </View>
 
-            <View style={[AppStyles.button]}>
-              <Button
-                title={"Signup"}
-                onPress={this._signup} />
-            </View>
+          <View style={[AppStyles.button]}>
+            <Button
+              title={"Signup"}
+              onPress={this._signup} />
+          </View>
         </View>
-
       </ScrollView>
     );
   }

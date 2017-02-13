@@ -26,8 +26,9 @@ import * as TaskController from '../../models/controllers/task'
 import * as TaskStorage from '../../models/storage/task-storage'
 import * as TaskActions from '../../actions/entities/task'
 
-import AppStyles from '../../styles'
+import Validator from 'validator'
 
+import AppStyles from '../../styles'
 import MultiTaskPage from './MultiTaskPage'
 
 class EditTask extends Component {
@@ -45,7 +46,10 @@ class EditTask extends Component {
       isUpdating: false,
 
       task: this._getTask(),
-      list: this._getList()
+      list: this._getList(),
+
+      nameValidationError: '',
+      notesValidationError: ''
     }
   }
 
@@ -110,9 +114,36 @@ class EditTask extends Component {
   _onSubmitEdit = async () => {
     let profile = this.props.profile;
 
-    // TODO - validate input
+    let updatedTaskName = this.state.task.name || ''
+    let updatedTaskNotes = this.state.task.notes || ''
 
-    this.setState({isUpdating: true, updateSuccess: '', updateError: ''})
+    let nameValidationError = ''
+    let notesValidationError = ''
+
+    if (!Validator.isLength(updatedTaskName, {min: 2, max: 100})) {
+      nameValidationError = 'Name must be between 2 and 100 characters'
+    }
+
+    if (!Validator.isLength(updatedTaskNotes, {min: 0, max: 5000})) {
+      notesValidationError = 'Notes must be between 0 and 5000 characters'
+    }
+
+    if (nameValidationError || notesValidationError) {
+      this.setState({
+        nameValidationError: nameValidationError,
+        notesValidationError: notesValidationError
+      })
+
+      return; // validation failed; cannot update task
+    }
+
+    this.setState({
+      isUpdating: true,
+      updateSuccess: '',
+      updateError: '',
+      notesValidationError: '',
+      nameValidationError: ''
+    })
 
     if (UserController.canAccessNetwork(this.props.profile)) {
       TaskController.updateTask(this.state.task, profile.id, profile.password)
@@ -189,6 +220,7 @@ class EditTask extends Component {
     // TODO - refine this approach
 
     let dateString;
+    let dateStringStyle = [AppStyles.baseText]
     if (this.state.task.dueDateTimeUtc) {
 
       // TODO - refine how we format date (and move to utils)
@@ -196,11 +228,14 @@ class EditTask extends Component {
       dateString = this.state.task.dueDateTimeUtc;
     } else {
       dateString = 'Select a due date'
+      dateStringStyle.push(AppStyles.linkText)
     }
 
-    return <Text style={[AppStyles.baseText]}>
-      {dateString}
-    </Text>
+    return (
+      <Text style={dateStringStyle}>
+        {dateString}
+      </Text>
+    )
   }
 
   _getListNames = () => {
@@ -253,17 +288,23 @@ class EditTask extends Component {
         style={[AppStyles.container]}>
 
         <View style={[AppStyles.padding]}>
-          <Text style={[AppStyles.baseText]}>Name</Text>
-          <TextInput
-            style={[AppStyles.baseText]}
-            onChangeText={(updatedName) => {
-              let task = this.state.task
-              task.name = updatedName
-              this.setState({ task: task })
-            }}
-            value={this.state.task.name}/>
 
-          <View>
+          <View style={[AppStyles.paddingVertical]}>
+            <Text style={[AppStyles.baseText]}>Name</Text>
+            <TextInput
+              style={[AppStyles.baseText]}
+              onChangeText={(updatedName) => {
+                let task = this.state.task
+                task.name = updatedName
+                this.setState({ task: task })
+              }}
+              value={this.state.task.name}/>
+            <Text style={[AppStyles.errorText]}>
+              {this.state.nameValidationError}
+            </Text>
+          </View>
+
+          <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>List</Text>
             <Picker
               selectedValue={this.state.task.listId}
@@ -276,7 +317,7 @@ class EditTask extends Component {
             </Picker>
           </View>
 
-          <View>
+          <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>Notes</Text>
             <TextInput
               style={[AppStyles.baseText]}
@@ -286,9 +327,13 @@ class EditTask extends Component {
                 this.setState({ task: task })
               }}
               value={this.state.task.notes}/>
+
+            <Text style={[AppStyles.errorText]}>
+              {this.state.notesValidationError}
+            </Text>
           </View>
 
-          <View>
+          <View style={[AppStyles.paddingVertical]}>
           <Text style={[AppStyles.baseText]}>Due Date</Text>
           <TouchableOpacity
             style={[ AppStyles.paddingRight, AppStyles.paddingLeft]}

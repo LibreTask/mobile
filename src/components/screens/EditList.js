@@ -20,6 +20,8 @@ import * as ListController from '../../models/controllers/list'
 import * as ListStorage from '../../models/storage/list-storage'
 import * as UserController from '../../models/controllers/user'
 
+import Validator from 'validator'
+
 import AppStyles from '../../styles'
 import MultiTaskPage from './MultiTaskPage'
 
@@ -38,6 +40,8 @@ class EditList extends Component {
       updateSuccess: '',
       isUpdating: false,
       list: this._getList(),
+
+      nameValidationError: ''
     }
   }
 
@@ -94,12 +98,29 @@ class EditList extends Component {
     });
   }
 
-  _onSubmitEdit = async () => {
+  _onSubmitEdit = () => {
     let profile = this.props.profile;
 
-    // TODO - validate input
+    let updatedListName = this.state.list.name || ''
 
-    this.setState({isUpdating: true, updateSuccess: '', updateError: ''})
+    let nameValidationError = ''
+
+    if (!Validator.isLength(updatedListName, {min: 2, max: 100})) {
+      nameValidationError = 'Name must be between 2 and 100 characters'
+    }
+
+    if (nameValidationError) {
+      this.setState({ nameValidationError: nameValidationError })
+
+      return; // validation failed; cannot update list
+    }
+
+    this.setState({
+      isUpdating: true,
+      updateSuccess: '',
+      updateError: '',
+      nameValidationError: ''
+    })
 
     if (UserController.canAccessNetwork(profile)) {
       ListController.updateList(this.state.list, profile.id, profile.password)
@@ -143,28 +164,34 @@ class EditList extends Component {
         style={[AppStyles.container]}>
 
         <View style={[AppStyles.padding]}>
-          <Text style={[AppStyles.baseText]}>Name</Text>
-          <TextInput
-            style={[AppStyles.baseText]}
-            onChangeText={(updatedName) => {
-              let list = this.state.list
-              list.name = updatedName
-              this.setState({ list: list })
-            }}
-            value={this.state.list.name}/>
+
+          <View style={[AppStyles.paddingVertical]}>
+            <Text style={[AppStyles.baseText]}>Name</Text>
+            <TextInput
+              style={[AppStyles.baseText]}
+              onChangeText={(updatedName) => {
+                let list = this.state.list
+                list.name = updatedName
+                this.setState({ list: list })
+              }}
+              value={this.state.list.name}/>
+            <Text style={[AppStyles.errorText]}>
+              {this.state.nameValidationError}
+            </Text>
+          </View>
 
           <View style={[AppStyles.row]}>
-              <View style={[AppStyles.button]}>
+            <View style={[AppStyles.button]}>
 
-                <Button
-                  title={'Save'}
-                  onPress={this._onSubmitEdit} />
-              </View>
-              <View style={[AppStyles.button]}>
-                <Button
-                  title={'Delete'}
-                  onPress={this._onDelete} />
-              </View>
+              <Button
+                title={'Save'}
+                onPress={this._onSubmitEdit} />
+            </View>
+            <View style={[AppStyles.button]}>
+              <Button
+                title={'Delete'}
+                onPress={this._onDelete} />
+            </View>
           </View>
         </View>
       </ScrollView>

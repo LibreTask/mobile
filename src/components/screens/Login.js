@@ -51,8 +51,8 @@ class Login extends Component {
         return;
     }
 
-    let email = this.state.email
-    let password = this.state.password
+    let email = this.state.email || ''
+    let password = this.state.password || ''
 
     let emailValidationError = ''
     let passwordValidationError = ''
@@ -118,19 +118,22 @@ class Login extends Component {
         contentContainerStyle={[AppStyles.containerStretched]}>
         <View style={[AppStyles.padding]}>
 
-          <Text style={[AppStyles.baseText]}>Email</Text>
-          <TextInput
-            keyboardType="email-address"
-            style={[AppStyles.baseText]}
-            onChangeText={(updatedEmail) => {
-              this.setState({ email: updatedEmail })
-            }}
-            value={this.state.email}/>
+          <View style={[AppStyles.paddingVertical]}>
+            <Text style={[AppStyles.baseText]}>Email</Text>
+            <TextInput
+              keyboardType="email-address"
+              style={[AppStyles.baseText]}
+              onChangeText={(updatedEmail) => {
+                this.setState({ email: updatedEmail })
+              }}
+              value={this.state.email}/>
 
-          <Text style={[AppStyles.errorText]}>
-            {this.state.emailValidationError}
-          </Text>
+            <Text style={[AppStyles.errorText]}>
+              {this.state.emailValidationError}
+            </Text>
+          </View>
 
+          <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>Password</Text>
             <TextInput
               secureTextEntry={true}
@@ -140,25 +143,26 @@ class Login extends Component {
               }}
               value={this.state.password}/>
 
-              <Text style={[AppStyles.errorText]}>
-                {this.state.passwordValidationError}
-              </Text>
+            <Text style={[AppStyles.errorText]}>
+              {this.state.passwordValidationError}
+            </Text>
+          </View>
 
-              <View style={[AppStyles.button]}>
-                <Button
-                  title={"Login"}
-                  onPress={this._login} />
-              </View>
+          <View style={[AppStyles.button, AppStyles.paddingVertical]}>
+            <Button
+              title={"Login"}
+              onPress={this._login} />
+          </View>
 
-              <TouchableOpacity
-                style={[ AppStyles.paddingVertical]}
-                onPress={() => {
-                  Linking.openURL(AppConstants.PASSWORD_RESET_LINK);
-                }}>
-                  <Text>
-                    Forgot password?
-                  </Text>
-                </TouchableOpacity>
+          <TouchableOpacity
+            style={[ AppStyles.paddingVertical]}
+            onPress={() => {
+              Linking.openURL(AppConstants.PASSWORD_RESET_LINK);
+            }}>
+            <Text>
+              Forgot password?
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     );

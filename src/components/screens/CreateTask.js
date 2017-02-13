@@ -14,6 +14,8 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
+import Validator from 'validator'
+
 import * as TaskActions from '../../actions/entities/task'
 import * as TaskController from '../../models/controllers/task'
 import * as TaskStorage from '../../models/storage/task-storage'
@@ -34,7 +36,8 @@ class CreateTask extends Component {
     this.state = {
       creationError: '',
       isCreatingTask: false,
-      taskName: ''
+      taskName: '',
+      nameValidationError: ''
     }
   }
 
@@ -44,13 +47,27 @@ class CreateTask extends Component {
       return;
     }
 
-    var taskName = this.state.taskName
+    var taskName = this.state.taskName || ''
 
-    // TODO - validate
+    let nameValidationError = ''
+
+    if (!Validator.isLength(taskName, {min: 2, max: 100})) {
+      nameValidationError = 'Name must be between 2 and 100 characters'
+    }
+
+    if (nameValidationError) {
+      this.setState({ nameValidationError: nameValidationError })
+
+      return; // validation failed; cannot create task
+    }
+
     if (UserController.canAccessNetwork(this.props.profile)) {
 
-      this.setState({isCreatingTask: true,
-         creationError: ''}, () => {
+      this.setState({
+        isCreatingTask: true,
+        creationError: '',
+        nameValidationError: ''
+      }, () => {
 
         TaskController.createTask(taskName, this.props.listId,
            this.props.profile.id, this.props.profile.password)
@@ -75,7 +92,6 @@ class CreateTask extends Component {
           }
         })
       });
-
     } else {
       this._createTaskLocallyAndRedirect(taskName)
     }
@@ -97,13 +113,19 @@ class CreateTask extends Component {
         contentContainerStyle={[AppStyles.containerStretched]}>
         <View style={[AppStyles.padding]}>
 
+        <View style={[AppStyles.paddingVertical]}>
           <Text style={[AppStyles.baseText]}>Name</Text>
           <TextInput
-            style={[AppStyles.baseTextSmall]}
+            style={[AppStyles.baseText]}
             onChangeText={(updatedName) => {
               this.setState({ taskName: updatedName })
             }}
             value={this.state.taskName}/>
+
+          <Text style={[AppStyles.errorText]}>
+            {this.state.nameValidationError}
+          </Text>
+        </View>
 
           <View style={[AppStyles.row]}>
 

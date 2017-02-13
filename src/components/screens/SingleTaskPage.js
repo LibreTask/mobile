@@ -180,14 +180,16 @@ class SingleTaskPage extends Component {
 
           <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>Name</Text>
-            <Text style={[AppStyles.baseText]}>
+            <Text style={[AppStyles.baseTextSmall]}>
               {this.state.task.name}
             </Text>
           </View>
 
           <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>List</Text>
-            <Text>{this.state.parentList.name}</Text>
+            <Text style={[AppStyles.baseTextSmall]}>
+              {this.state.parentList.name}
+            </Text>
           </View>
 
           <View style={[AppStyles.paddingVertical]}>
