@@ -6,7 +6,6 @@
 import React, { Component, PropTypes } from 'react'
 import {
   Alert,
-  Button,
   Text,
   TextInput,
   ScrollView,
@@ -15,6 +14,7 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
+import * as NavbarActions from '../../actions/navbar'
 import * as ListActions from '../../actions/entities/list'
 import * as ListController from '../../models/controllers/list'
 import * as ListStorage from '../../models/storage/list-storage'
@@ -23,17 +23,18 @@ import * as UserController from '../../models/controllers/user'
 import Validator from 'validator'
 
 import AppStyles from '../../styles'
+import AppConstants from '../../constants'
 import MultiTaskPage from './MultiTaskPage'
 
 class EditList extends Component {
-	static componentName = 'EditList';
+	static componentName = 'EditList'
 
   static propTypes = {
     listId: PropTypes.string.isRequired,
   }
 
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       updateError: '',
@@ -42,6 +43,28 @@ class EditList extends Component {
       list: this._getList(),
 
       nameValidationError: ''
+    }
+  }
+
+  componentDidMount() {
+    this.props.setMediumRightNavButton(AppConstants.SAVE_NAVBAR_BUTTON)
+    this.props.setFarRightNavButton(AppConstants.DELETE_NAVBAR_BUTTON)
+  }
+
+  componentWillUnmount() {
+    this.props.removeMediumRightNavButton()
+    this.props.removeFarRightNavButton()
+  }
+
+  componentWillReceiveProps(nextProps) {
+
+    // consume any actions triggered via the Navbar
+    if (nextProps.navAction === NavbarActions.SAVE_NAV_ACTION) {
+      this._onSubmitEdit()
+      this.props.setNavAction(undefined)
+    } else if (nextProps.navAction === NavbarActions.DELETE_NAV_ACTION) {
+      this._onDelete()
+      this.props.setNavAction(undefined)
     }
   }
 
@@ -84,18 +107,18 @@ class EditList extends Component {
           }
         },
       ],
-    );
+    )
   }
 
   _deleteListLocallyAndRedirect = (listId) => {
-    ListStorage.deleteListByListId(listId);
+    ListStorage.deleteListByListId(listId)
     this.props.deleteList(listId)
 
     this.props.navigator.replace({
       title: 'Main',
       component: MultiTaskPage,
       index: 0,
-    });
+    })
   }
 
   _onSubmitEdit = () => {
@@ -179,23 +202,9 @@ class EditList extends Component {
               {this.state.nameValidationError}
             </Text>
           </View>
-
-          <View style={[AppStyles.row]}>
-            <View style={[AppStyles.button]}>
-
-              <Button
-                title={'Save'}
-                onPress={this._onSubmitEdit} />
-            </View>
-            <View style={[AppStyles.button]}>
-              <Button
-                title={'Delete'}
-                onPress={this._onDelete} />
-            </View>
-          </View>
         </View>
       </ScrollView>
-    );
+    )
   }
 }
 
@@ -203,11 +212,17 @@ const mapStateToProps = (state) => ({
   isLoggedIn: state.user.isLoggedIn,
   profile: state.user.profile,
   lists: state.entities.lists,
-});
+  navAction: state.ui.navbar.navAction
+})
 
 const mapDispatchToProps = {
   createOrUpdateList: ListActions.createOrUpdateList,
   deleteList: ListActions.deleteList,
-};
+  setNavAction: NavbarActions.setNavAction,
+  setMediumRightNavButton: NavbarActions.setMediumRightNavButton,
+  removeMediumRightNavButton: NavbarActions.removeMediumRightNavButton,
+  setFarRightNavButton: NavbarActions.setFarRightNavButton,
+  removeFarRightNavButton: NavbarActions.removeFarRightNavButton,
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditList);
+export default connect(mapStateToProps, mapDispatchToProps)(EditList)

@@ -8,7 +8,7 @@ import { AsyncStorage } from 'react-native'
 import * as _ from 'lodash'
 
 export async function getAllTasks() {
-  const allKeys = await AsyncStorage.getAllKeys();
+  const allKeys = await AsyncStorage.getAllKeys()
   let tasks = [];
 
   for (let key of allKeys) {
@@ -23,7 +23,7 @@ export async function getAllTasks() {
 }
 
 export async function getTasksByListId(listId) {
-  const allKeys = await AsyncStorage.getAllKeys();
+  const allKeys = await AsyncStorage.getAllKeys()
   let tasks = [];
 
   for (let key of allKeys) {
@@ -40,7 +40,7 @@ export async function getTasksByListId(listId) {
 }
 
 export async function getTaskByTaskId(taskId) {
-  return await AsyncStorage.getItem(`tasks/${taskId}`);
+  return await AsyncStorage.getItem(`tasks/${taskId}`)
 }
 
 export function createOrUpdateTasks(tasks) {
@@ -50,11 +50,11 @@ export function createOrUpdateTasks(tasks) {
 }
 
 export function createOrUpdateTask(task) {
-  return AsyncStorage.setItem(`tasks/${task.id}`, JSON.stringify(task));
+  return AsyncStorage.setItem(`tasks/${task.id}`, JSON.stringify(task))
 }
 
 export function deleteTaskByTaskId(taskId) {
-  return AsyncStorage.removeItem(`tasks/${taskId}`);
+  return AsyncStorage.removeItem(`tasks/${taskId}`)
 }
 
 export function cleanTaskStorage() {

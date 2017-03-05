@@ -25,10 +25,10 @@ import AppStyles from '../../styles'
 import MultiTaskPage from './MultiTaskPage'
 
 class CreateList extends Component {
-	static componentName = 'CreateList';
+	static componentName = 'CreateList'
 
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       isCreatingList: false,
@@ -74,8 +74,8 @@ class CreateList extends Component {
 
           let list = response.list
 
-          ListStorage.createOrUpdateList(list);
-          this.props.createOrUpdateList(list);
+          ListStorage.createOrUpdateList(list)
+          this.props.createOrUpdateList(list)
 
           // move the new list's page to the stop of the stack
           this.props.navigator.replace({
@@ -85,7 +85,7 @@ class CreateList extends Component {
             passProps: {
               listId: list.id,
             }
-          });
+          })
         })
         .catch( error => {
 
@@ -96,10 +96,10 @@ class CreateList extends Component {
             this.setState({
               creationError: error.message,
               isCreatingList: false
-            });
+            })
           }
         })
-      });
+      })
     } else {
 
       let userId = this.props.profile ? this.props.profile.id : undefined
@@ -110,8 +110,8 @@ class CreateList extends Component {
 
   _createListLocallyAndRedirect = (name, userId) => {
     let list = ListController.constructListLocally(name, userId)
-    ListStorage.createOrUpdateList(list);
-    this.props.createOrUpdateList(list);
+    ListStorage.createOrUpdateList(list)
+    this.props.createOrUpdateList(list)
 
     // move the new list's page to the stop of the stack
     this.props.navigator.replace({
@@ -121,7 +121,7 @@ class CreateList extends Component {
       passProps: {
         listId: list.id,
       }
-    });
+    })
   }
 
   render = () => {
@@ -157,17 +157,17 @@ class CreateList extends Component {
           </View>
         </View>
       </ScrollView>
-    );
+    )
   }
 }
 
 const mapStateToProps = (state) => ({
   isLoggedIn: state.user.isLoggedIn,
   profile: state.user.profile
-});
+})
 
 const mapDispatchToProps = {
   createOrUpdateList: ListActions.createOrUpdateList
-};
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateList);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateList)

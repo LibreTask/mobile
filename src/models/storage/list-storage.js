@@ -8,11 +8,11 @@ import * as ProfileStorage from './profile-storage'
 import * as _ from 'lodash'
 
 export async function getListByListId(listId) {
-  return await AsyncStorage.getItem(`lists/${listId}`);
+  return await AsyncStorage.getItem(`lists/${listId}`)
 }
 
 export async function getAllLists() {
-  const allKeys = await AsyncStorage.getAllKeys();
+  const allKeys = await AsyncStorage.getAllKeys()
   let lists = [];
 
   for (let key of allKeys) {
@@ -27,7 +27,7 @@ export async function getAllLists() {
 }
 
 export async function getListsByUserId(userId) {
-  const allKeys = await AsyncStorage.getAllKeys();
+  const allKeys = await AsyncStorage.getAllKeys()
   let lists = [];
 
   for (let key of allKeys) {
@@ -50,11 +50,11 @@ export function createOrUpdateLists(lists) {
 }
 
 export function createOrUpdateList(list) {
-  return AsyncStorage.setItem(`lists/${list.id}`, JSON.stringify(list));
+  return AsyncStorage.setItem(`lists/${list.id}`, JSON.stringify(list))
 }
 
 export function deleteListByListId(listId) {
-  return AsyncStorage.removeItem(`lists/${listId}`);
+  return AsyncStorage.removeItem(`lists/${listId}`)
 }
 
 export async function getMyLists() {
@@ -65,9 +65,9 @@ export async function getMyLists() {
 
   // ALSO - should we really get the ProfileStorage object?
 
-  //const myProfile = JSON.parse(await ProfileStorage.getMyProfile());
+  //const myProfile = JSON.parse(await ProfileStorage.getMyProfile())
 
-  //return await getListsByUserId(myProfile.id);
+  //return await getListsByUserId(myProfile.id)
 
   return await getAllLists() // TODO - what if other person's lists on client???
 }

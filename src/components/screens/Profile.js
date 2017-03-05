@@ -23,7 +23,7 @@ import AppStyles from '../../styles'
 import MultiTaskPage from './MultiTaskPage'
 
 class Profile extends Component {
-	static componentName = 'Profile';
+	static componentName = 'Profile'
 
   constructor(props) {
     super(props)
@@ -111,11 +111,11 @@ class Profile extends Component {
           }
         },
       ],
-    );
+    )
   }
 
   _deleteProfileLocallyAndRedirect = () => {
-    ProfileStorage.deleteProfile();
+    ProfileStorage.deleteProfile()
     this.props.deleteProfile()
 
      // profile deletion ui update
@@ -129,7 +129,7 @@ class Profile extends Component {
          // TODO fix passing in empty object to satisfy props constraint
          myProfile: {}
        }
-     });
+     })
   }
 
   _onSubmitEdit = async () => {
@@ -246,18 +246,18 @@ class Profile extends Component {
           {this._getAccountStatusButton()}
         </View>
       </ScrollView>
-    );
+    )
   }
 }
 
 const mapStateToProps = (state) => ({
   isLoggedIn: state.user.isLoggedIn,
   profile: state.user.profile
-});
+})
 
 const mapDispatchToProps = {
   createOrUpdateProfile: UserActions.createOrUpdateProfile,
   deleteProfile: UserActions.deleteProfile
-};
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default connect(mapStateToProps, mapDispatchToProps)(Profile)

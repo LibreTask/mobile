@@ -10,7 +10,11 @@ import {
   TouchableOpacity,
 } from 'react-native'
 
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome'
+
+export const FAR_RIGHT_NAV_BUTTON = 'FAR_RIGHT_NAV_BUTTON'
+export const MEDIUM_RIGHT_NAV_BUTTON = 'MEDIUM_RIGHT_NAV_BUTTON'
+export const LEFT_NAV_BUTTON = 'LEFT_NAV_BUTTON'
 
 class NavbarRightButton extends Component {
   static propTypes = {
@@ -20,9 +24,17 @@ class NavbarRightButton extends Component {
 
   render = () => {
 
-    let style = this.props.isRightNavButton
-      ? styles.rightNavbarButton
-      : styles.leftNavbarButton;
+    let style;
+
+    if (this.props.navButtonLocation === FAR_RIGHT_NAV_BUTTON) {
+      style = styles.farRightNavbarButton
+    } else if (this.props.navButtonLocation === MEDIUM_RIGHT_NAV_BUTTON) {
+      style = styles.mediumRightNavButton
+    } else if (this.props.navButtonLocation === LEFT_NAV_BUTTON) {
+      style = styles.leftNavbarButton
+    }
+
+    // TODO - handle the else condition
 
     return (
       <TouchableOpacity
@@ -34,7 +46,7 @@ class NavbarRightButton extends Component {
           size={30}
           color={"#ffffff"} />
       </TouchableOpacity>
-    );
+    )
   }
 }
 
@@ -43,10 +55,14 @@ const styles = StyleSheet.create({
     right: 20,
     top: 4,
   },
+  farRightNavbarButton: {
+    right: 40,
+    top: 4,
+  },
   leftNavbarButton: {
     left: 20,
     top: 4,
   },
-});
+})
 
 export default NavbarRightButton

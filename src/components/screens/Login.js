@@ -28,10 +28,10 @@ import Validator from 'validator'
 import MultiTaskPage from './MultiTaskPage'
 
 class Login extends Component {
-  static componentName = 'Login';
+  static componentName = 'Login'
 
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       isLoggingIn: false,
@@ -98,15 +98,15 @@ class Login extends Component {
             title: 'Main',
             component: MultiTaskPage,
             index: 0,
-          });
+          })
       })
       .catch( error => {
           this.setState({
             loginError: error.message,
             isLoggingIn: false
-          });
-      });
-    });
+          })
+      })
+    })
   }
 
   render = () => {
@@ -157,7 +157,7 @@ class Login extends Component {
           <TouchableOpacity
             style={[ AppStyles.paddingVertical]}
             onPress={() => {
-              Linking.openURL(AppConstants.PASSWORD_RESET_LINK);
+              Linking.openURL(AppConstants.PASSWORD_RESET_LINK)
             }}>
             <Text>
               Forgot password?
@@ -165,14 +165,14 @@ class Login extends Component {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    );
+    )
   }
 }
 
-const mapStateToProps = (state) => ({ /* TODO */ });
+const mapStateToProps = (state) => ({ /* TODO */ })
 
 const mapDispatchToProps = {
   createOrUpdateProfile: UserActions.createOrUpdateProfile
-};
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

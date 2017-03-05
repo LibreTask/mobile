@@ -3,12 +3,12 @@
  * @license https://github.com/AlgernonLabs/mobile/blob/master/LICENSE.md
  */
 
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   StyleSheet,
-} from 'react-native';
+} from 'react-native'
 
-import AppConfig from './config';
+import AppConfig from './config'
 
 module.exports = StyleSheet.create({
   baseTextSmall: {
@@ -84,4 +84,4 @@ module.exports = StyleSheet.create({
     height: StyleSheet.hairlineWidth,
     backgroundColor: AppConfig.borderColor
   },
-});
+})

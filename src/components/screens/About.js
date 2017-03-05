@@ -14,10 +14,10 @@ import {
 } from 'react-native'
 
 import AppStyles from '../../styles'
-import AppConstants from '../../constants';
+import AppConstants from '../../constants'
 
 class About extends Component {
-	static componentName = 'About';
+	static componentName = 'About'
 
   render = () => {
     return (
@@ -38,7 +38,7 @@ class About extends Component {
           <TouchableOpacity
             style={[AppStyles.paddingVertical]}
             onPress={() => {
-              Linking.openURL(AppConstants.WEBSITE_LINK);
+              Linking.openURL(AppConstants.WEBSITE_LINK)
             }}
             >
             <Text style={[AppStyles.baseTextSmall, AppStyles.linkText]}>
@@ -51,7 +51,7 @@ class About extends Component {
           <TouchableOpacity
             style={[AppStyles.paddingVertical]}
             onPress={() => {
-              Linking.openURL(AppConstants.SOURCE_CODE_LINK);
+              Linking.openURL(AppConstants.SOURCE_CODE_LINK)
             }}
             >
             <Text style={[AppStyles.baseTextSmall, AppStyles.linkText]}>
@@ -64,7 +64,7 @@ class About extends Component {
           <TouchableOpacity
             style={[AppStyles.paddingVertical]}
             onPress={() => {
-              Linking.openURL(AppConstants.PRODUCT_PRIVACY_LINK);
+              Linking.openURL(AppConstants.PRODUCT_PRIVACY_LINK)
             }}
             >
             <Text style={[AppStyles.baseTextSmall, AppStyles.linkText]}>
@@ -77,7 +77,7 @@ class About extends Component {
           <TouchableOpacity
             style={[AppStyles.paddingVertical]}
             onPress={() => {
-              Linking.openURL(AppConstants.PRODUCT_TERMS_LINK);
+              Linking.openURL(AppConstants.PRODUCT_TERMS_LINK)
             }}
             >
             <Text style={[AppStyles.baseTextSmall, AppStyles.linkText]}>
@@ -89,7 +89,7 @@ class About extends Component {
 
         </View>
       </ScrollView>
-    );
+    )
   }
 }
 

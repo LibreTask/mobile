@@ -5,8 +5,8 @@
 
 import AppConstants from './constants'
 
-import Dimensions from 'Dimensions';
-var window = Dimensions.get('window');
+import Dimensions from 'Dimensions'
+var window = Dimensions.get('window')
 
 export default {
 	appName: AppConstants.APP_NAME,

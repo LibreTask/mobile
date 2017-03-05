@@ -24,14 +24,14 @@ import * as UserController from '../../models/controllers/user'
 import AppStyles from '../../styles'
 
 class CreateTask extends Component {
-	static componentName = 'CreateTask';
+	static componentName = 'CreateTask'
 
    static propTypes = {
      listId: PropTypes.string,
    }
 
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       creationError: '',
@@ -75,7 +75,7 @@ class CreateTask extends Component {
 
             let task = response.task
 
-            TaskStorage.createOrUpdateTask(task);
+            TaskStorage.createOrUpdateTask(task)
             this.props.createOrUpdateTask(task)
 
             this.props.navigator.pop()
@@ -88,10 +88,10 @@ class CreateTask extends Component {
             this.setState({
               creationError: error.message,
               isCreatingTask: false
-            });
+            })
           }
         })
-      });
+      })
     } else {
       this._createTaskLocallyAndRedirect(taskName)
     }
@@ -99,7 +99,7 @@ class CreateTask extends Component {
 
   _createTaskLocallyAndRedirect = (name) => {
     let task = TaskController.constructTaskLocally(name, this.props.listId)
-    TaskStorage.createOrUpdateTask(task);
+    TaskStorage.createOrUpdateTask(task)
     this.props.createOrUpdateTask(task)
 
     this.props.navigator.pop()
@@ -138,17 +138,17 @@ class CreateTask extends Component {
         </View>
 
       </ScrollView>
-    );
+    )
   }
 }
 
 const mapStateToProps = (state) => ({
   isLoggedIn: state.user.isLoggedIn,
   profile: state.user.profile
-});
+})
 
 const mapDispatchToProps = {
   createOrUpdateTask: TaskActions.createOrUpdateTask
-};
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateTask);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateTask)

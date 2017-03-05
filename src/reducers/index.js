@@ -17,26 +17,26 @@ import syncReducer from './sync'
 const entitiesReducer = combineReducers({
   tasks: tasksReducer,
   lists: listsReducer,
-});
+})
 
 const uiReducer = combineReducers({
   sideMenu,
   navbar
-});
+})
 
 const appReducer = combineReducers({
   ui: uiReducer,
   entities: entitiesReducer,
   user: userReducer,
   sync: syncReducer
-});
+})
 
 const rootReducer = (state, action) => {
   if (action.type === 'RESET') {
     state = undefined;
   }
 
-  return appReducer(state, action);
-};
+  return appReducer(state, action)
+}
 
 export default rootReducer

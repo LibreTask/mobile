@@ -47,6 +47,6 @@ export const sync = () => {
     })
     .catch( error => {
       console.log('sync error....')
-    });
+    })
   }
 }

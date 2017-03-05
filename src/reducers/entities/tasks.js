@@ -28,7 +28,7 @@ function deleteTask(state, action) {
   let updatedTaskEntry = {}
   updatedTaskEntry[taskId] = undefined;
 
-  return updateObject(state, updatedTaskEntry);
+  return updateObject(state, updatedTaskEntry)
 }
 
 function addTasks(state, action) {
@@ -40,7 +40,7 @@ function addTasks(state, action) {
 }
 
 function addTask(state, action) {
-  return addNormalizedTask(state, action.task);
+  return addNormalizedTask(state, action.task)
 }
 
 function addNormalizedTask(state, normalizedTask) {
@@ -48,19 +48,19 @@ function addNormalizedTask(state, normalizedTask) {
   let updatedTaskEntry = {}
   updatedTaskEntry[normalizedTask.id] = normalizedTask;
 
-  return updateObject(state, updatedTaskEntry);
+  return updateObject(state, updatedTaskEntry)
 }
 
 function syncTasks(state, action) {
 
   return (action.tasks && action.tasks.length > 0)
     ? addTasks(state, action)
-    : state;
+    : state
 }
 
 const initialState = {
   // taskId: {public task attributes}
-};
+}
 
 function tasksReducer(state = initialState, action) {
   switch(action.type) {
@@ -75,25 +75,25 @@ function tasksReducer(state = initialState, action) {
       TODO - doc
     */
     case CREATE_OR_UPDATE_TASK:
-      return addTask(state, action);
+      return addTask(state, action)
 
     /*
       TODO - doc
     */
     case CREATE_OR_UPDATE_TASKS:
-      return addTasks(state, action);
+      return addTasks(state, action)
 
     /*
       TODO - doc
     */
     case DELETE_ALL_TASKS:
-      return deleteAllTasks(state, action);
+      return deleteAllTasks(state, action)
 
     /*
       TODO - doc
     */
     case DELETE_TASK:
-      return deleteTask(state, action);
+      return deleteTask(state, action)
 
     default:
       return state;

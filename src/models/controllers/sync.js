@@ -19,14 +19,14 @@ async function getState() {
 
   try {
     let tasksHash = await TaskStorage.getAllTasks()
-    var taskIds = Object.keys(tasksHash);
-    tasks = taskIds.map(function(id) { return tasksHash[id]; });
+    var taskIds = Object.keys(tasksHash)
+    tasks = taskIds.map(function(id) { return tasksHash[id]; })
   } catch (err) { /* ignore */ }
 
   try {
     let listsHash = await ListStorage.getAllLists()
-    var listIds = Object.keys(listsHash);
-    lists = listIds.map(function(id) { return listsHash[id]; });
+    var listIds = Object.keys(listsHash)
+    lists = listIds.map(function(id) { return listsHash[id]; })
   } catch (err) { /* ignore */ }
 
   try {
@@ -94,7 +94,7 @@ export const sync = async () => {
       // TODO - better handling of PW
       const profile = Object.assign({}, response.state.user.profile, {
         password: password
-      });
+      })
 
       ProfileStorage.createOrUpdateProfile(profile)
     }

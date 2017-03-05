@@ -5,7 +5,7 @@
 
 import { invoke, constructAuthHeader } from '../../middleware/api'
 
-const uuid = require('uuid/v4');
+const uuid = require('uuid/v4')
 
 /*
   Only invoked when a Task need to be created client side, rather than server

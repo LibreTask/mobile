@@ -20,6 +20,7 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
+import * as NavbarActions from '../../actions/navbar'
 import * as UserController from '../../models/controllers/user'
 import * as ListController from '../../models/controllers/list'
 import * as TaskController from '../../models/controllers/task'
@@ -29,6 +30,7 @@ import * as TaskActions from '../../actions/entities/task'
 import Validator from 'validator'
 
 import AppStyles from '../../styles'
+import AppConstants from '../../constants'
 import MultiTaskPage from './MultiTaskPage'
 
 class EditTask extends Component {
@@ -38,7 +40,7 @@ class EditTask extends Component {
   }
 
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       updateError: '',
@@ -50,6 +52,28 @@ class EditTask extends Component {
 
       nameValidationError: '',
       notesValidationError: ''
+    }
+  }
+
+  componentDidMount() {
+    this.props.setMediumRightNavButton(AppConstants.SAVE_NAVBAR_BUTTON)
+    this.props.setFarRightNavButton(AppConstants.DELETE_NAVBAR_BUTTON)
+  }
+
+  componentWillUnmount() {
+    this.props.removeMediumRightNavButton()
+    this.props.removeFarRightNavButton()
+  }
+
+  componentWillReceiveProps(nextProps) {
+
+    // consume any actions triggered via the Navbar
+    if (nextProps.navAction === NavbarActions.SAVE_NAV_ACTION) {
+      this._onSubmitEdit()
+      this.props.setNavAction(undefined)
+    } else if (nextProps.navAction === NavbarActions.DELETE_NAV_ACTION) {
+      this._onDelete()
+      this.props.setNavAction(undefined)
     }
   }
 
@@ -97,18 +121,18 @@ class EditTask extends Component {
           }
         },
       ],
-    );
+    )
   }
 
   _deleteTaskLocallyAndRedirect = (taskId) => {
-    TaskStorage.deleteTaskByTaskId(taskId);
+    TaskStorage.deleteTaskByTaskId(taskId)
     this.props.deleteTask(taskId)
 
     this.props.navigator.replace({
       title: 'Main',
       component: MultiTaskPage,
       index: 0,
-    });
+    })
   }
 
   _onSubmitEdit = async () => {
@@ -169,7 +193,7 @@ class EditTask extends Component {
   }
 
   _updateTaskLocally = (task) => {
-    TaskStorage.createOrUpdateTask(task);
+    TaskStorage.createOrUpdateTask(task)
     this.props.createOrUpdateTask(task)
 
     this.setState({
@@ -185,12 +209,12 @@ class EditTask extends Component {
   _showDatePicker = async () => {
 
     let chosenDate = this.state.task.dueDateTimeUtc;
-    let minDate = new Date();
-    let maxDate = new Date();
-    maxDate.setFullYear(maxDate.getFullYear() + 10); // aribtrarily add 10 years
+    let minDate = new Date()
+    let maxDate = new Date()
+    maxDate.setFullYear(maxDate.getFullYear() + 10) // aribtrarily add 10 years
 
     if (!chosenDate) {
-      chosenDate = new Date(); // aribtrarily choose today
+      chosenDate = new Date() // aribtrarily choose today
     }
 
     if (Platform.OS === 'ios') {
@@ -204,7 +228,7 @@ class EditTask extends Component {
       }
 
       try {
-        const {year, month, day} = await DatePickerAndroid.open(options);
+        const {year, month, day} = await DatePickerAndroid.open(options)
         this.setState({
           dueDateTimeUtc: new Date(year, month, day)
         })
@@ -341,23 +365,9 @@ class EditTask extends Component {
               {this._currentDateToText()}
             </TouchableOpacity>
           </View>
-
-          <View style={[AppStyles.row]}>
-            <View style={[AppStyles.button]}>
-              <Button
-                title={'Save'}
-                onPress={this._onSubmitEdit} />
-            </View>
-
-            <View style={[AppStyles.button]}>
-              <Button
-                title={'Delete'}
-                onPress={this._onDelete} />
-            </View>
-          </View>
         </View>
       </ScrollView>
-    );
+    )
   }
 }
 
@@ -365,12 +375,18 @@ const mapStateToProps = (state) => ({
   isLoggedIn: state.user.isLoggedIn,
   profile: state.user.profile,
   lists: state.entities.lists,
-  tasks: state.entities.tasks
-});
+  tasks: state.entities.tasks,
+  navAction: state.ui.navbar.navAction
+})
 
 const mapDispatchToProps = {
   createOrUpdateTask: TaskActions.createOrUpdateTask,
   deleteTask: TaskActions.deleteTask,
-};
+  setNavAction: NavbarActions.setNavAction,
+  setMediumRightNavButton: NavbarActions.setMediumRightNavButton,
+  removeMediumRightNavButton: NavbarActions.removeMediumRightNavButton,
+  setFarRightNavButton: NavbarActions.setFarRightNavButton,
+  removeFarRightNavButton: NavbarActions.removeFarRightNavButton,
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditTask);
+export default connect(mapStateToProps, mapDispatchToProps)(EditTask)

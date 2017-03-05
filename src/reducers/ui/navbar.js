@@ -1,51 +1,56 @@
 /*
  * @link https://www.algernon.io/
- * @license https://github.com/AlgernonLabs/mobile/blob/master/LICENSE.md
+ * @license https://github.com/AlgernonLabs/desktop/blob/master/LICENSE.md
  */
 
-import {
-  SET_RIGHT_NAV_BUTTON,
-  REMOVE_RIGHT_NAV_BUTTON
-} from '../../actions/navbar'
+import AppConstants from '../../constants'
 
 const initialState = {
-
-  rightButton: null
-
-  /*** No right button initially ***
-  rightButton: {
-    buttonIcon: 'pencil-square-o',
-    onClickFunc: 'example', // a key that maps to actual function
-    onClickArgs: {
-      // ...
-    }
-  }
-  */
+  navAction: undefined,
+  farRightButton: null,
+  farRightTransitionLocation: null,
+  mediumRightButton: null,
+  mediumRightTransitionLocation: null,
+  leftButton: null,
+  leftTransitionLocation: null,
+  title: AppConstants.APP_NAME
 }
 
 export default function navbarReducer(state = initialState, action) {
 
   switch (action.type) {
-    case SET_RIGHT_NAV_BUTTON:
+    case 'SET_NAV_ACTION':
       return Object.assign({}, state, {
-        rightButton: action.rightButton
-        /*
-
-        TODO - expand to this functionality
-
-        // we expand the action, rather than directly
-        // assign rightButton, for improved clarity
-        rightButton: {
-          onClickFunc: action.rightButton.onClickFunc,
-          onClickArgs: action.rightButton.onClickArgs,
-          buttonIcon: action.rightButton.buttonIcon
-        }
-        */
-      });
-    case REMOVE_RIGHT_NAV_BUTTON:
-    return Object.assign({}, state, {
-      rightButton: null
-    });
+        navAction: action.navAction
+      })
+    case 'SET_MEDIUM_RIGHT_NAV_BUTTON':
+      return Object.assign({}, state, {
+        mediumRightButton: action.mediumRightButton,
+      })
+    case 'REMOVE_MEDIUM_RIGHT_NAV_BUTTON':
+      return Object.assign({}, state, {
+        mediumRightButton: null
+      })
+    case 'SET_FAR_RIGHT_NAV_BUTTON':
+      return Object.assign({}, state, {
+        farRightButton: action.farRightButton,
+      })
+    case 'REMOVE_FAR_RIGHT_NAV_BUTTON':
+      return Object.assign({}, state, {
+        farRightButton: null
+      })
+    case 'SET_LEFT_NAV_BUTTON':
+      return Object.assign({}, state, {
+        leftButton: action.leftButton,
+      })
+    case 'REMOVE_LEFT_NAV_BUTTON':
+      return Object.assign({}, state, {
+        leftButton: null
+      })
+    case 'SET_NAVBAR_TITLE':
+      return Object.assign({}, state, {
+        title: action.title
+      })
     default:
       return state
   }

@@ -13,8 +13,8 @@ import {
 
 const initialState = {
   storeItems: {},
-};
+}
 
 export const storeItemsReducer = createReducer(initialState, {
 
-});
+})

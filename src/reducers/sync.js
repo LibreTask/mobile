@@ -35,7 +35,7 @@ function endSync(state, action) {
 const initialState = {
   isSyncing: false,
   intervalId: undefined // used to cancel sync
-};
+}
 
 function syncReducer(state = initialState, action) {
   switch(action.type) {
@@ -44,13 +44,13 @@ function syncReducer(state = initialState, action) {
       TODO - doc
     */
     case START_SYNC:
-      return startSync(state, action);
+      return startSync(state, action)
 
     /*
       TODO - doc
     */
     case END_SYNC:
-      return endSync(state, action);
+      return endSync(state, action)
 
     default:
       return state;

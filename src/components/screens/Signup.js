@@ -27,10 +27,10 @@ import Validator from 'validator'
 import MultiTaskPage from './MultiTaskPage'
 
 class Signup extends Component {
-  static componentName = 'Signup';
+  static componentName = 'Signup'
 
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       isSigningUp: '',
@@ -107,15 +107,15 @@ class Signup extends Component {
           title: 'Main',
           component: MultiTaskPage,
           index: 0,
-        });
+        })
       })
       .catch( error => {
           this.setState({
             signupError: error.message,
             isSigningUp: false
-          });
-      });
-    });
+          })
+      })
+    })
   }
 
   render = () => {
@@ -180,14 +180,14 @@ class Signup extends Component {
           </View>
         </View>
       </ScrollView>
-    );
+    )
   }
 }
 
-const mapStateToProps = (state) => ({ /* TODO */ });
+const mapStateToProps = (state) => ({ /* TODO */ })
 
 const mapDispatchToProps = {
   createOrUpdateProfile: UserActions.createOrUpdateProfile
-};
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Signup);
+export default connect(mapStateToProps, mapDispatchToProps)(Signup)

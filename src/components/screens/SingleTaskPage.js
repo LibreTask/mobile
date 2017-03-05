@@ -15,29 +15,58 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import CheckBox from 'react-native-checkbox';
+import CheckBox from 'react-native-checkbox'
 
+import * as NavbarActions from '../../actions/navbar'
 import * as TaskActions from '../../actions/entities/task'
 import * as TaskController from '../../models/controllers/task'
 import * as TaskStorage from '../../models/storage/task-storage'
 import * as UserController from '../../models/controllers/user'
 
 import AppStyles from '../../styles'
+import AppConstants from '../../constants'
 import EditTask from './EditTask'
 
 class SingleTaskPage extends Component {
-	static componentName = 'Task';
+	static componentName = 'Task'
 
   static propTypes = {
     taskId: PropTypes.string.isRequired,
   }
 
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       task: this._getTask(),
       parentList: this._getList()
+    }
+  }
+
+  componentDidMount() {
+
+    console.log("setting medium right: " + AppConstants.EDIT_NAVBAR_BUTTON)
+
+    console.log("setting far right: " + AppConstants.DELETE_NAVBAR_BUTTON)
+
+    this.props.setMediumRightNavButton(AppConstants.EDIT_NAVBAR_BUTTON)
+    this.props.setFarRightNavButton(AppConstants.DELETE_NAVBAR_BUTTON)
+  }
+
+  componentWillUnmount() {
+    this.props.removeMediumRightNavButton()
+    this.props.removeFarRightNavButton()
+  }
+
+  componentWillReceiveProps(nextProps) {
+
+    // consume any actions triggered via the Navbar
+    if (nextProps.navAction === NavbarActions.EDIT_NAV_ACTION) {
+      this.onEdit()
+      this.props.setNavAction(undefined)
+    } else if (nextProps.navAction === NavbarActions.DELETE_NAV_ACTION) {
+      this.onDelete()
+      this.props.setNavAction(undefined)
     }
   }
 
@@ -86,11 +115,11 @@ class SingleTaskPage extends Component {
           }
         },
       ],
-    );
+    )
   }
 
   _deleteTaskLocallyAndRedirect = (taskId) => {
-    TaskStorage.deleteTaskByTaskId(taskId);
+    TaskStorage.deleteTaskByTaskId(taskId)
     this.props.deleteTask(taskId)
 
     this.props.navigator.pop()
@@ -105,35 +134,33 @@ class SingleTaskPage extends Component {
       passProps: {
         taskId: this.state.task.id,
       }
-    });
+    })
   }
 
   _notesBlock = () => {
-    let notesBlock;
-
-    if (this.state.task.notes) {
-      notesBlock = <View>
+    return (
+      <View>
         <Text style={[AppStyles.baseText]}>Notes</Text>
-        <Text>{this.state.task.notes}</Text>
+        <Text style={[AppStyles.baseTextSmall]}>
+          {this.state.task.notes || 'No notes yet'}
+        </Text>
       </View>
-    }
-
-    return notesBlock
+    )
   }
 
   _dueDateBlock = () => {
-    let dueDateBlock;
-
-    // TODO - refine how we format date (and move to utils)
-
-    if (this.state.task.dueDateTimeUtc) {
-      dueDateBlock = <View>
+    return (
+      <View style={[AppStyles.paddingVertical]}>
         <Text style={[AppStyles.baseText]}>Due Date</Text>
-        <Text>{this.state.task.dueDateTimeUtc}</Text>
+        <Text style={[AppStyles.baseTextSmall]}>
+          {
+            this.state.task.dueDateTimeUtc
+            ? dateFormat(this.state.task.dueDateTimeUtc, 'mmmm d')
+            : 'No due date yet'
+          }
+        </Text>
       </View>
-    }
-
-    return dueDateBlock
+    )
   }
 
   _priorityBlock = () => {
@@ -165,12 +192,46 @@ class SingleTaskPage extends Component {
   }
 
   _updateTaskLocally = (task) => {
-    TaskStorage.createOrUpdateTask(task);
+    TaskStorage.createOrUpdateTask(task)
     this.props.createOrUpdateTask(task)
     this.setState({ task: task })
   }
 
   render = () => {
+
+    /*
+    <View style={[AppStyles.paddingVertical]}>
+      <CheckBox
+        label={'Completed'}
+        labelStyle={[AppStyles.baseText]}
+        checked={this.state.task.isCompleted}
+        onChange={(checked) => {
+
+          let updatedCheckedValue = !checked
+
+          let task = this.state.task
+          task.isCompleted = updatedCheckedValue
+
+          if (UserController.canAccessNetwork(this.props.profile)) {
+            TaskController.updateTask(task,
+               this.props.profile.id, this.props.profile.password)
+            .then(response => {
+               this._updateTaskLocally(task)
+            })
+            .catch(error => {
+              if (error.name === 'NoConnection') {
+                 this._updateTaskLocally(task)
+              } else {
+                // TODO
+              }
+            })
+          } else {
+             this._updateTaskLocally(task)
+          }
+        }}
+      />
+    </View>
+    */
 
     return (
       <ScrollView automaticallyAdjustContentInsets={false}
@@ -192,59 +253,13 @@ class SingleTaskPage extends Component {
             </Text>
           </View>
 
-          <View style={[AppStyles.paddingVertical]}>
-            <CheckBox
-              label={'Completed'}
-              labelStyle={[AppStyles.baseText]}
-              checked={this.state.task.isCompleted}
-              onChange={(checked) => {
-
-                let updatedCheckedValue = !checked
-
-                let task = this.state.task
-                task.isCompleted = updatedCheckedValue
-
-                if (UserController.canAccessNetwork(this.props.profile)) {
-                  TaskController.updateTask(task,
-                     this.props.profile.id, this.props.profile.password)
-                  .then(response => {
-                     this._updateTaskLocally(task)
-                  })
-                  .catch(error => {
-                    if (error.name === 'NoConnection') {
-                       this._updateTaskLocally(task)
-                    } else {
-                      // TODO
-                    }
-                  })
-                } else {
-                   this._updateTaskLocally(task)
-                }
-              }}
-            />
-          </View>
-
           {this._notesBlock()}
           {this._dueDateBlock()}
           {this._priorityBlock()}
           {this._recurringBlock()}
-
-          <View style={[AppStyles.row]}>
-            <View style={[AppStyles.button]}>
-              <Button
-                title={'Edit'}
-                onPress={this._onEdit} />
-            </View>
-
-            <View style={[AppStyles.button]}>
-              <Button
-                title={'Delete'}
-                onPress={this._onDelete} />
-            </View>
-          </View>
         </View>
       </ScrollView>
-    );
+    )
   }
 }
 
@@ -252,12 +267,18 @@ const mapStateToProps = (state) => ({
   isLoggedIn: state.user.isLoggedIn,
   profile: state.user.profile,
   lists: state.entities.lists,
-  tasks: state.entities.tasks
-});
+  tasks: state.entities.tasks,
+  navAction: state.ui.navbar.navAction
+})
 
 const mapDispatchToProps = {
   createOrUpdateTask: TaskActions.createOrUpdateTask,
   deleteTask: TaskActions.deleteTask,
-};
+  setNavAction: NavbarActions.setNavAction,
+  setMediumRightNavButton: NavbarActions.setMediumRightNavButton,
+  removeMediumRightNavButton: NavbarActions.removeMediumRightNavButton,
+  setFarRightNavButton: NavbarActions.setFarRightNavButton,
+  removeFarRightNavButton: NavbarActions.removeFarRightNavButton,
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(SingleTaskPage);
+export default connect(mapStateToProps, mapDispatchToProps)(SingleTaskPage)

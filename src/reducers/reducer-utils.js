@@ -11,7 +11,7 @@ export function updateObject(oldObject, newValues) {
 
     // Encapsulate the idea of passing a new object as the first parameter
     // to Object.assign to ensure we correctly copy data instead of mutating
-    return Object.assign({}, oldObject, newValues);
+    return Object.assign({}, oldObject, newValues)
 }
 
 export function createReducer(initialState, handlers) {
@@ -29,12 +29,12 @@ export function createReducer(initialState, handlers) {
 */
 export function constructHashFromId(item) {
   // create clone so to not modify original
-  let clonedItem = Object.assign({}, item);
+  let clonedItem = Object.assign({}, item)
 
   let itemId = clonedItem.id;
   delete clonedItem.id;
 
-  let normalizedItem = {};
+  let normalizedItem = {}
   normalizedItem[itemId] = clonedItem;
 
   return normalizedItem;

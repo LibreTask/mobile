@@ -21,7 +21,7 @@ class NavbarTitle extends Component {
       <Text style={[styles.navbarTitle]}>
         {this.props.title || AppConstants.APP_NAME}
       </Text>
-    );
+    )
   }
 }
 
@@ -31,6 +31,6 @@ const styles = StyleSheet.create({
     bottom: 6,
     fontSize: 13,
   },
-});
+})
 
 export default NavbarTitle

@@ -71,7 +71,7 @@ class Menu extends Component {
           },
         ],
         { cancelable: false }
-      );
+      )
     }
   }
 
@@ -103,7 +103,7 @@ class Menu extends Component {
               </Text>
             </View>
           </TouchableOpacity>
-        );
+        )
       }
 
       listsMenuItems.push(
@@ -115,7 +115,7 @@ class Menu extends Component {
             </Text>
           </View>
         </TouchableOpacity>
-      );
+      )
     }
 
     return (
@@ -165,7 +165,7 @@ class Menu extends Component {
       </TouchableOpacity>
       // TODO - store
       // TODO - settings
-    );
+    )
     */
 
     menuItems = menuItems.concat(this._getListsMenuItems())
@@ -177,7 +177,7 @@ class Menu extends Component {
           <Text style={[AppStyles.baseText, styles.menuItemText]}>{'Profile'}</Text>
         </View>
       </TouchableOpacity>
-    );
+    )
 
     menuItems.push(
       <TouchableOpacity key={'menu-item-about'}
@@ -206,25 +206,25 @@ class Menu extends Component {
                   text: 'Yes',
                   onPress: () => {
                     // remove profile and all entities
-                    this.props.deleteProfile();
-                    this.props.deleteAllTasks();
-                    this.props.deleteAllLists();
-                    ProfileStorage.logout();
+                    this.props.deleteProfile()
+                    this.props.deleteAllTasks()
+                    this.props.deleteAllLists()
+                    ProfileStorage.logout()
 
                      // logout requires ui update
                     navigate('Tasks', MultiTaskPage, {
                       listId: AppConstants.ALL_TASKS_IDENTIFIER,
-                    });
+                    })
                   }
                 },
               ],
-            );
+            )
           }}>
           <View style={[styles.menuItem]}>
             <Text style={[AppStyles.baseText, styles.menuItemText]}>{'Logout'}</Text>
           </View>
         </TouchableOpacity>
-      );
+      )
     }
 
     return menuItems;
@@ -232,7 +232,7 @@ class Menu extends Component {
 
   _renderUserDetails = () => {
 
-    let greeting = 'Hello!';
+    let greeting = 'Hello!'
 
     if (this.props.isLoggedIn && this.props.profile.name) {
       greeting = `Hello, ${this.props.profile.name}!`;
@@ -254,12 +254,12 @@ class Menu extends Component {
               !== this.props.sideMenuListsViewIsCollapsed) {
       this.setState({
         sideMenuListsViewIsCollapsed: nextProps.sideMenuListsViewIsCollapsed
-      });
+      })
     }
   }
 
   render = () => {
-    const menuItems = this._constructMenuItems();
+    const menuItems = this._constructMenuItems()
 
     // TODO - render a greeting
     /*
@@ -278,7 +278,7 @@ class Menu extends Component {
           <View style={[styles.menu]}>{menuItems}</View>
         </View>
       </ScrollView>
-    );
+    )
   }
 }
 
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
   },
-});
+})
 
 const mapStateToProps = (state) => ({
   sideMenuListsViewIsCollapsed: state.ui.sideMenu.isListsViewCollapsed,
@@ -338,7 +338,7 @@ const mapStateToProps = (state) => ({
   profile: state.user.profile,
   isSyncing: state.sync.isSyncing,
   lists: state.entities.lists
-});
+})
 
 const mapDispatchToProps = {
   toggleListsView: SideMenuActions.toggleListsView,
@@ -350,6 +350,6 @@ const mapDispatchToProps = {
   startSync: SyncActions.startSync,
   stopSync: SyncActions.stopSync,
   sync: SyncActions.sync
-};
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Menu);
+export default connect(mapStateToProps, mapDispatchToProps)(Menu)

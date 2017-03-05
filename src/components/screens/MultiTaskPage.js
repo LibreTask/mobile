@@ -30,11 +30,12 @@ import AppConstants from '../../constants'
 
 import TaskRow from '../TaskRow'
 
+import EditList from './EditList'
 import CreateTask from './CreateTask'
 import SingleTaskPage from './SingleTaskPage'
 
 class MultiTaskPage extends Component {
-  static componentName = 'MultiTaskPage';
+  static componentName = 'MultiTaskPage'
 
   static propTypes = {
     navigator: PropTypes.object.isRequired,
@@ -46,7 +47,7 @@ class MultiTaskPage extends Component {
   }
 
   constructor(props) {
-    super(props);
+    super(props)
 
     let dataSource = new ListView.DataSource({
        rowHasChanged: (row1, row2) => row1 !== row2,
@@ -69,7 +70,7 @@ class MultiTaskPage extends Component {
   componentWillMount = () => {
 
     if (this.props.listId !== AppConstants.ALL_TASKS_IDENTIFIER) {
-        this.props.setRightNavButton('MultiTaskPage')
+        this.props.setFarRightNavButton('MultiTaskPage')
     }
   }
 
@@ -91,7 +92,7 @@ class MultiTaskPage extends Component {
       // TODO - can we rely on private member `event._data.route` ???
       if (this._isTopRoute(event._data.route)
             && this.props.listId !== AppConstants.ALL_TASKS_IDENTIFIER) {
-        this.props.setRightNavButton('MultiTaskPage')
+        this.props.setFarRightNavButton('MultiTaskPage')
       }
     })
 	}
@@ -133,6 +134,22 @@ class MultiTaskPage extends Component {
       let tasks = this._filterTasksToDisplay(this.props.listId, nextProps.tasks)
       this.setState({dataSource: this.state.dataSource.cloneWithRows(tasks)})
     }
+
+    // consume any actions triggered via the Navbar
+    if (nextProps.navAction === NavbarActions.EDIT_NAV_ACTION) {
+
+      this.props.setNavAction(undefined)
+
+      this.props.navigator.push({
+        title: 'Edit List',
+        component: EditList,
+        index: 2,
+        transition: 'FloatFromBottom',
+        passProps: {
+          listId: this._getListId(),
+        }
+      })
+    }
   }
 
   componentWillUnmount = () => {
@@ -141,7 +158,7 @@ class MultiTaskPage extends Component {
         // when we transition from MultiTaskPage to MultiTaskPage
         // For example, when we view the tasks of one lists and then the tasks
         // of another list
-        this.props.removeRightNavButton();
+        this.props.removeFarRightNavButton()
 
         if (this.state.willFocusSubscription) {
           this.state.willFocusSubscription.remove()
@@ -244,12 +261,12 @@ class MultiTaskPage extends Component {
 
   _fetchData = async() => {
 
-    this.setState({ isRefreshing: true });
+    this.setState({ isRefreshing: true })
 
     // TODO - ensure that this works even if no profile specified
       // eg offline usage?
 
-    let attributes = {};
+    let attributes = {}
 
     if (this.props.listId !== AppConstants.ALL_TASKS_IDENTIFIER) {
       attributes.listId = this.props.listId
@@ -269,7 +286,7 @@ class MultiTaskPage extends Component {
       // no network or not logged in, revert to local storage
       tasks = (this.props.listId === AppConstants.ALL_TASKS_IDENTIFIER)
         ? (await TaskStorage.getAllTasks())
-        : (await TaskStorage.getTasksByListId(this.props.listId));
+        : (await TaskStorage.getTasksByListId(this.props.listId))
     }
 
     if (tasks.length > 0) {
@@ -279,7 +296,7 @@ class MultiTaskPage extends Component {
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(tasks),
       isRefreshing: false,
-    });
+    })
   }
 
   _shouldRenderTask = (task) => {
@@ -370,7 +387,7 @@ class MultiTaskPage extends Component {
               }
           }}
           onPress={() => {
-            this.props.removeRightNavButton(); // remove before transition
+            this.props.removeFarRightNavButton() // remove before transition
             this.props.navigator.push({
               title: 'Task View',
               component: SingleTaskPage,
@@ -379,9 +396,9 @@ class MultiTaskPage extends Component {
               passProps: {
                 taskId: task.id,
               }
-            });
+            })
           }} />
-      );
+      )
     }
 
     return <View></View>
@@ -445,7 +462,7 @@ class MultiTaskPage extends Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          this.props.removeRightNavButton(); // remove before transition
+          this.props.removeFarRightNavButton() // remove before transition
           this.props.navigator.push({
             title: 'Create Task',
             component: CreateTask,
@@ -454,7 +471,7 @@ class MultiTaskPage extends Component {
             passProps: {
               listId: this.props.listId,
             }
-          });
+          })
         }}
         activeOpacity={0.7}>
 
@@ -463,7 +480,7 @@ class MultiTaskPage extends Component {
         </View>
 
       </TouchableOpacity>
-    );
+    )
   }
 
   render = () => {
@@ -487,7 +504,7 @@ class MultiTaskPage extends Component {
               tintColor={AppConfig.primaryColor} />
           } />
       </View>
-    );
+    )
   }
 }
 
@@ -513,7 +530,7 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingHorizontal: 5,
   },
-});
+})
 
 const mapStateToProps = (state, ownProps) => {
 
@@ -523,12 +540,12 @@ const mapStateToProps = (state, ownProps) => {
     lists: state.entities.lists,
     tasks: state.entities.tasks,
   }
-};
+}
 
 const mapDispatchToProps = {
-  setRightNavButton: NavbarActions.setRightNavButton,
-  removeRightNavButton: NavbarActions.removeRightNavButton,
+  setFarRightNavButton: NavbarActions.setFarRightNavButton,
+  removeFarRightNavButton: NavbarActions.removeFarRightNavButton,
   createOrUpdateTask: TaskActions.createOrUpdateTask,
-};
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(MultiTaskPage);
+export default connect(mapStateToProps, mapDispatchToProps)(MultiTaskPage)

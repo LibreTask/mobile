@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
 } from 'react-native'
 
-import CheckBox from 'react-native-checkbox';
+import CheckBox from 'react-native-checkbox'
 
 import AppStyles from '../styles'
 import AppConfig from '../config'
@@ -27,7 +27,7 @@ class TaskRow extends Component {
   }
 
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       isCurrentlyCompleted: this.props.isInitiallyCompleted
@@ -73,6 +73,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
   },
-});
+})
 
 export default TaskRow
