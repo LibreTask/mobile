@@ -70,7 +70,7 @@ class MultiTaskPage extends Component {
   componentWillMount = () => {
 
     if (this.props.listId !== AppConstants.ALL_TASKS_IDENTIFIER) {
-        this.props.setFarRightNavButton('MultiTaskPage')
+        this.props.setFarRightNavButton(AppConstants.EDIT_NAVBAR_BUTTON)
     }
   }
 
@@ -92,7 +92,7 @@ class MultiTaskPage extends Component {
       // TODO - can we rely on private member `event._data.route` ???
       if (this._isTopRoute(event._data.route)
             && this.props.listId !== AppConstants.ALL_TASKS_IDENTIFIER) {
-        this.props.setFarRightNavButton('MultiTaskPage')
+        this.props.setFarRightNavButton(AppConstants.EDIT_NAVBAR_BUTTON)
       }
     })
 	}

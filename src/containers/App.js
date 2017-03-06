@@ -140,8 +140,10 @@ class AppContainer extends Component {
       leftButton.icon = 'arrow-left'
     }
 
+    console.log('nav button location, left nav: ' + AppConstants.LEFT_NAV_BUTTON)
+
     return <NavbarButton
-        navButtonLocation={NavbarButton.LEFT_RIGHT_NAV_BUTTON}
+        navButtonLocation={AppConstants.LEFT_NAV_BUTTON}
         onPress={leftButton.onPress}
         icon={leftButton.icon} />
   }
@@ -171,7 +173,7 @@ class AppContainer extends Component {
 
     return (
       <NavbarButton
-          navButtonLocation={NavbarButton.MEDIUM_RIGHT_NAV_BUTTON}
+          navButtonLocation={AppConstants.MEDIUM_RIGHT_NAV_BUTTON}
           onPress={() => {
               this.props.setNavAction(navbarAction)
           }}
@@ -206,7 +208,7 @@ class AppContainer extends Component {
 
     return (
       <NavbarButton
-          navButtonLocation={NavbarButton.FAR_RIGHT_NAV_BUTTON}
+          navButtonLocation={AppConstants.FAR_RIGHT_NAV_BUTTON}
           onPress={() => {
               this.props.setNavAction(navbarAction)
           }}
@@ -221,13 +223,6 @@ class AppContainer extends Component {
     let mediumRightNavButton = this._constructMediumRightNavButton()
     let farRightNavButton = this._constructFarRightNavButton()
 
-    /*
-    rightButton={<View>
-      {mediumRightNavButton}
-      {farRightNavButton}
-    </View>}/>
-    */
-
     return (
       <View style={[AppStyles.container]}>
         <NavigationBar
@@ -236,7 +231,10 @@ class AppContainer extends Component {
           style={[AppStyles.navbar]}
           tintColor={AppConfig.primaryColor}
           leftButton={leftNavBarButton}
-          rightButton={farRightNavButton}/>
+          rightButton={<View>
+            {mediumRightNavButton}
+            {farRightNavButton}
+          </View>}/>
 
         <route.component
           navigator={navigator}
@@ -247,6 +245,8 @@ class AppContainer extends Component {
   }
 
   render() {
+
+    console.log("rendering app.js...")
 
     return (
       <SideMenu
@@ -302,7 +302,8 @@ const mapDispatchToProps = {
   deleteAllTasks: TaskActions.deleteAllTasks,
   startSync: SyncActions.startSync,
   stopSync: SyncActions.stopSync,
-  sync: SyncActions.sync
+  sync: SyncActions.sync,
+  setNavAction: NavbarActions.setNavAction
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppContainer)
