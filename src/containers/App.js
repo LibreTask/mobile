@@ -13,7 +13,6 @@ import {
   StatusBar,
 } from 'react-native'
 import { connect } from 'react-redux'
-import NavigationBar from 'react-native-navbar'
 import SideMenu from 'react-native-side-menu'
 
 import * as _ from 'lodash'
@@ -30,7 +29,6 @@ import * as UserActions from '../actions/entities/user'
 import * as TaskActions from '../actions/entities/task'
 import * as ListActions from '../actions/entities/list'
 
-import * as NavbarActions from '../actions/navbar'
 import * as SyncActions from '../actions/sync'
 
 import AppStyles from '../styles'
@@ -38,8 +36,6 @@ import AppConfig from '../config'
 import AppConstants from '../constants'
 
 import Menu from '../components/Menu'
-import NavbarTitle from '../components/navbar/NavbarTitle'
-import NavbarButton from '../components/navbar/NavbarButton'
 
 import MultiTaskPage from '../components/screens/MultiTaskPage'
 
@@ -49,9 +45,8 @@ class AppContainer extends Component {
     super(props)
 
     this.state = {
-
       // no list is initially selected
-      currentlySelectedList: AppConstants.ALL_TASKS_IDENTIFIER
+      currentlySelectedList: AppConstants.ALL_TASKS_IDENTIFIER,
     }
   }
 
@@ -70,6 +65,7 @@ class AppContainer extends Component {
 
     return false;
   }
+
 
   // TODO - move this logic to file like index.js
   _loadInitialState = async () => {
@@ -123,119 +119,9 @@ class AppContainer extends Component {
     }
   }
 
-  _leftNavBarButton = (route) => {
-    // Show Hamburger Icon when index is 0,
-    // and Back Arrow Icon when index is > 0
-    let leftButton = {
-      onPress: (route.index > 0)
-        ? this.refs.rootNavigator.pop
-        : this.props.toggleSideMenu,
-      icon: (route.index > 0)
-        ? 'arrow-left'
-        : 'bars'
-    }
-
-    // Show a cross icon when transition pops from bottom
-    if(route.transition == 'FloatFromBottom')  {
-      leftButton.icon = 'arrow-left'
-    }
-
-    console.log('nav button location, left nav: ' + AppConstants.LEFT_NAV_BUTTON)
-
-    return <NavbarButton
-        navButtonLocation={AppConstants.LEFT_NAV_BUTTON}
-        onPress={leftButton.onPress}
-        icon={leftButton.icon} />
-  }
-
-  _constructMediumRightNavButton() {
-    let mediumRightNavIcon
-    let navbarAction
-
-    if (this.props.mediumRightNavButton
-      === AppConstants.EDIT_NAVBAR_BUTTON) {
-      mediumRightNavIcon = 'edit'
-      navbarAction = NavbarActions.EDIT_NAV_ACTION
-    } else if (this.props.mediumRightNavButton
-      === AppConstants.DELETE_NAVBAR_BUTTON) {
-        mediumRightNavIcon = 'trash-o'
-        navbarAction = NavbarActions.DELETE_NAV_ACTION
-    } else if (this.props.mediumRightNavButton
-      === AppConstants.SAVE_NAVBAR_BUTTON) {
-        mediumRightNavIcon = 'floppy-o'
-        navbarAction = NavbarActions.SAVE_NAV_ACTION
-    } else {
-      return // no navbutton set; return nothing
-    }
-
-
-        console.log("medium right nav icon: " + mediumRightNavIcon)
-
-    return (
-      <NavbarButton
-          navButtonLocation={AppConstants.MEDIUM_RIGHT_NAV_BUTTON}
-          onPress={() => {
-              this.props.setNavAction(navbarAction)
-          }}
-          icon={mediumRightNavIcon} />
-    )
-  }
-
-  _constructFarRightNavButton() {
-    let farRightNavIcon
-    let navbarAction
-
-    console.log("far right nav button: " + this.props.farRightNavButton)
-    console.log("medium right nav button: " + this.props.mediumRightNavButton)
-
-    if (this.props.farRightNavButton
-      === AppConstants.EDIT_NAVBAR_BUTTON) {
-      farRightNavIcon = 'edit'
-      navbarAction = NavbarActions.EDIT_NAV_ACTION
-    } else if (this.props.farRightNavButton
-      === AppConstants.DELETE_NAVBAR_BUTTON) {
-        farRightNavIcon = 'trash-o'
-        navbarAction = NavbarActions.DELETE_NAV_ACTION
-    } else if (this.props.farRightNavButton
-      === AppConstants.SAVE_NAVBAR_BUTTON) {
-        farRightNavIcon = 'floppy-o'
-        navbarAction = NavbarActions.SAVE_NAV_ACTION
-    } else {
-      return // no navbutton set; return nothing
-    }
-
-    console.log("far right nav icon: " + farRightNavIcon)
-
-    return (
-      <NavbarButton
-          navButtonLocation={AppConstants.FAR_RIGHT_NAV_BUTTON}
-          onPress={() => {
-              this.props.setNavAction(navbarAction)
-          }}
-          icon={farRightNavIcon} />
-    )
-  }
-
   _renderScene = (route, navigator) => {
-    let title = route.title || AppConstants.APP_NAME
-
-    let leftNavBarButton = this._leftNavBarButton(route)
-    let mediumRightNavButton = this._constructMediumRightNavButton()
-    let farRightNavButton = this._constructFarRightNavButton()
-
     return (
       <View style={[AppStyles.container]}>
-        <NavigationBar
-          title={<NavbarTitle title={title || null} />}
-          statusBar={{style: 'light-content', hidden: false}}
-          style={[AppStyles.navbar]}
-          tintColor={AppConfig.primaryColor}
-          leftButton={leftNavBarButton}
-          rightButton={<View>
-            {mediumRightNavButton}
-            {farRightNavButton}
-          </View>}/>
-
         <route.component
           navigator={navigator}
           route={route}
@@ -245,8 +131,6 @@ class AppContainer extends Component {
   }
 
   render() {
-
-    console.log("rendering app.js...")
 
     return (
       <SideMenu
@@ -284,8 +168,6 @@ class AppContainer extends Component {
 
 const mapStateToProps = (state) => ({
   sideMenuIsOpen: state.ui.sideMenu.isOpen,
-  mediumRightNavButton: state.ui.navbar.mediumRightButton,
-  farRightNavButton: state.ui.navbar.farRightButton,
   isLoggedIn: state.user.isLoggedIn,
   profile: state.user.profile,
   isSyncing: state.sync.isSyncing
@@ -303,7 +185,6 @@ const mapDispatchToProps = {
   startSync: SyncActions.startSync,
   stopSync: SyncActions.stopSync,
   sync: SyncActions.sync,
-  setNavAction: NavbarActions.setNavAction
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppContainer)

@@ -84,4 +84,7 @@ module.exports = StyleSheet.create({
     height: StyleSheet.hairlineWidth,
     backgroundColor: AppConfig.borderColor
   },
+  rightNavButtons: {
+    flexDirection: 'row'
+  }
 })

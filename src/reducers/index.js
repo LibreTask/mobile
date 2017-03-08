@@ -6,7 +6,6 @@
 import { combineReducers } from 'redux'
 
 import sideMenu from './ui/sidemenu'
-import navbar from './ui/navbar'
 
 import userReducer from './user'
 import listsReducer from './entities/lists'
@@ -21,7 +20,6 @@ const entitiesReducer = combineReducers({
 
 const uiReducer = combineReducers({
   sideMenu,
-  navbar
 })
 
 const appReducer = combineReducers({

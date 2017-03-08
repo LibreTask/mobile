@@ -18,7 +18,7 @@ import { connect } from 'react-redux'
 
 import * as _ from 'lodash'
 
-import * as NavbarActions from '../../actions/navbar'
+import * as SideMenuActions from '../../actions/sidemenu'
 import * as TaskActions from '../../actions/entities/task'
 import * as TaskController from '../../models/controllers/task'
 import * as TaskStorage from '../../models/storage/task-storage'
@@ -27,6 +27,10 @@ import * as UserController from '../../models/controllers/user'
 import AppStyles from '../../styles'
 import AppConfig from '../../config'
 import AppConstants from '../../constants'
+
+import NavigationBar from 'react-native-navbar'
+import NavbarTitle from '../navbar/NavbarTitle'
+import NavbarButton from '../navbar/NavbarButton'
 
 import TaskRow from '../TaskRow'
 
@@ -67,36 +71,6 @@ class MultiTaskPage extends Component {
     }
   }
 
-  componentWillMount = () => {
-
-    if (this.props.listId !== AppConstants.ALL_TASKS_IDENTIFIER) {
-        this.props.setFarRightNavButton(AppConstants.EDIT_NAVBAR_BUTTON)
-    }
-  }
-
-	componentDidMount = () => {
-    /*
-    See documentation:
-    https://github.com/facebook/react-native/blob/9ee815f6b52e0c2417c04e5a05e1e31df26daed2/Examples/UIExplorer/js/Navigator/NavigationBarSample.js
-
-    The current usage of `willfocus` in my code is pretty hacky, and this should
-    be fixed.
-
-    PROBLEMS
-    1. setting the state with assignment, and not with the `setState()` method
-    2. Relying on getCurrentRoutes().length to determine if we should re-apply
-        the right nav bar button -- because, can we always rely on this???
-    */
-    this.state.willFocusSubscription = this.props.navigator.navigationContext.addListener('willfocus', (event) => {
-
-      // TODO - can we rely on private member `event._data.route` ???
-      if (this._isTopRoute(event._data.route)
-            && this.props.listId !== AppConstants.ALL_TASKS_IDENTIFIER) {
-        this.props.setFarRightNavButton(AppConstants.EDIT_NAVBAR_BUTTON)
-      }
-    })
-	}
-
   shouldComponentUpdate(nextProps, nextState) {
 
     if (!_.isEqual(this.props, nextProps)) {
@@ -133,51 +107,6 @@ class MultiTaskPage extends Component {
     if (!_.isEqual(this.props.tasks, nextProps.tasks)) {
       let tasks = this._filterTasksToDisplay(this.props.listId, nextProps.tasks)
       this.setState({dataSource: this.state.dataSource.cloneWithRows(tasks)})
-    }
-
-    // consume any actions triggered via the Navbar
-    if (nextProps.navAction === NavbarActions.EDIT_NAV_ACTION) {
-
-      this.props.setNavAction(undefined)
-
-      this.props.navigator.push({
-        title: 'Edit List',
-        component: EditList,
-        index: 2,
-        transition: 'FloatFromBottom',
-        passProps: {
-          listId: this._getListId(),
-        }
-      })
-    }
-  }
-
-  componentWillUnmount = () => {
-      if (!this._isTopRoute()) {
-        // the intended use-case is to avoid removing the RightNavButton
-        // when we transition from MultiTaskPage to MultiTaskPage
-        // For example, when we view the tasks of one lists and then the tasks
-        // of another list
-        this.props.removeFarRightNavButton()
-
-        if (this.state.willFocusSubscription) {
-          this.state.willFocusSubscription.remove()
-        }
-      }
-  }
-
-  // TODO - fix this hack
-  _isTopRoute = (route) => {
-    try {
-
-      if (!route) {
-        route = this.props.navigator.getCurrentRoutes()[0]
-      }
-
-      return route.component.WrappedComponent.componentName === 'MultiTaskPage'
-    } catch (err) {
-      // TODO -
-      return false
     }
   }
 
@@ -387,7 +316,6 @@ class MultiTaskPage extends Component {
               }
           }}
           onPress={() => {
-            this.props.removeFarRightNavButton() // remove before transition
             this.props.navigator.push({
               title: 'Task View',
               component: SingleTaskPage,
@@ -462,7 +390,6 @@ class MultiTaskPage extends Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          this.props.removeFarRightNavButton() // remove before transition
           this.props.navigator.push({
             title: 'Create Task',
             component: CreateTask,
@@ -483,9 +410,61 @@ class MultiTaskPage extends Component {
     )
   }
 
+  _constructNavbar = () => {
+
+    let title = 'Task View' // TODO
+    let leftNavBarButton = (
+      <NavbarButton
+        navButtonLocation={AppConstants.LEFT_NAV_LOCATION}
+        onPress={()=>{
+          this.props.toggleSideMenu()
+        }}
+        icon={'bars'} />
+    )
+
+    let mediumRightNavButton
+    if (this.props.listId !== AppConstants.ALL_TASKS_IDENTIFIER) {
+        mediumRightButton = (
+          <NavbarButton
+            navButtonLocation={NavbarActions.MEDIUM_RIGHT_NAV_LOCATION}
+            onPress={() => {
+              this.props.navigator.push({
+                title: 'Edit List',
+                component: EditList,
+                index: 2,
+                transition: 'FloatFromBottom',
+                passProps: {
+                  listId: this.props.listId
+                }
+              })
+            }}
+            icon={'edit'} />
+        )
+    }
+
+    let rightNavButtons = (
+      <View style={AppStyles.rightNavButtons}>
+        {mediumRightNavButton}
+      </View>
+    )
+
+    return (
+      <NavigationBar
+        title={<NavbarTitle title={title || null} />}
+        statusBar={{style: 'light-content', hidden: false}}
+        style={[AppStyles.navbar]}
+        tintColor={AppConfig.primaryColor}
+        leftButton={leftNavBarButton}
+        rightButton={rightNavButtons}/>
+    )
+  }
+
   render = () => {
     return (
       <View style={[AppStyles.container]}>
+
+        {this._constructNavbar()}
+
         <ListView
           initialListSize={this.state.dataSource.getRowCount()}
           automaticallyAdjustContentInsets={false}
@@ -543,9 +522,8 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 const mapDispatchToProps = {
-  setFarRightNavButton: NavbarActions.setFarRightNavButton,
-  removeFarRightNavButton: NavbarActions.removeFarRightNavButton,
   createOrUpdateTask: TaskActions.createOrUpdateTask,
+  toggleSideMenu: SideMenuActions.toggleSideMenu,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MultiTaskPage)

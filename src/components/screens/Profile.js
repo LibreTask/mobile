@@ -15,11 +15,19 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
+import * as SideMenuActions from '../../actions/sidemenu'
 import * as UserActions from '../../actions/entities/user'
 import * as UserController from '../../models/controllers/user'
 import * as ProfileStorage from '../../models/storage/profile-storage'
 
+import NavigationBar from 'react-native-navbar'
+import NavbarTitle from '../navbar/NavbarTitle'
+import NavbarButton from '../navbar/NavbarButton'
+
+import AppConfig from '../../config'
 import AppStyles from '../../styles'
+import AppConstants from '../../constants'
+
 import MultiTaskPage from './MultiTaskPage'
 
 class Profile extends Component {
@@ -194,11 +202,35 @@ class Profile extends Component {
     return accountStatusButton
   }
 
+  _constructNavbar = () => {
+
+    let title = 'Task View'
+    let leftNavBarButton = (
+      <NavbarButton
+        navButtonLocation={AppConstants.LEFT_NAV_LOCATION}
+        onPress={()=>{
+          this.props.toggleSideMenu()
+        }}
+        icon={'bars'} />
+    )
+
+    return (
+      <NavigationBar
+        title={<NavbarTitle title={title || null} />}
+        statusBar={{style: 'light-content', hidden: false}}
+        style={[AppStyles.navbar]}
+        tintColor={AppConfig.primaryColor}
+        leftButton={leftNavBarButton}/>
+    )
+  }
+
   render = () => {
 
     return (
       <ScrollView automaticallyAdjustContentInsets={false}
         style={[AppStyles.container]}>
+
+        {this._constructNavbar()}
 
         <View style={[AppStyles.padding]}>
           <Text style={[AppStyles.baseText]}>
@@ -257,7 +289,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   createOrUpdateProfile: UserActions.createOrUpdateProfile,
-  deleteProfile: UserActions.deleteProfile
+  deleteProfile: UserActions.deleteProfile,
+  toggleSideMenu: SideMenuActions.toggleSideMenu,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile)

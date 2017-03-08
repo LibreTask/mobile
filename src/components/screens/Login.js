@@ -16,10 +16,16 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
+import * as SideMenuActions from '../../actions/sidemenu'
 import * as UserActions from '../../actions/entities/user'
 import * as UserController from '../../models/controllers/user'
 import * as ProfileStorage from '../../models/storage/profile-storage'
 
+import NavigationBar from 'react-native-navbar'
+import NavbarTitle from '../navbar/NavbarTitle'
+import NavbarButton from '../navbar/NavbarButton'
+
+import AppConfig from '../../config'
 import AppStyles from '../../styles'
 import AppConstants from '../../constants'
 
@@ -109,6 +115,28 @@ class Login extends Component {
     })
   }
 
+  _constructNavbar = () => {
+
+    let title = 'Task View'
+    let leftNavBarButton = (
+      <NavbarButton
+        navButtonLocation={AppConstants.LEFT_NAV_LOCATION}
+        onPress={()=>{
+          this.props.toggleSideMenu()
+        }}
+        icon={'bars'} />
+    )
+
+    return (
+      <NavigationBar
+        title={<NavbarTitle title={title || null} />}
+        statusBar={{style: 'light-content', hidden: false}}
+        style={[AppStyles.navbar]}
+        tintColor={AppConfig.primaryColor}
+        leftButton={leftNavBarButton}/>
+    )
+  }
+
   render = () => {
 
     return (
@@ -116,6 +144,9 @@ class Login extends Component {
         ref={'scrollView'}
         style={[AppStyles.container]}
         contentContainerStyle={[AppStyles.containerStretched]}>
+
+        {this._constructNavbar()}
+
         <View style={[AppStyles.padding]}>
 
           <View style={[AppStyles.paddingVertical]}>
@@ -172,7 +203,8 @@ class Login extends Component {
 const mapStateToProps = (state) => ({ /* TODO */ })
 
 const mapDispatchToProps = {
-  createOrUpdateProfile: UserActions.createOrUpdateProfile
+  createOrUpdateProfile: UserActions.createOrUpdateProfile,
+  toggleSideMenu: SideMenuActions.toggleSideMenu,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login)

@@ -21,19 +21,16 @@ class NavbarRightButton extends Component {
   }
 
   render = () => {
-
     let style;
 
-    console.log("nav button location: " + this.props.navButtonLocation)
-
     if (this.props.navButtonLocation
-        === AppConstants.FAR_RIGHT_NAV_BUTTON) {
+        === AppConstants.FAR_RIGHT_NAV_LOCATION) {
       style = styles.farRightNavButton
     } else if (this.props.navButtonLocation
-        === AppConstants.MEDIUM_RIGHT_NAV_BUTTON) {
+        === AppConstants.MEDIUM_RIGHT_NAV_LOCATION) {
       style = styles.mediumRightNavButton
     } else if (this.props.navButtonLocation
-        === AppConstants.LEFT_NAV_BUTTON) {
+        === AppConstants.LEFT_NAV_LOCATION) {
       style = styles.leftNavButton
     } else {
       throw new "Internal error!" // TODO - properly handle else-condition
@@ -55,7 +52,7 @@ class NavbarRightButton extends Component {
 
 const styles = StyleSheet.create({
   mediumRightNavButton: {
-    left: 90,
+    right: 40,
     top: 4,
   },
   farRightNavButton: {

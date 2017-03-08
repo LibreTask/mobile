@@ -12,17 +12,50 @@ import {
   TouchableOpacity,
   ScrollView
 } from 'react-native'
+import { connect } from 'react-redux'
 
+import * as SideMenuActions from '../../actions/sidemenu'
+
+import NavigationBar from 'react-native-navbar'
+import NavbarTitle from '../navbar/NavbarTitle'
+import NavbarButton from '../navbar/NavbarButton'
+
+import AppConfig from '../../config'
 import AppStyles from '../../styles'
 import AppConstants from '../../constants'
 
 class About extends Component {
 	static componentName = 'About'
 
+  _constructNavbar = () => {
+
+    let title = 'Task View'
+    let leftNavBarButton = (
+      <NavbarButton
+        navButtonLocation={AppConstants.LEFT_NAV_LOCATION}
+        onPress={()=>{
+          this.props.toggleSideMenu()
+        }}
+        icon={'bars'} />
+    )
+
+    return (
+      <NavigationBar
+        title={<NavbarTitle title={title || null} />}
+        statusBar={{style: 'light-content', hidden: false}}
+        style={[AppStyles.navbar]}
+        tintColor={AppConfig.primaryColor}
+        leftButton={leftNavBarButton}/>
+    )
+  }
+
   render = () => {
     return (
       <ScrollView automaticallyAdjustContentInsets={false}
         style={[AppStyles.container]}>
+
+        {this._constructNavbar()}
+
         <View style={[AppStyles.padding]}>
 
           <Text style={[AppStyles.paddingVertical, AppStyles.baseTextLarge]}>
@@ -93,4 +126,10 @@ class About extends Component {
   }
 }
 
-export default About
+const mapStateToProps = (state) => ({ /* TODO */ })
+
+const mapDispatchToProps = {
+  toggleSideMenu: SideMenuActions.toggleSideMenu,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(About)

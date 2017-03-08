@@ -7,28 +7,32 @@ import React, { Component, PropTypes } from 'react'
 import {
   Alert,
   Button,
+  ScrollView,
   StyleSheet,
-  View,
   Text,
   TouchableOpacity,
-  ScrollView
+  View
 } from 'react-native'
 import { connect } from 'react-redux'
 
 import CheckBox from 'react-native-checkbox'
 
-import * as NavbarActions from '../../actions/navbar'
+import NavigationBar from 'react-native-navbar'
+import NavbarTitle from '../navbar/NavbarTitle'
+import NavbarButton from '../navbar/NavbarButton'
+
 import * as TaskActions from '../../actions/entities/task'
 import * as TaskController from '../../models/controllers/task'
 import * as TaskStorage from '../../models/storage/task-storage'
 import * as UserController from '../../models/controllers/user'
 
+import AppConfig from '../../config'
 import AppStyles from '../../styles'
 import AppConstants from '../../constants'
 import EditTask from './EditTask'
 
 class SingleTaskPage extends Component {
-	static componentName = 'Task'
+	static componentName = 'SingleTaskPage'
 
   static propTypes = {
     taskId: PropTypes.string.isRequired,
@@ -39,34 +43,7 @@ class SingleTaskPage extends Component {
 
     this.state = {
       task: this._getTask(),
-      parentList: this._getList()
-    }
-  }
-
-  componentDidMount() {
-
-    console.log("setting medium right: " + AppConstants.EDIT_NAVBAR_BUTTON)
-
-    console.log("setting far right: " + AppConstants.DELETE_NAVBAR_BUTTON)
-
-    this.props.setMediumRightNavButton(AppConstants.EDIT_NAVBAR_BUTTON)
-    this.props.setFarRightNavButton(AppConstants.DELETE_NAVBAR_BUTTON)
-  }
-
-  componentWillUnmount() {
-    this.props.removeMediumRightNavButton()
-    this.props.removeFarRightNavButton()
-  }
-
-  componentWillReceiveProps(nextProps) {
-
-    // consume any actions triggered via the Navbar
-    if (nextProps.navAction === NavbarActions.EDIT_NAV_ACTION) {
-      this.onEdit()
-      this.props.setNavAction(undefined)
-    } else if (nextProps.navAction === NavbarActions.DELETE_NAV_ACTION) {
-      this.onDelete()
-      this.props.setNavAction(undefined)
+      parentList: this._getList(),
     }
   }
 
@@ -126,6 +103,9 @@ class SingleTaskPage extends Component {
   }
 
   _onEdit = () => {
+
+    console.log("PUSHING EDIT TASK")
+
     this.props.navigator.push({
       title: 'Edit Task',
       component: EditTask,
@@ -197,7 +177,57 @@ class SingleTaskPage extends Component {
     this.setState({ task: task })
   }
 
+  _constructNavbar = () => {
+
+    let title = 'Task View'
+    let leftNavBarButton = (
+      <NavbarButton
+        navButtonLocation={AppConstants.LEFT_NAV_LOCATION}
+        onPress={()=>{
+          this.props.navigator.pop()
+        }}
+        icon={'arrow-left'} />
+    )
+
+    let mediumRightNavButton = (
+      <NavbarButton
+        navButtonLocation={AppConstants.MEDIUM_RIGHT_NAV_LOCATION}
+        onPress={() => {
+          this._onEdit()
+        }}
+        icon={'edit'} />
+    )
+
+    let farRightNavButton = (
+      <NavbarButton
+        navButtonLocation={AppConstants.FAR_RIGHT_NAV_LOCATION}
+        onPress={() => {
+          this._onDelete()
+        }}
+        icon={'trash-o'} />
+    )
+
+    let rightNavButtons = (
+      <View style={AppStyles.rightNavButtons}>
+        {mediumRightNavButton}
+        {farRightNavButton}
+      </View>
+    )
+
+    return (
+      <NavigationBar
+        title={<NavbarTitle title={title || null} />}
+        statusBar={{style: 'light-content', hidden: false}}
+        style={[AppStyles.navbar]}
+        tintColor={AppConfig.primaryColor}
+        leftButton={leftNavBarButton}
+        rightButton={rightNavButtons}/>
+    )
+  }
+
   render = () => {
+
+    console.log("\nrendering single task...")
 
     /*
     <View style={[AppStyles.paddingVertical]}>
@@ -233,9 +263,12 @@ class SingleTaskPage extends Component {
     </View>
     */
 
+
     return (
       <ScrollView automaticallyAdjustContentInsets={false}
         style={[AppStyles.container]}>
+
+        {this._constructNavbar()}
 
         <View style={[AppStyles.padding]}>
 
@@ -268,17 +301,11 @@ const mapStateToProps = (state) => ({
   profile: state.user.profile,
   lists: state.entities.lists,
   tasks: state.entities.tasks,
-  navAction: state.ui.navbar.navAction
 })
 
 const mapDispatchToProps = {
   createOrUpdateTask: TaskActions.createOrUpdateTask,
   deleteTask: TaskActions.deleteTask,
-  setNavAction: NavbarActions.setNavAction,
-  setMediumRightNavButton: NavbarActions.setMediumRightNavButton,
-  removeMediumRightNavButton: NavbarActions.removeMediumRightNavButton,
-  setFarRightNavButton: NavbarActions.setFarRightNavButton,
-  removeFarRightNavButton: NavbarActions.removeFarRightNavButton,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleTaskPage)

@@ -20,20 +20,26 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import * as NavbarActions from '../../actions/navbar'
 import * as UserController from '../../models/controllers/user'
 import * as ListController from '../../models/controllers/list'
 import * as TaskController from '../../models/controllers/task'
 import * as TaskStorage from '../../models/storage/task-storage'
 import * as TaskActions from '../../actions/entities/task'
 
+import NavigationBar from 'react-native-navbar'
+import NavbarTitle from '../navbar/NavbarTitle'
+import NavbarButton from '../navbar/NavbarButton'
+
 import Validator from 'validator'
 
+import AppConfig from '../../config'
 import AppStyles from '../../styles'
 import AppConstants from '../../constants'
+
 import MultiTaskPage from './MultiTaskPage'
 
 class EditTask extends Component {
+  static componentName = 'EditTask'
 
   static propTypes = {
     taskId: PropTypes.string.isRequired,
@@ -52,28 +58,6 @@ class EditTask extends Component {
 
       nameValidationError: '',
       notesValidationError: ''
-    }
-  }
-
-  componentDidMount() {
-    this.props.setMediumRightNavButton(AppConstants.SAVE_NAVBAR_BUTTON)
-    this.props.setFarRightNavButton(AppConstants.DELETE_NAVBAR_BUTTON)
-  }
-
-  componentWillUnmount() {
-    this.props.removeMediumRightNavButton()
-    this.props.removeFarRightNavButton()
-  }
-
-  componentWillReceiveProps(nextProps) {
-
-    // consume any actions triggered via the Navbar
-    if (nextProps.navAction === NavbarActions.SAVE_NAV_ACTION) {
-      this._onSubmitEdit()
-      this.props.setNavAction(undefined)
-    } else if (nextProps.navAction === NavbarActions.DELETE_NAV_ACTION) {
-      this._onDelete()
-      this.props.setNavAction(undefined)
     }
   }
 
@@ -279,6 +263,54 @@ class EditTask extends Component {
     return listNames
   }
 
+  _constructNavbar = () => {
+
+    let title = 'Task View' // TODO
+    let leftNavBarButton = (
+      <NavbarButton
+        navButtonLocation={AppConstants.LEFT_NAV_LOCATION}
+        onPress={()=>{
+          this.props.navigator.pop()
+        }}
+        icon={'arrow-left'} />
+    )
+
+    let mediumRightNavButton = (
+      <NavbarButton
+        navButtonLocation={AppConstants.MEDIUM_RIGHT_NAV_LOCATION}
+        onPress={() => {
+          this._onSubmitEdit()
+        }}
+        icon={'floppy-o'} />
+    )
+
+    let farRightNavButton = (
+      <NavbarButton
+        navButtonLocation={AppConstants.FAR_RIGHT_NAV_LOCATION}
+        onPress={() => {
+          this._onDelete()
+        }}
+        icon={'trash-o'} />
+    )
+
+    let rightNavButtons = (
+      <View style={AppStyles.rightNavButtons}>
+        {mediumRightNavButton}
+        {farRightNavButton}
+      </View>
+    )
+
+    return (
+      <NavigationBar
+        title={<NavbarTitle title={title || null} />}
+        statusBar={{style: 'light-content', hidden: false}}
+        style={[AppStyles.navbar]}
+        tintColor={AppConfig.primaryColor}
+        leftButton={leftNavBarButton}
+        rightButton={rightNavButtons}/>
+    )
+  }
+
   render = () => {
 
     /*
@@ -310,6 +342,8 @@ class EditTask extends Component {
     return (
       <ScrollView automaticallyAdjustContentInsets={false}
         style={[AppStyles.container]}>
+
+        {this._constructNavbar()}
 
         <View style={[AppStyles.padding]}>
 
@@ -376,17 +410,11 @@ const mapStateToProps = (state) => ({
   profile: state.user.profile,
   lists: state.entities.lists,
   tasks: state.entities.tasks,
-  navAction: state.ui.navbar.navAction
 })
 
 const mapDispatchToProps = {
   createOrUpdateTask: TaskActions.createOrUpdateTask,
   deleteTask: TaskActions.deleteTask,
-  setNavAction: NavbarActions.setNavAction,
-  setMediumRightNavButton: NavbarActions.setMediumRightNavButton,
-  removeMediumRightNavButton: NavbarActions.removeMediumRightNavButton,
-  setFarRightNavButton: NavbarActions.setFarRightNavButton,
-  removeFarRightNavButton: NavbarActions.removeFarRightNavButton,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditTask)
