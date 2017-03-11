@@ -100,6 +100,10 @@ class EditList extends Component {
       title: 'Main',
       component: MultiTaskPage,
       index: 0,
+      passProps: {
+        // after deleting list, return to all tasks identifier
+        listId: AppConstants.ALL_TASKS_IDENTIFIER
+      }
     })
   }
 
@@ -165,7 +169,7 @@ class EditList extends Component {
 
   _constructNavbar = () => {
 
-    let title = 'Task View' // TODO
+    let title = 'Edit List'
     let leftNavBarButton = (
       <NavbarButton
         navButtonLocation={AppConstants.LEFT_NAV_LOCATION}
@@ -219,6 +223,14 @@ class EditList extends Component {
         {this._constructNavbar()}
 
         <View style={[AppStyles.padding]}>
+
+          <Text style={[AppStyles.successText]}>
+            {this.state.updateSuccess}
+          </Text>
+
+          <Text style={[AppStyles.errorText]}>
+            {this.state.updateError}
+          </Text>
 
           <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>Name</Text>

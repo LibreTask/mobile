@@ -1,6 +1,6 @@
 /*
  * @link https://www.algernon.io/
- * @license https://github.com/AlgernonLabs/mobile/blob/master/LICENSE.md
+ * @license https://github.com/AlgernonLabs/desktop/blob/master/LICENSE.md
  */
 
 import { combineReducers } from 'redux'
@@ -23,12 +23,9 @@ function deleteAllLists(state, action) {
 }
 
 function deleteList(state, action) {
-  const listId = action.list.listId
-
-  let updatedListEntry = {}
-  updatedListEntry[listId] = undefined;
-
-  return updateObject(state, updatedListEntry)
+  return _.filter(state, function(list) {
+    return list.id !== action.listId // filter out listId
+  })
 }
 
 function addLists(state, action) {

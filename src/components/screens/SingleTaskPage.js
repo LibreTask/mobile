@@ -16,6 +16,7 @@ import {
 import { connect } from 'react-redux'
 
 import CheckBox from 'react-native-checkbox'
+import dateFormat from 'dateformat'
 
 import NavigationBar from 'react-native-navbar'
 import NavbarTitle from '../navbar/NavbarTitle'
@@ -98,13 +99,10 @@ class SingleTaskPage extends Component {
   _deleteTaskLocallyAndRedirect = (taskId) => {
     TaskStorage.deleteTaskByTaskId(taskId)
     this.props.deleteTask(taskId)
-
     this.props.navigator.pop()
   }
 
   _onEdit = () => {
-
-    console.log("PUSHING EDIT TASK")
 
     this.props.navigator.push({
       title: 'Edit Task',
@@ -119,7 +117,7 @@ class SingleTaskPage extends Component {
 
   _notesBlock = () => {
     return (
-      <View>
+      <View style={[AppStyles.paddingVertical]}>
         <Text style={[AppStyles.baseText]}>Notes</Text>
         <Text style={[AppStyles.baseTextSmall]}>
           {this.state.task.notes || 'No notes yet'}
@@ -226,8 +224,6 @@ class SingleTaskPage extends Component {
   }
 
   render = () => {
-
-    console.log("\nrendering single task...")
 
     /*
     <View style={[AppStyles.paddingVertical]}>

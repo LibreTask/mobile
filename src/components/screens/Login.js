@@ -117,7 +117,7 @@ class Login extends Component {
 
   _constructNavbar = () => {
 
-    let title = 'Task View'
+    let title = 'Login'
     let leftNavBarButton = (
       <NavbarButton
         navButtonLocation={AppConstants.LEFT_NAV_LOCATION}

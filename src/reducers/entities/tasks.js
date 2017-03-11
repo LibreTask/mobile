@@ -1,6 +1,6 @@
 /*
  * @link https://www.algernon.io/
- * @license https://github.com/AlgernonLabs/mobile/blob/master/LICENSE.md
+ * @license https://github.com/AlgernonLabs/desktop/blob/master/LICENSE.md
  */
 
 import { combineReducers } from 'redux'
@@ -23,12 +23,9 @@ function deleteAllTasks(state, action) {
 }
 
 function deleteTask(state, action) {
-  const taskId = action.task.taskId
-
-  let updatedTaskEntry = {}
-  updatedTaskEntry[taskId] = undefined;
-
-  return updateObject(state, updatedTaskEntry)
+  return _.filter(state, function(task) {
+    return task.id !== action.taskId // filter out taskId 
+  })
 }
 
 function addTasks(state, action) {
@@ -55,7 +52,7 @@ function syncTasks(state, action) {
 
   return (action.tasks && action.tasks.length > 0)
     ? addTasks(state, action)
-    : state
+    : state;
 }
 
 const initialState = {

@@ -111,7 +111,7 @@ class Menu extends Component {
           onPress={()=>navigate('Create List', CreateList, this.props)}>
           <View style={[styles.menuSubItem]}>
             <Text style={[AppStyles.baseText, styles.menuSubItemLinkText]}>
-              + New
+              Create List
             </Text>
           </View>
         </TouchableOpacity>

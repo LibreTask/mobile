@@ -29,7 +29,7 @@ class About extends Component {
 
   _constructNavbar = () => {
 
-    let title = 'Task View'
+    let title = 'About'
     let leftNavBarButton = (
       <NavbarButton
         navButtonLocation={AppConstants.LEFT_NAV_LOCATION}

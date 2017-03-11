@@ -30,6 +30,7 @@ import NavigationBar from 'react-native-navbar'
 import NavbarTitle from '../navbar/NavbarTitle'
 import NavbarButton from '../navbar/NavbarButton'
 
+import dateFormat from 'dateformat'
 import Validator from 'validator'
 
 import AppConfig from '../../config'
@@ -213,9 +214,9 @@ class EditTask extends Component {
 
       try {
         const {year, month, day} = await DatePickerAndroid.open(options)
-        this.setState({
-          dueDateTimeUtc: new Date(year, month, day)
-        })
+        let task = this.state.task
+        task.dueDateTimeUtc = (new Date(year, month, day)).toString()
+        this.setState({ task: task })
       } catch (error) {
         console.log("error: " + error)
         // TODO -
@@ -233,7 +234,7 @@ class EditTask extends Component {
 
       // TODO - refine how we format date (and move to utils)
 
-      dateString = this.state.task.dueDateTimeUtc;
+      dateString = dateFormat(this.state.task.dueDateTimeUtc, 'mmmm d')
     } else {
       dateString = 'Select a due date'
       dateStringStyle.push(AppStyles.linkText)
@@ -265,7 +266,7 @@ class EditTask extends Component {
 
   _constructNavbar = () => {
 
-    let title = 'Task View' // TODO
+    let title = 'Edit Task'
     let leftNavBarButton = (
       <NavbarButton
         navButtonLocation={AppConstants.LEFT_NAV_LOCATION}
@@ -346,6 +347,14 @@ class EditTask extends Component {
         {this._constructNavbar()}
 
         <View style={[AppStyles.padding]}>
+
+          <Text style={[AppStyles.successText]}>
+            {this.state.updateSuccess}
+          </Text>
+
+          <Text style={[AppStyles.errorText]}>
+            {this.state.updateError}
+          </Text>
 
           <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>Name</Text>

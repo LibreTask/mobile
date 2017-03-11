@@ -16,6 +16,7 @@ export default {
 	primaryColor: "#C66666",
 	textColor: "#4c4c4c",
   errorColor: '#e71e13',
+  successColor: '#3A9237',
   linkColor: '#3350d2',
 	borderColor: "#bababa",
   windowHeight: window.height,

@@ -28,6 +28,8 @@ import AppConfig from '../../config'
 import AppStyles from '../../styles'
 import AppConstants from '../../constants'
 
+import Validator from 'validator'
+
 import MultiTaskPage from './MultiTaskPage'
 
 class Profile extends Component {
@@ -40,6 +42,8 @@ class Profile extends Component {
       isUpdating: false,
       updateError: '',
       updateSuccess: '',
+      nameValidationError: '',
+      emailValidationError: '',
       myProfile: this.props.profile
     }
   }
@@ -66,7 +70,7 @@ class Profile extends Component {
       this.setState({
         isUpdating: false,
         updateError: error.message,
-        updateSuccess: ''
+        updateSuccess: '',
       })
     })
   }
@@ -108,7 +112,7 @@ class Profile extends Component {
         {
           text: 'Yes',
           onPress: async () => {
-            UserController.deleteProfile(this.props.profile)
+            UserController.deleteProfile(this.props.myProfile)
               .catch(error => {
                 if (error.name === 'NoConnection') {
                   this._deleteProfileLocallyAndRedirect()
@@ -131,23 +135,47 @@ class Profile extends Component {
        title: 'Main',
        component: MultiTaskPage,
        index: 0,
-       passProps: {
-         isLoggedIn: false,
-
-         // TODO fix passing in empty object to satisfy props constraint
-         myProfile: {}
-       }
      })
   }
 
   _onSubmitEdit = async () => {
 
-    // TODO - validate input
+    let updatedName = this.state.myProfile.name || ''
+    let updatedEmail = this.state.myProfile.email || ''
 
-    this.setState({isUpdating: true, updateSuccess: '', updateError: ''})
+    let emailValidationError = ''
+    let nameValidationError = ''
+
+    if (!Validator.isEmail(updatedEmail)) {
+      emailValidationError = 'Email is not valid'
+    }
+
+    if (!Validator.isLength(updatedName, {min: 0, max: 100})) {
+      nameValidationError = 'Name must be between 0 and 100 characters'
+    }
+
+    if (emailValidationError || nameValidationError) {
+      this.setState({
+        emailValidationError: emailValidationError,
+        nameValidationError: nameValidationError
+      })
+
+      return; // validation failed; cannot updated profile
+    }
+
+    this.setState({
+      isUpdating: true,
+      updateSuccess: '',
+      updateError: '',
+      emailValidationError: '',
+      nameValidationError: ''
+    })
 
     UserController.updateProfile(this.state.myProfile)
     .then(response => {
+
+        // TODO - handle password better
+        response.password = this.state.myProfile.password
 
         ProfileStorage.createOrUpdateProfile(response.profile)
         this.props.createOrUpdateProfile(response.profile)
@@ -204,7 +232,7 @@ class Profile extends Component {
 
   _constructNavbar = () => {
 
-    let title = 'Task View'
+    let title = 'Profile'
     let leftNavBarButton = (
       <NavbarButton
         navButtonLocation={AppConstants.LEFT_NAV_LOCATION}
@@ -233,29 +261,48 @@ class Profile extends Component {
         {this._constructNavbar()}
 
         <View style={[AppStyles.padding]}>
-          <Text style={[AppStyles.baseText]}>
-            Name
-          </Text>
-          <TextInput
-            style={[AppStyles.baseText]}
-            onChangeText={(updatedName) => {
-              let profile = this.state.myProfile
-              profile.name = updatedName
-              this.setState({ myProfile: profile })
-            }}
-            value={this.state.myProfile.name}/>
 
-          <Text style={[AppStyles.baseText]}>
-            Email
+          <Text style={[AppStyles.successText]}>
+            {this.state.updateSuccess}
           </Text>
-          <TextInput
-            style={[AppStyles.baseText]}
-            onChangeText={(updatedEmail) => {
-              let profile = this.state.myProfile
-              profile.email = updatedEmail
-              this.setState({ myProfile: profile })
-            }}
-            value={this.state.myProfile.email}/>
+
+          <Text style={[AppStyles.errorText]}>
+            {this.state.updateError}
+          </Text>
+
+          <View style={[AppStyles.paddingVertical]}>
+            <Text style={[AppStyles.baseText]}>
+              Name
+            </Text>
+            <TextInput
+              style={[AppStyles.baseText]}
+              onChangeText={(updatedName) => {
+                let profile = this.state.myProfile
+                profile.name = updatedName
+                this.setState({ myProfile: profile })
+              }}
+              value={this.state.myProfile.name}/>
+              <Text style={[AppStyles.errorText]}>
+                {this.state.nameValidationError}
+              </Text>
+          </View>
+
+          <View style={[AppStyles.paddingVertical]}>
+            <Text style={[AppStyles.baseText]}>
+              Email
+            </Text>
+            <TextInput
+              style={[AppStyles.baseText]}
+              onChangeText={(updatedEmail) => {
+                let profile = this.state.myProfile
+                profile.email = updatedEmail
+                this.setState({ myProfile: profile })
+              }}
+              value={this.state.myProfile.email}/>
+            <Text style={[AppStyles.errorText]}>
+              {this.state.emailValidationError}
+            </Text>
+          </View>
 
           <View style={[AppStyles.row]}>
             <View style={[AppStyles.button]}>

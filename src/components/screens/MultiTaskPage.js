@@ -71,7 +71,7 @@ class MultiTaskPage extends Component {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate = (nextProps, nextState) => {
 
     if (!_.isEqual(this.props, nextProps)) {
       return true;
@@ -261,6 +261,7 @@ class MultiTaskPage extends Component {
   }
 
   _isHeaderCurrentlyCollapsed = (header) => {
+
     if (header.name === 'No Date') {
       return this.state.tasksWithNoDateCollapsed
     } else if (header.name === 'Today') {
@@ -387,6 +388,10 @@ class MultiTaskPage extends Component {
 
   _renderCreateTaskFooter = () => {
 
+    if (this.props.listId === AppConstants.ALL_TASKS_IDENTIFIER) {
+      return <View/> // a list must be selected before a task can be created
+    }
+
     return (
       <TouchableOpacity
         onPress={() => {
@@ -411,8 +416,16 @@ class MultiTaskPage extends Component {
   }
 
   _constructNavbar = () => {
+    let title = 'All Tasks'
+    if (this.props.listId !== AppConstants.ALL_TASKS_IDENTIFIER
+      && this.props.listId in this.props.lists) {
 
-    let title = 'Task View' // TODO
+      // Use the name of the selected list. The only time which a specific
+      // listId should not be found in this.props.lists is when it has just
+      // been deleted. Otherwise, it should always be available and used.
+      title = this.props.lists[this.props.listId].name
+    }
+
     let leftNavBarButton = (
       <NavbarButton
         navButtonLocation={AppConstants.LEFT_NAV_LOCATION}
@@ -422,11 +435,11 @@ class MultiTaskPage extends Component {
         icon={'bars'} />
     )
 
-    let mediumRightNavButton
+    let farRightNavButton
     if (this.props.listId !== AppConstants.ALL_TASKS_IDENTIFIER) {
-        mediumRightButton = (
+        farRightNavButton = (
           <NavbarButton
-            navButtonLocation={NavbarActions.MEDIUM_RIGHT_NAV_LOCATION}
+            navButtonLocation={AppConstants.FAR_RIGHT_NAV_LOCATION}
             onPress={() => {
               this.props.navigator.push({
                 title: 'Edit List',
@@ -444,7 +457,7 @@ class MultiTaskPage extends Component {
 
     let rightNavButtons = (
       <View style={AppStyles.rightNavButtons}>
-        {mediumRightNavButton}
+        {farRightNavButton}
       </View>
     )
 
@@ -459,29 +472,50 @@ class MultiTaskPage extends Component {
     )
   }
 
+  _renderList = () => {
+    // if no tasks exist, and no list selected, display
+    // text so that the screen is not blank
+    if (this.props.listId === AppConstants.ALL_TASKS_IDENTIFIER
+      && this.state.dataSource.getRowCount() === 0) {
+
+        // TODO - consider adding a more accessible way to create a task
+        // for this scenario, like a link, etc
+
+        return (
+          <Text style={[AppStyles.padding, AppStyles.paddingVertical,  AppStyles.baseTextLarge]}>
+            Navigate to a new or existing list, then create a task.
+          </Text>
+        )
+    }
+
+
+    return (
+      <ListView
+        initialListSize={this.state.dataSource.getRowCount()}
+        automaticallyAdjustContentInsets={false}
+        dataSource={this.state.dataSource}
+        renderRow={this._renderRow}
+        renderFooter={this._renderCreateTaskFooter}
+
+        // TODO - use real section headers
+        renderSectionHeader={() => {return <View></View>}}
+        contentContainerStyle={AppStyles.paddingBottom}
+        enableEmptySections={true}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.isRefreshing}
+            onRefresh={this._fetchData}
+            tintColor={AppConfig.primaryColor} />
+        } />
+    )
+  }
+
   render = () => {
+
     return (
       <View style={[AppStyles.container]}>
-
         {this._constructNavbar()}
-
-        <ListView
-          initialListSize={this.state.dataSource.getRowCount()}
-          automaticallyAdjustContentInsets={false}
-          dataSource={this.state.dataSource}
-          renderRow={this._renderRow}
-          renderFooter={this._renderCreateTaskFooter}
-
-          // TODO - use real section headers
-          renderSectionHeader={() => {return <View></View>}}
-          contentContainerStyle={AppStyles.paddingBottom}
-          enableEmptySections={true}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.isRefreshing}
-              onRefresh={this._fetchData}
-              tintColor={AppConfig.primaryColor} />
-          } />
+        {this._renderList()}
       </View>
     )
   }
