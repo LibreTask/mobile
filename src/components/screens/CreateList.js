@@ -14,7 +14,6 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import * as SideMenuActions from '../../actions/sidemenu'
 import * as ListActions from '../../actions/entities/list'
 import * as ListController from '../../models/controllers/list'
 import * as ListStorage from '../../models/storage/list-storage'
@@ -139,9 +138,9 @@ class CreateList extends Component {
       <NavbarButton
         navButtonLocation={AppConstants.LEFT_NAV_LOCATION}
         onPress={()=>{
-          this.props.toggleSideMenu()
+          this.props.navigator.pop()
         }}
-        icon={'bars'} />
+        icon={'arrow-left'} />
     )
 
     return (
@@ -201,7 +200,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   createOrUpdateList: ListActions.createOrUpdateList,
-  toggleSideMenu: SideMenuActions.toggleSideMenu,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateList)

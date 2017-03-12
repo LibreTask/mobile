@@ -16,7 +16,6 @@ import { connect } from 'react-redux'
 
 import Validator from 'validator'
 
-import * as SideMenuActions from '../../actions/sidemenu'
 import * as TaskActions from '../../actions/entities/task'
 import * as TaskController from '../../models/controllers/task'
 import * as TaskStorage from '../../models/storage/task-storage'
@@ -118,9 +117,9 @@ class CreateTask extends Component {
       <NavbarButton
         navButtonLocation={AppConstants.LEFT_NAV_LOCATION}
         onPress={()=>{
-          this.props.toggleSideMenu()
+          this.props.navigator.pop()
         }}
-        icon={'bars'} />
+        icon={'arrow-left'} />
     )
 
     return (
@@ -180,7 +179,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   createOrUpdateTask: TaskActions.createOrUpdateTask,
-  toggleSideMenu: SideMenuActions.toggleSideMenu,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateTask)
