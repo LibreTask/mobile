@@ -54,7 +54,9 @@ class MultiTaskPage extends Component {
     super(props)
 
     let dataSource = new ListView.DataSource({
-       rowHasChanged: (row1, row2) => row1 !== row2,
+      // TODO - once ListView will re-render if the state has been updated
+        // then we can properly set rowHasChanged by comparing the objects
+      rowHasChanged: (row1, row2) => true,
     })
 
     let tasks = this._getTasksToDisplay()
@@ -372,7 +374,38 @@ class MultiTaskPage extends Component {
             }
           }
 
-          this.setState(stateUpdate)
+          this.setState(stateUpdate, () => {
+            let tasks = this._filterTasksToDisplay(this.props.listId, this.props.tasks)
+            this.setState({
+              dataSource: new ListView.DataSource({
+                /*
+                  TODO - Fix this stupid hack! Not safe for production.
+
+                  ReactNative's ListView behavior is such that an element is not
+                  re-rendered unless the function rowHasChanged returns true.
+                  That aspect of ListView makes our use-case extremely
+                  difficult to achieve.
+
+                  We want to update every element of the ListView if the state
+                  has changed. That seems like a simple ask, right? No! We do
+                  not store whether a task should be collapsed in the actual
+                  dataSource state object, because that leads to unnecessary
+                  duplication, especially if a category of tasks has many
+                  elements.
+
+                  Until a better fix is discovered, we will recreate the
+                  dataSource object so that a complete re-render is forced.
+                  To be precise, an ideal solution would be to completely
+                  remove this setState callback and still have the ListView
+                  update every element whenever the state is updated.
+
+                  Related:
+                  http://stackoverflow.com/questions/33436902/how-force-redraw-listview-when-this-state-changed-but-not-the-datasource
+                */
+                rowHasChanged: (row1, row2) => true,
+              }).cloneWithRows(tasks)
+            })
+          })
         }}>
         <View style={[AppStyles.row]}>
           <View>
