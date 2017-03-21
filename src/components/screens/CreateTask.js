@@ -6,11 +6,12 @@
 import React, { Component, PropTypes } from 'react'
 import {
   Button,
-  StyleSheet,
-  View,
   ScrollView,
+  StyleSheet,
   Text,
-  TextInput
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native'
 import { connect } from 'react-redux'
 
@@ -29,6 +30,8 @@ import AppConfig from '../../config'
 import AppStyles from '../../styles'
 import AppConstants from '../../constants'
 
+import Icon from 'react-native-vector-icons/FontAwesome'
+
 class CreateTask extends Component {
 	static componentName = 'CreateTask'
 
@@ -43,7 +46,11 @@ class CreateTask extends Component {
       creationError: '',
       isCreatingTask: false,
       taskName: '',
-      nameValidationError: ''
+      taskNotes: '',
+      nameValidationError: '',
+      notesValidationError: '',
+      notesIconSelected: false,
+      calendarIconSelected: false
     }
   }
 
@@ -110,6 +117,28 @@ class CreateTask extends Component {
     this.props.navigator.pop()
   }
 
+  _constructNotesTextEdit = () => {
+    if (!this.state.notesIconSelected) {
+      return <View/>
+    }
+
+    return (
+      <View style={[AppStyles.paddingVertical]}>
+        <Text style={[AppStyles.baseText]}>Notes</Text>
+        <TextInput
+          style={[AppStyles.baseText]}
+          onChangeText={(updatedNotes) => {
+            this.setState({ taskNotes: updatedNotes })
+          }}
+          value={this.state.taskNotes}/>
+
+        <Text style={[AppStyles.errorText]}>
+          {this.state.notesValidationError}
+        </Text>
+      </View>
+    )
+  }
+
   _constructNavbar = () => {
 
     let title = 'Create Task'
@@ -132,6 +161,41 @@ class CreateTask extends Component {
     )
   }
 
+  _constructAttributeIcons = () => {
+
+    return (
+      <View style={[AppStyles.row]}>
+        <TouchableOpacity
+          onPress={() => {
+            this.setState({
+              notesIconSelected: !this.state.notesIconSelected
+            })
+          }}
+          style={styles.mediumIcon}
+          activeOpacity={0.7}>
+          <Icon
+            name={'comment-o'}
+            size={40}
+            color={this.state.notesIconSelected ? 'green' : 'black'} />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => {
+            this.setState({
+              calendarIconSelected: !this.state.calendarIconSelected
+            })
+          }}
+          style={styles.mediumIcon}
+          activeOpacity={0.7}>
+          <Icon
+            name={'calendar'}
+            size={40}
+            color={this.state.calendarIconSelected ? 'green' : 'black'} />
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
   render = () => {
     return (
       <ScrollView automaticallyAdjustContentInsets={false}
@@ -143,19 +207,21 @@ class CreateTask extends Component {
 
         <View style={[AppStyles.padding]}>
 
-        <View style={[AppStyles.paddingVertical]}>
-          <Text style={[AppStyles.baseText]}>Name</Text>
-          <TextInput
-            style={[AppStyles.baseText]}
-            onChangeText={(updatedName) => {
-              this.setState({ taskName: updatedName })
-            }}
-            value={this.state.taskName}/>
+          <View style={[AppStyles.paddingVertical]}>
+            <Text style={[AppStyles.baseText]}>Name</Text>
+            <TextInput
+              style={[AppStyles.baseText]}
+              onChangeText={(updatedName) => {
+                this.setState({ taskName: updatedName })
+              }}
+              value={this.state.taskName}/>
 
-          <Text style={[AppStyles.errorText]}>
-            {this.state.nameValidationError}
-          </Text>
-        </View>
+            <Text style={[AppStyles.errorText]}>
+              {this.state.nameValidationError}
+            </Text>
+          </View>
+
+          {this._constructNotesTextEdit()}
 
           <View style={[AppStyles.row]}>
 
@@ -165,12 +231,25 @@ class CreateTask extends Component {
                 onPress={this._createTask} />
             </View>
           </View>
+
+          {this._constructAttributeIcons()}
         </View>
 
       </ScrollView>
     )
   }
 }
+
+
+const styles = StyleSheet.create({
+  mediumIcon: {
+    padding: 10
+  },
+  selectedIcon: {
+    color: 'green'
+  }
+})
+
 
 const mapStateToProps = (state) => ({
   isLoggedIn: state.user.isLoggedIn,
