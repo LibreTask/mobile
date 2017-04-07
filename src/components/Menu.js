@@ -189,7 +189,9 @@ class Menu extends Component {
     */
 
     return (
-      <ScrollView automaticallyAdjustContentInsets={false}
+      <ScrollView
+        scrollEnabled={false}
+        automaticallyAdjustContentInsets={false}
         ref={'scrollView'}
         style={[AppStyles.container]}
         contentContainerStyle={[styles.containerCentered, styles.containerStretched]}>

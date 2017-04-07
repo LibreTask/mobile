@@ -6,6 +6,7 @@
 import { combineReducers } from 'redux'
 
 import sideMenu from './ui/sidemenu'
+import taskview from './ui/taskview'
 
 import userReducer from './user'
 import tasksReducer from './entities/tasks'
@@ -18,6 +19,7 @@ const entitiesReducer = combineReducers({
 
 const uiReducer = combineReducers({
   sideMenu,
+  taskview
 })
 
 const appReducer = combineReducers({

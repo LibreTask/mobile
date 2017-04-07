@@ -416,10 +416,32 @@ class MultiTaskPage extends Component {
         icon={'bars'} />
     )
 
-    let farRightNavButton // TODO
+    let mediumRightNavButton = (
+      <NavbarButton
+        navButtonLocation={AppConstants.MEDIUM_RIGHT_NAV_LOCATION}
+        onPress={() => {
+          this.props.navigator.push({
+            title: 'Create Task',
+            component: CreateTask,
+            index: 2,
+            transition: 'FloatFromBottom',
+          })
+        }}
+        icon={'plus'} />
+    )
+
+    let farRightNavButton = (
+      <NavbarButton
+        navButtonLocation={AppConstants.FAR_RIGHT_NAV_LOCATION}
+        onPress={() => {
+          // TODO
+        }}
+        icon={'ellipsis-v'} />
+    )
 
     let rightNavButtons = (
       <View style={AppStyles.rightNavButtons}>
+        {mediumRightNavButton}
         {farRightNavButton}
       </View>
     )

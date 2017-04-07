@@ -7,33 +7,39 @@ import React, { Component, PropTypes } from 'react'
 import {
   Alert,
   Button,
+  DatePickerAndroid,
+  DatePickerIOS,
+  Picker,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import CheckBox from 'react-native-checkbox'
-import dateFormat from 'dateformat'
+import * as UserController from '../../models/controllers/user'
+import * as TaskController from '../../models/controllers/task'
+import * as TaskStorage from '../../models/storage/task-storage'
+import * as TaskActions from '../../actions/entities/task'
 
 import NavigationBar from 'react-native-navbar'
 import NavbarTitle from '../navbar/NavbarTitle'
 import NavbarButton from '../navbar/NavbarButton'
 
-import * as TaskActions from '../../actions/entities/task'
-import * as TaskController from '../../models/controllers/task'
-import * as TaskStorage from '../../models/storage/task-storage'
-import * as UserController from '../../models/controllers/user'
+import dateFormat from 'dateformat'
+import Validator from 'validator'
 
 import AppConfig from '../../config'
 import AppStyles from '../../styles'
 import AppConstants from '../../constants'
-import EditTask from './EditTask'
+
+import MultiTaskPage from './MultiTaskPage'
 
 class SingleTaskPage extends Component {
-	static componentName = 'SingleTaskPage'
+  static componentName = 'SingleTaskPage'
 
   static propTypes = {
     taskId: PropTypes.string.isRequired,
@@ -43,13 +49,19 @@ class SingleTaskPage extends Component {
     super(props)
 
     this.state = {
+      updateError: '',
+      updateSuccess: '',
+      isUpdating: false,
+
       task: this._getTask(),
+
+      nameValidationError: '',
+      notesValidationError: ''
     }
   }
 
   _getTask = () => {
-    let id = this.props.taskId;
-    return this.props.tasks[id]
+    return this.props.tasks[this.props.taskId]
   }
 
   _onDelete = () => {
@@ -67,22 +79,22 @@ class SingleTaskPage extends Component {
 
             if (UserController.canAccessNetwork(this.props.profile)) {
               TaskController.deleteTask(
-                this.state.task.id,
+                this.props.task.id,
                 this.props.profile.id,
                 this.props.profile.password
               )
               .then(response => {
-                this._deleteTaskLocallyAndRedirect(this.state.task.id)
+                this._deleteTaskLocallyAndRedirect(this.props.task.id)
               })
               .catch(error => {
                 if (error.name === 'NoConnection') {
-                  this._deleteTaskLocallyAndRedirect(this.state.task.id)
+                  this._deleteTaskLocallyAndRedirect(this.props.task.id)
                 } else {
                   // TODO
                 }
               })
             } else {
-              this._deleteTaskLocallyAndRedirect(this.state.task.id)
+              this._deleteTaskLocallyAndRedirect(this.props.task.id)
             }
           }
         },
@@ -93,85 +105,144 @@ class SingleTaskPage extends Component {
   _deleteTaskLocallyAndRedirect = (taskId) => {
     TaskStorage.deleteTaskByTaskId(taskId)
     this.props.deleteTask(taskId)
-    this.props.navigator.pop()
-  }
 
-  _onEdit = () => {
-
-    this.props.navigator.push({
-      title: 'Edit Task',
-      component: EditTask,
-      index: 3,
-      transition: 'FloatFromBottom',
-      passProps: {
-        taskId: this.state.task.id,
-      }
+    this.props.navigator.replace({
+      title: 'Main',
+      component: MultiTaskPage,
+      index: 0,
     })
   }
 
-  _notesBlock = () => {
-    return (
-      <View style={[AppStyles.paddingVertical]}>
-        <Text style={[AppStyles.baseText]}>Notes</Text>
-        <Text style={[AppStyles.baseTextSmall]}>
-          {this.state.task.notes || 'No notes yet'}
-        </Text>
-      </View>
-    )
-  }
+  _onSubmitEdit = async () => {
+    let profile = this.props.profile;
 
-  _dueDateBlock = () => {
-    return (
-      <View style={[AppStyles.paddingVertical]}>
-        <Text style={[AppStyles.baseText]}>Due Date</Text>
-        <Text style={[AppStyles.baseTextSmall]}>
-          {
-            this.state.task.dueDateTimeUtc
-            ? dateFormat(this.state.task.dueDateTimeUtc, 'mmmm d')
-            : 'No due date yet'
-          }
-        </Text>
-      </View>
-    )
-  }
+    let updatedTaskName = this.state.task.name || ''
+    let updatedTaskNotes = this.state.task.notes || ''
 
-  _priorityBlock = () => {
-    let priorityBlock;
-    if (this.state.task.priority) {
-      priorityBlock = <View>
-        <Text style={[AppStyles.baseText]}>
-          Priority</Text>
-        <Text>{this.state.task.priority}
-        </Text>
-      </View>
+    let nameValidationError = ''
+    let notesValidationError = ''
+
+    if (!Validator.isLength(updatedTaskName, {min: 2, max: 100})) {
+      nameValidationError = 'Name must be between 2 and 100 characters'
     }
 
-    return priorityBlock
-  }
-
-  _recurringBlock = () => {
-    let recurringBlock;
-    if (this.state.task.recurringFrequency) {
-      <View>
-        <Text style={[AppStyles.baseText]}>
-          Recurring Frequency
-        </Text>
-        <Text>{this.state.task.recurringFrequency}</Text>
-      </View>
+    if (!Validator.isLength(updatedTaskNotes, {min: 0, max: 5000})) {
+      notesValidationError = 'Notes must be between 0 and 5000 characters'
     }
 
-    return recurringBlock
+    if (nameValidationError || notesValidationError) {
+      this.setState({
+        nameValidationError: nameValidationError,
+        notesValidationError: notesValidationError
+      })
+
+      return; // validation failed; cannot update task
+    }
+
+    this.setState({
+      isUpdating: true,
+      updateSuccess: '',
+      updateError: '',
+      notesValidationError: '',
+      nameValidationError: ''
+    })
+
+    if (UserController.canAccessNetwork(this.props.profile)) {
+      TaskController.updateTask(this.state.task, profile.id, profile.password)
+      .then(response => {
+
+        this._updateTaskLocally(response.task)
+      })
+      .catch(error => {
+
+        if (error.name === 'NoConnection') {
+          this._updateTaskLocally(this.state.task)
+        } else {
+          this.setState({
+            isUpdating: false,
+            updateError: error.message,
+            updateSuccess: ''
+          })
+        }
+      })
+    } else {
+      this._updateTaskLocally(this.state.task)
+    }
   }
 
   _updateTaskLocally = (task) => {
     TaskStorage.createOrUpdateTask(task)
     this.props.createOrUpdateTask(task)
-    this.setState({ task: task })
+
+    this.setState({
+      updateSuccess: 'Update successful!',
+      isUpdated: false
+    })
+
+    setTimeout(() => {
+      this.setState({ updateSuccess: '' })
+    }, 1500) // remove message after 1.5 seconds
+  }
+
+  _showDatePicker = async () => {
+
+    let chosenDate = this.state.task.dueDateTimeUtc;
+    let minDate = new Date()
+    let maxDate = new Date()
+    maxDate.setFullYear(maxDate.getFullYear() + 10) // aribtrarily add 10 years
+
+    if (!chosenDate) {
+      chosenDate = new Date() // aribtrarily choose today
+    }
+
+    if (Platform.OS === 'ios') {
+      // TODO -
+    } else {
+
+      let options = {
+        date: chosenDate,
+        minDate: minDate,
+        maxDate: maxDate
+      }
+
+      try {
+        const {year, month, day} = await DatePickerAndroid.open(options)
+        let task = this.state.task
+        task.dueDateTimeUtc = (new Date(year, month, day)).toString()
+        this.setState({ task: task })
+      } catch (error) {
+        console.log("error: " + error)
+        // TODO -
+      }
+    }
+  }
+
+  _currentDateToText = () => {
+
+    // TODO - refine this approach
+
+    let dateString;
+    let dateStringStyle = [AppStyles.baseText]
+    if (this.state.task.dueDateTimeUtc) {
+
+      // TODO - refine how we format date (and move to utils)
+
+      dateString = dateFormat(this.state.task.dueDateTimeUtc, 'mmmm d')
+    } else {
+      dateString = 'Select a due date'
+      dateStringStyle.push(AppStyles.linkText)
+    }
+
+    return (
+      <Text style={dateStringStyle}>
+        {dateString}
+      </Text>
+    )
   }
 
   _constructNavbar = () => {
 
-    let title = 'Task View'
+    let title = 'Edit Task'
     let leftNavBarButton = (
       <NavbarButton
         navButtonLocation={AppConstants.LEFT_NAV_LOCATION}
@@ -185,9 +256,9 @@ class SingleTaskPage extends Component {
       <NavbarButton
         navButtonLocation={AppConstants.MEDIUM_RIGHT_NAV_LOCATION}
         onPress={() => {
-          this._onEdit()
+          this._onSubmitEdit()
         }}
-        icon={'edit'} />
+        icon={'floppy-o'} />
     )
 
     let farRightNavButton = (
@@ -220,36 +291,27 @@ class SingleTaskPage extends Component {
   render = () => {
 
     /*
-    <View style={[AppStyles.paddingVertical]}>
-      <CheckBox
-        label={'Completed'}
-        labelStyle={[AppStyles.baseText]}
-        checked={this.state.task.isCompleted}
-        onChange={(checked) => {
 
-          let updatedCheckedValue = !checked
+    TODO
 
-          let task = this.state.task
-          task.isCompleted = updatedCheckedValue
+    <View>
+      <Text style={[AppStyles.baseText]}>Priority</Text>
+      <TextInput
+        style={[AppStyles.baseText]}
+        onChangeText={(updatedNotes) => this.setState({
+          currenNotes: updatedNotes
+        })}
+        value={this.state.currentNotes}/>
+    </View>
 
-          if (UserController.canAccessNetwork(this.props.profile)) {
-            TaskController.updateTask(task,
-               this.props.profile.id, this.props.profile.password)
-            .then(response => {
-               this._updateTaskLocally(task)
-            })
-            .catch(error => {
-              if (error.name === 'NoConnection') {
-                 this._updateTaskLocally(task)
-              } else {
-                // TODO
-              }
-            })
-          } else {
-             this._updateTaskLocally(task)
-          }
-        }}
-      />
+    <View>
+      <Text style={[AppStyles.baseText]}>Recurring Status</Text>
+      <TextInput
+        style={[AppStyles.baseText]}
+        onChangeText={(updatedNotes) => this.setState({
+          currenNotes: updatedNotes
+        })}
+        value={this.state.currentNotes}/>
     </View>
     */
 
@@ -262,17 +324,53 @@ class SingleTaskPage extends Component {
 
         <View style={[AppStyles.padding]}>
 
+          <Text style={[AppStyles.successText]}>
+            {this.state.updateSuccess}
+          </Text>
+
+          <Text style={[AppStyles.errorText]}>
+            {this.state.updateError}
+          </Text>
+
           <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>Name</Text>
-            <Text style={[AppStyles.baseTextSmall]}>
-              {this.state.task.name}
+            <TextInput
+              style={[AppStyles.baseText]}
+              onChangeText={(updatedName) => {
+                let task = this.state.task
+                task.name = updatedName
+                this.setState({ task: task })
+              }}
+              value={this.state.task.name}/>
+            <Text style={[AppStyles.errorText]}>
+              {this.state.nameValidationError}
             </Text>
           </View>
 
-          {this._notesBlock()}
-          {this._dueDateBlock()}
-          {this._priorityBlock()}
-          {this._recurringBlock()}
+          <View style={[AppStyles.paddingVertical]}>
+            <Text style={[AppStyles.baseText]}>Notes</Text>
+            <TextInput
+              style={[AppStyles.baseText]}
+              onChangeText={(updatedNotes) => {
+                let task = this.state.task
+                task.notes = updatedNotes
+                this.setState({ task: task })
+              }}
+              value={this.state.task.notes}/>
+
+            <Text style={[AppStyles.errorText]}>
+              {this.state.notesValidationError}
+            </Text>
+          </View>
+
+          <View style={[AppStyles.paddingVertical]}>
+          <Text style={[AppStyles.baseText]}>Due Date</Text>
+          <TouchableOpacity
+            style={[ AppStyles.paddingRight, AppStyles.paddingLeft]}
+            onPress={this._showDatePicker.bind(this)}>
+              {this._currentDateToText()}
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     )

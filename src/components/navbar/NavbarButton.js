@@ -52,7 +52,7 @@ class NavbarRightButton extends Component {
 
 const styles = StyleSheet.create({
   mediumRightNavButton: {
-    right: 40,
+    right: 50,
     top: 4,
   },
   farRightNavButton: {
