@@ -21,7 +21,6 @@ import {
 import { connect } from 'react-redux'
 
 import * as UserController from '../../models/controllers/user'
-import * as ListController from '../../models/controllers/list'
 import * as TaskController from '../../models/controllers/task'
 import * as TaskStorage from '../../models/storage/task-storage'
 import * as TaskActions from '../../actions/entities/task'
@@ -55,7 +54,6 @@ class EditTask extends Component {
       isUpdating: false,
 
       task: this._getTask(),
-      list: this._getList(),
 
       nameValidationError: '',
       notesValidationError: ''
@@ -64,11 +62,6 @@ class EditTask extends Component {
 
   _getTask = () => {
     return this.props.tasks[this.props.taskId]
-  }
-
-  _getList = () => {
-    let task = this._getTask()
-    return this.props.lists[task.listId]
   }
 
   _onDelete = () => {
@@ -247,23 +240,6 @@ class EditTask extends Component {
     )
   }
 
-  _getListNames = () => {
-    let listNames = []
-
-    for (let listId in this.props.lists) {
-      let list = this.props.lists[listId]
-      listNames.push(
-        <Picker.Item
-          label={list.name}
-          value={list.id}
-          key={list.id}
-        />
-      )
-    }
-
-    return listNames
-  }
-
   _constructNavbar = () => {
 
     let title = 'Edit Task'
@@ -372,19 +348,6 @@ class EditTask extends Component {
           </View>
 
           <View style={[AppStyles.paddingVertical]}>
-            <Text style={[AppStyles.baseText]}>List</Text>
-            <Picker
-              selectedValue={this.state.task.listId}
-              onValueChange={(updatedParentListId) => {
-                let task = this.state.task
-                task.listId = updatedParentListId
-                this.setState({task: task})
-              }}>
-              {this._getListNames()}
-            </Picker>
-          </View>
-
-          <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>Notes</Text>
             <TextInput
               style={[AppStyles.baseText]}
@@ -417,7 +380,6 @@ class EditTask extends Component {
 const mapStateToProps = (state) => ({
   isLoggedIn: state.user.isLoggedIn,
   profile: state.user.profile,
-  lists: state.entities.lists,
   tasks: state.entities.tasks,
 })
 

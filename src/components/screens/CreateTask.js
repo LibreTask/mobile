@@ -35,10 +35,6 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 class CreateTask extends Component {
 	static componentName = 'CreateTask'
 
-   static propTypes = {
-     listId: PropTypes.string,
-   }
-
   constructor(props) {
     super(props)
 
@@ -82,8 +78,8 @@ class CreateTask extends Component {
         nameValidationError: ''
       }, () => {
 
-        TaskController.createTask(taskName, this.props.listId,
-           this.props.profile.id, this.props.profile.password)
+        TaskController.createTask(taskName, this.props.profile.id,
+           this.props.profile.password)
         .then(response => {
 
             let task = response.task
@@ -111,7 +107,7 @@ class CreateTask extends Component {
   }
 
   _createTaskLocallyAndRedirect = (name) => {
-    let task = TaskController.constructTaskLocally(name, this.props.listId)
+    let task = TaskController.constructTaskLocally(name)
     TaskStorage.createOrUpdateTask(task)
     this.props.createOrUpdateTask(task)
     this.props.navigator.pop()

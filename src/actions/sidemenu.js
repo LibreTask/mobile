@@ -26,27 +26,3 @@ export const closeSideMenu = () => {
     type: SIDEMENU_CLOSE
   }
 }
-
-export const SIDEMENU_TOGGLE_LISTS = 'SIDEMENU_TOGGLE_LISTS'
-
-export const toggleListsView = () => {
-  return {
-    type: SIDEMENU_TOGGLE_LISTS
-  }
-}
-
-export const SIDEMENU_COLLAPSE_LISTS = 'SIDEMENU_COLLAPSE_LISTS'
-
-export const collapseLists = () => {
-  return {
-    type: SIDEMENU_COLLAPSE_LISTS
-  }
-}
-
-export const SIDEMENU_EXPAND_LISTS = 'SIDEMENU_EXPAND_LISTS'
-
-export const expandLists = () => {
-  return {
-    type: SIDEMENU_EXPAND_LISTS
-  }
-}

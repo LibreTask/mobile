@@ -35,7 +35,6 @@ export const sync = () => {
 
       let syncAction = {
         type: SYNC,
-        lists: response.state.entities.lists,
         tasks: response.state.entities.tasks
       }
 

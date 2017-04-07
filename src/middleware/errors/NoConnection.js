@@ -7,8 +7,8 @@
   When this error is thrown, the client should attempt to perform the action
   locally if it can wait for the next successful sync.
 
-  Example: Client cannot create a List because no Internet connection. We throw
-  this error, create the List locally, and then the next successful Sync pushes
+  Example: Client cannot create a Task because no Internet connection. We throw
+  this error, create the Task locally, and then the next successful Sync pushes
   this state to the server.
 */
 function NoConnection(message) {

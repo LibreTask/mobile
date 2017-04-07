@@ -22,23 +22,6 @@ export async function getAllTasks() {
   return tasks;
 }
 
-export async function getTasksByListId(listId) {
-  const allKeys = await AsyncStorage.getAllKeys()
-  let tasks = [];
-
-  for (let key of allKeys) {
-    if (key.indexOf('tasks') !== -1) {
-      let task = JSON.parse(await AsyncStorage.getItem(key))
-
-      if (task.listId === listId) {
-        tasks.push(task)
-      }
-    }
-  }
-
-  return tasks;
-}
-
 export async function getTaskByTaskId(taskId) {
   return await AsyncStorage.getItem(`tasks/${taskId}`)
 }

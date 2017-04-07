@@ -23,9 +23,16 @@ function deleteAllTasks(state, action) {
 }
 
 function deleteTask(state, action) {
-  return _.filter(state, function(task) {
-    return task.id !== action.taskId // filter out taskId 
+  let remainingTasks = _.filter(state, function(task) {
+    return task.id !== action.taskId // filter out taskId
   })
+
+  let taskMap = {}
+  _.forEach(remainingTasks, (task) => {
+    taskMap[task.id] = task
+  })
+
+  return taskMap
 }
 
 function addTasks(state, action) {

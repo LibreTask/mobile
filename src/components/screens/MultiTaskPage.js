@@ -34,7 +34,6 @@ import NavbarButton from '../navbar/NavbarButton'
 
 import TaskRow from '../TaskRow'
 
-import EditList from './EditList'
 import CreateTask from './CreateTask'
 import SingleTaskPage from './SingleTaskPage'
 
@@ -43,11 +42,6 @@ class MultiTaskPage extends Component {
 
   static propTypes = {
     navigator: PropTypes.object.isRequired,
-    listId: PropTypes.string
-  }
-
-  static defaultProps = {
-    listId: AppConstants.ALL_TASKS_IDENTIFIER
   }
 
   constructor(props) {
@@ -86,28 +80,25 @@ class MultiTaskPage extends Component {
     return false;
   }
 
-  _filterTasksToDisplay = (myListId, tasks) => {
+  _filterTasksToDisplay = (tasks) => {
     let tasksToDisplay = []
 
     for (let taskId in tasks) {
       let task = tasks[taskId]
 
-      if (myListId === AppConstants.ALL_TASKS_IDENTIFIER
-          || myListId === task.listId) {
-        tasksToDisplay.push(task)
-      }
+      tasksToDisplay.push(task)
     }
 
     return this._sortTasksByDateAndInsertHeaders(tasksToDisplay)
   }
 
   _getTasksToDisplay = () => {
-    return this._filterTasksToDisplay(this.props.listId, this.props.tasks)
+    return this._filterTasksToDisplay(this.props.tasks)
   }
 
   componentWillReceiveProps = (nextProps) => {
     if (!_.isEqual(this.props.tasks, nextProps.tasks)) {
-      let tasks = this._filterTasksToDisplay(this.props.listId, nextProps.tasks)
+      let tasks = this._filterTasksToDisplay(nextProps.tasks)
       this.setState({dataSource: this.state.dataSource.cloneWithRows(tasks)})
     }
   }
@@ -199,10 +190,6 @@ class MultiTaskPage extends Component {
 
     let attributes = {}
 
-    if (this.props.listId !== AppConstants.ALL_TASKS_IDENTIFIER) {
-      attributes.listId = this.props.listId
-    }
-
     let hasNetworkConnection = true // TODO
 
     let tasks;
@@ -215,9 +202,7 @@ class MultiTaskPage extends Component {
       )
     } else {
       // no network or not logged in, revert to local storage
-      tasks = (this.props.listId === AppConstants.ALL_TASKS_IDENTIFIER)
-        ? (await TaskStorage.getAllTasks())
-        : (await TaskStorage.getTasksByListId(this.props.listId))
+      tasks = await TaskStorage.getAllTasks()
     }
 
     if (tasks.length > 0) {
@@ -375,7 +360,7 @@ class MultiTaskPage extends Component {
           }
 
           this.setState(stateUpdate, () => {
-            let tasks = this._filterTasksToDisplay(this.props.listId, this.props.tasks)
+            let tasks = this._filterTasksToDisplay(this.props.tasks)
             this.setState({
               dataSource: new ListView.DataSource({
                 /*
@@ -419,45 +404,8 @@ class MultiTaskPage extends Component {
     </View>
   }
 
-  _renderCreateTaskFooter = () => {
-
-    if (this.props.listId === AppConstants.ALL_TASKS_IDENTIFIER) {
-      return <View/> // a list must be selected before a task can be created
-    }
-
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          this.props.navigator.push({
-            title: 'Create Task',
-            component: CreateTask,
-            index: 2,
-            transition: 'FloatFromBottom',
-            passProps: {
-              listId: this.props.listId,
-            }
-          })
-        }}
-        activeOpacity={0.7}>
-
-        <View style={styles.createTaskRowInner}>
-          <Text style={[AppStyles.baseTextSmall,  styles.createTaskRowText]}>{'CREATE NEW TASK'}</Text>
-        </View>
-
-      </TouchableOpacity>
-    )
-  }
-
   _constructNavbar = () => {
     let title = 'All Tasks'
-    if (this.props.listId !== AppConstants.ALL_TASKS_IDENTIFIER
-      && this.props.listId in this.props.lists) {
-
-      // Use the name of the selected list. The only time which a specific
-      // listId should not be found in this.props.lists is when it has just
-      // been deleted. Otherwise, it should always be available and used.
-      title = this.props.lists[this.props.listId].name
-    }
 
     let leftNavBarButton = (
       <NavbarButton
@@ -468,25 +416,7 @@ class MultiTaskPage extends Component {
         icon={'bars'} />
     )
 
-    let farRightNavButton
-    if (this.props.listId !== AppConstants.ALL_TASKS_IDENTIFIER) {
-        farRightNavButton = (
-          <NavbarButton
-            navButtonLocation={AppConstants.FAR_RIGHT_NAV_LOCATION}
-            onPress={() => {
-              this.props.navigator.push({
-                title: 'Edit List',
-                component: EditList,
-                index: 2,
-                transition: 'FloatFromBottom',
-                passProps: {
-                  listId: this.props.listId
-                }
-              })
-            }}
-            icon={'edit'} />
-        )
-    }
+    let farRightNavButton // TODO
 
     let rightNavButtons = (
       <View style={AppStyles.rightNavButtons}>
@@ -505,18 +435,16 @@ class MultiTaskPage extends Component {
     )
   }
 
-  _renderList = () => {
-    // if no tasks exist, and no list selected, display
-    // text so that the screen is not blank
-    if (this.props.listId === AppConstants.ALL_TASKS_IDENTIFIER
-      && this.state.dataSource.getRowCount() === 0) {
+  _renderTasks = () => {
+    // if no tasks exist display text so that the screen is not blank
+    if (this.state.dataSource.getRowCount() === 0) {
 
         // TODO - consider adding a more accessible way to create a task
         // for this scenario, like a link, etc
 
         return (
           <Text style={[AppStyles.padding, AppStyles.paddingVertical,  AppStyles.baseTextLarge]}>
-            Navigate to a new or existing list, then create a task.
+            Create a task.
           </Text>
         )
     }
@@ -528,7 +456,7 @@ class MultiTaskPage extends Component {
         automaticallyAdjustContentInsets={false}
         dataSource={this.state.dataSource}
         renderRow={this._renderRow}
-        renderFooter={this._renderCreateTaskFooter}
+        renderFooter={() => {<View/>}}
 
         // TODO - use real section headers
         renderSectionHeader={() => {return <View></View>}}
@@ -548,7 +476,7 @@ class MultiTaskPage extends Component {
     return (
       <View style={[AppStyles.container]}>
         {this._constructNavbar()}
-        {this._renderList()}
+        {this._renderTasks()}
       </View>
     )
   }
@@ -583,7 +511,6 @@ const mapStateToProps = (state, ownProps) => {
   return {
     isLoggedIn: state.user.isLoggedIn,
     profile: state.user.profile,
-    lists: state.entities.lists,
     tasks: state.entities.tasks,
   }
 }

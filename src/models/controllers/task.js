@@ -12,17 +12,20 @@ const uuid = require('uuid/v4')
   side. That is, when the client 1) has no network connection OR 2) is not
   logged in.
 */
-export const constructTaskLocally = (taskName, listId) => {
+export const constructTaskLocally = (taskName, taskNotes,
+  taskDueDateTimeUtc) => {
   return {
     name: taskName,
-    id: 'client-task-' + uuid(),
-    listId: listId
+    notes: taskNotes,
+    dueDateTimeUtc: taskDueDateTimeUtc,
+    id: 'client-task-' + uuid.v4(),
     // Notably, no userId is assigned because one may not exist.
     // A successful sync will rectify any discrepencies.
   }
 }
 
-export const createTask = (taskName, listId, userId, password) => {
+export const createTask = (taskName, taskNotes, taskDueDateTimeUtc,
+   userId, password) => {
   const request = {
     endpoint: `task/create`,
     method: 'POST',
@@ -33,7 +36,8 @@ export const createTask = (taskName, listId, userId, password) => {
      },
      body: JSON.stringify({
        name: taskName,
-       listId: listId
+       notes: taskNotes,
+       dueDateTimeUtc: taskDueDateTimeUtc,
        // TODO -
      })
   }
@@ -93,10 +97,6 @@ export const fetchTask = (taskId, userId, password) => {
 export const fetchTasksByAttributes = (attributes, userId, password) => {
 
   let query = `userId=${userId}&`;
-
-  if (attributes.listId) {
-    query += `listId=${attributes.listId}`
-  }
 
   // TODO - use additional atributes as well
 

@@ -44,18 +44,12 @@ class SingleTaskPage extends Component {
 
     this.state = {
       task: this._getTask(),
-      parentList: this._getList(),
     }
   }
 
   _getTask = () => {
     let id = this.props.taskId;
     return this.props.tasks[id]
-  }
-
-  _getList = () => {
-    let task = this._getTask()
-    return this.props.lists[task.listId]
   }
 
   _onDelete = () => {
@@ -275,13 +269,6 @@ class SingleTaskPage extends Component {
             </Text>
           </View>
 
-          <View style={[AppStyles.paddingVertical]}>
-            <Text style={[AppStyles.baseText]}>List</Text>
-            <Text style={[AppStyles.baseTextSmall]}>
-              {this.state.parentList.name}
-            </Text>
-          </View>
-
           {this._notesBlock()}
           {this._dueDateBlock()}
           {this._priorityBlock()}
@@ -295,7 +282,6 @@ class SingleTaskPage extends Component {
 const mapStateToProps = (state) => ({
   isLoggedIn: state.user.isLoggedIn,
   profile: state.user.profile,
-  lists: state.entities.lists,
   tasks: state.entities.tasks,
 })
 

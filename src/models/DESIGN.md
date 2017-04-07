@@ -3,9 +3,9 @@ if (login && network) {
 	2. store API result locally
 } else {
 	1. store locally  
-	(we might have to create temporary IDs for list/task creation)
+	(we might have to create temporary IDs for task creation)
 	(client validation should be identical to server, we do not need
-		server-side validation errors hours after list/task creation)
+		server-side validation errors hours after task creation)
 }
 
 Q: Why separate API and storage?

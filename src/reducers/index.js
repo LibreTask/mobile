@@ -8,14 +8,12 @@ import { combineReducers } from 'redux'
 import sideMenu from './ui/sidemenu'
 
 import userReducer from './user'
-import listsReducer from './entities/lists'
 import tasksReducer from './entities/tasks'
 
 import syncReducer from './sync'
 
 const entitiesReducer = combineReducers({
   tasks: tasksReducer,
-  lists: listsReducer,
 })
 
 const uiReducer = combineReducers({

@@ -20,14 +20,12 @@ import * as SideMenuActions from '../actions/sidemenu'
 import * as SyncActions from '../actions/sync'
 import * as UserActions from '../actions/entities/user'
 import * as TaskActions from '../actions/entities/task'
-import * as ListActions from '../actions/entities/list'
 
 import AppStyles from '../styles'
 import AppConfig from '../config'
 import AppConstants from '../constants'
 
 import MultiTaskPage from './screens/MultiTaskPage'
-import CreateList from './screens/CreateList'
 import Profile from './screens/Profile'
 import About from './screens/About'
 import Login from './screens/Login'
@@ -37,7 +35,6 @@ class Menu extends Component {
 
   static propTypes = {
     navigate: PropTypes.func.isRequired,
-    onListSelection: PropTypes.func.isRequired // TODO - fix this hack
   }
 
   _navigateToProfileIfLoggedIn = (props) => {
@@ -75,67 +72,6 @@ class Menu extends Component {
     }
   }
 
-  _getListsMenuItems = () => {
-
-    let { navigate } = this.props;
-
-    let listsArrowImage =
-      this.props.sideMenuListsViewIsCollapsed
-      ? require('../images/arrow_right_white.png')
-      : require('../images/arrow_down_white.png')
-
-    let listsMenuItems = [];
-
-    if (!this.props.sideMenuListsViewIsCollapsed) {
-
-      for (let listId in this.props.lists) {
-        let list = this.props.lists[listId]
-
-        listsMenuItems.push(
-          <TouchableOpacity key={`menu-item-create-${list.name}`}
-            onPress={()=> {
-              this.props.onListSelection(list.id)
-              navigate(list.name, MultiTaskPage, {listId: list.id})
-            }}>
-            <View style={[styles.menuSubItem]}>
-              <Text style={[AppStyles.baseText, styles.menuSubItemText]}>
-                {list.name}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        )
-      }
-
-      listsMenuItems.push(
-        <TouchableOpacity key={'menu-item-create-list'}
-          onPress={()=>navigate('Create List', CreateList, this.props)}>
-          <View style={[styles.menuSubItem]}>
-            <Text style={[AppStyles.baseText, styles.menuSubItemLinkText]}>
-              Create List
-            </Text>
-          </View>
-        </TouchableOpacity>
-      )
-    }
-
-    return (
-      <TouchableOpacity key={'menu-item-lists'}
-        onPress={()=>this.props.toggleListsView()}>
-        <View style={[styles.menuItem]}>
-          <View style={[AppStyles.row]}>
-            <View>
-              <Image key={'list-collapse-image'} style={styles.icon} source={listsArrowImage} />
-            </View>
-            <View >
-              <Text style={[AppStyles.baseText, styles.menuItemText]}>Lists</Text>
-              {listsMenuItems}
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
-    )
-  }
-
   _constructMenuItems = () => {
     let { navigate } = this.props;
 
@@ -144,12 +80,11 @@ class Menu extends Component {
     menuItems.push(
       <TouchableOpacity key={`menu-item-all-tasks`}
         onPress={()=> {
-          this.props.onListSelection(AppConstants.ALL_TASKS_IDENTIFIER)
           navigate('All Tasks', MultiTaskPage)
         }}>
         <View style={[styles.menuItem]}>
           <Text style={[AppStyles.baseText, styles.menuItemText]}>
-            {'All Tasks'}
+            {'Tasks'}
           </Text>
         </View>
       </TouchableOpacity>
@@ -167,8 +102,6 @@ class Menu extends Component {
       // TODO - settings
     )
     */
-
-    menuItems = menuItems.concat(this._getListsMenuItems())
 
     menuItems.push(
       <TouchableOpacity key={'menu-item-profile'}
@@ -208,13 +141,10 @@ class Menu extends Component {
                     // remove profile and all entities
                     this.props.deleteProfile()
                     this.props.deleteAllTasks()
-                    this.props.deleteAllLists()
                     ProfileStorage.logout()
 
                      // logout requires ui update
-                    navigate('Tasks', MultiTaskPage, {
-                      listId: AppConstants.ALL_TASKS_IDENTIFIER,
-                    })
+                    navigate('All Tasks', MultiTaskPage)
                   }
                 },
               ],
@@ -246,16 +176,6 @@ class Menu extends Component {
         {greeting}
       </Text>
     </View>
-  }
-
-  componentWillReceiveProps(nextProps) {
-
-    if (nextProps.sideMenuListsViewIsCollapsed
-              !== this.props.sideMenuListsViewIsCollapsed) {
-      this.setState({
-        sideMenuListsViewIsCollapsed: nextProps.sideMenuListsViewIsCollapsed
-      })
-    }
   }
 
   render = () => {
@@ -332,20 +252,16 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = (state) => ({
-  sideMenuListsViewIsCollapsed: state.ui.sideMenu.isListsViewCollapsed,
   sideMenuIsOpen: state.ui.sideMenu.isOpen,
   isLoggedIn: state.user.isLoggedIn,
   profile: state.user.profile,
   isSyncing: state.sync.isSyncing,
-  lists: state.entities.lists
 })
 
 const mapDispatchToProps = {
-  toggleListsView: SideMenuActions.toggleListsView,
   toggleSideMenu: SideMenuActions.toggleSideMenu,
   closeSideMenu: SideMenuActions.closeSideMenu,
   deleteProfile: UserActions.deleteProfile,
-  deleteAllLists: ListActions.deleteAllLists,
   deleteAllTasks: TaskActions.deleteAllTasks,
   startSync: SyncActions.startSync,
   stopSync: SyncActions.stopSync,

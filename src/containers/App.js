@@ -19,15 +19,12 @@ import * as _ from 'lodash'
 
 import * as SideMenuActions from '../actions/sidemenu'
 import * as UserController from '../models/controllers/user'
-import * as ListController from '../models/controllers/list'
 
-import * as ListStorage from '../models/storage/list-storage'
 import * as ProfileStorage from '../models/storage/profile-storage'
 import * as TaskStorage from '../models/storage/task-storage'
 
 import * as UserActions from '../actions/entities/user'
 import * as TaskActions from '../actions/entities/task'
-import * as ListActions from '../actions/entities/list'
 
 import * as SyncActions from '../actions/sync'
 
@@ -40,15 +37,6 @@ import Menu from '../components/Menu'
 import MultiTaskPage from '../components/screens/MultiTaskPage'
 
 class AppContainer extends Component {
-
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      // no list is initially selected
-      currentlySelectedList: AppConstants.ALL_TASKS_IDENTIFIER,
-    }
-  }
 
   componentDidMount = async () => {
     StatusBar.setHidden(false, 'slide') // Slide in on load
@@ -70,15 +58,10 @@ class AppContainer extends Component {
   // TODO - move this logic to file like index.js
   _loadInitialState = async () => {
     let tasks = {}
-    let lists = {}
     let profile = {}
 
     try {
       tasks = await TaskStorage.getAllTasks()
-    } catch (err) { /* ignore */ }
-
-    try {
-      lists = await ListStorage.getAllLists()
     } catch (err) { /* ignore */ }
 
     try {
@@ -87,18 +70,11 @@ class AppContainer extends Component {
 
 
     this.props.createOrUpdateTasks(tasks)
-    this.props.createOrUpdateLists(lists)
-
 
     // TODO - what else should we validate?
     if (profile) {
       this.props.createOrUpdateProfile(profile)
     }
-  }
-
-  // TODO - fix this hack
-  _onListSelection = (listId) => {
-    this.setState({ currentlySelectedList: listId })
   }
 
   _onSideMenuPress = (title, component, extraProps) => {
@@ -137,7 +113,6 @@ class AppContainer extends Component {
         ref="rootSidebarMenu"
         menu={<Menu
           navigate={this._onSideMenuPress}
-          onListSelection={this._onListSelection}
           ref="rootSidebarMenuMenu" />
         }
         disableGestures={this.props.sideMenuGesturesDisabled}
@@ -177,10 +152,8 @@ const mapDispatchToProps = {
   toggleSideMenu: SideMenuActions.toggleSideMenu,
   closeSideMenu: SideMenuActions.closeSideMenu,
   createOrUpdateTasks: TaskActions.createOrUpdateTasks,
-  createOrUpdateLists: ListActions.createOrUpdateLists,
   createOrUpdateProfile: UserActions.createOrUpdateProfile,
   deleteProfile: UserActions.deleteProfile,
-  deleteAllLists: ListActions.deleteAllLists,
   deleteAllTasks: TaskActions.deleteAllTasks,
   startSync: SyncActions.startSync,
   stopSync: SyncActions.stopSync,
