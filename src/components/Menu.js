@@ -161,11 +161,14 @@ class Menu extends Component {
 
   _renderUserDetails = () => {
 
-    let greeting = 'Hello!'
+    let greeting = ''
 
+    /*
+    TODO - refine
     if (this.props.isLoggedIn && this.props.profile.name) {
       greeting = `Hello, ${this.props.profile.name}!`;
     }
+    */
 
     // TODO - set streak info, points, etc
 

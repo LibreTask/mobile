@@ -43,6 +43,7 @@ class CreateTask extends Component {
       isCreatingTask: false,
       taskName: '',
       taskNotes: '',
+      taskDueDateTimeUtc: '',
       nameValidationError: '',
       notesValidationError: '',
       notesIconSelected: false,
@@ -56,16 +57,27 @@ class CreateTask extends Component {
       return;
     }
 
-    var taskName = this.state.taskName || ''
+    let taskName = this.state.taskName || ''
+    let taskNotes = this.state.taskNotes || ''
+    let dueDateTimeUtc = this.state.taskDueDateTimeUtc
 
     let nameValidationError = ''
+    let notesValidationError = ''
 
     if (!Validator.isLength(taskName, {min: 2, max: 100})) {
       nameValidationError = 'Name must be between 2 and 100 characters'
     }
 
+    if (this.state.notesIconSelected
+        && !Validator.isLength(notes, {min: 0, max: 5000})) {
+        notesValidationError = 'Notes must be between 0 and 5000 characters'
+    }
+
     if (nameValidationError) {
-      this.setState({ nameValidationError: nameValidationError })
+      this.setState({
+        nameValidationError: nameValidationError,
+        notesValidationError: notesValidationError
+      })
 
       return; // validation failed; cannot create task
     }
@@ -75,14 +87,19 @@ class CreateTask extends Component {
       this.setState({
         isCreatingTask: true,
         creationError: '',
-        nameValidationError: ''
+        nameValidationError: '',
+        notesValidationError: ''
       }, () => {
 
-        TaskController.createTask(taskName, this.props.profile.id,
-           this.props.profile.password)
+        let userId = this.props.profile.id
+        let password = this.props.profile.password
+
+        TaskController.createTask(taskName, taskNotes, taskDueDateTimeUtc,
+          userId, password)
         .then(response => {
 
             let task = response.task
+            task.isCompleted = false // initialize to false
 
             TaskStorage.createOrUpdateTask(task)
             this.props.createOrUpdateTask(task)
@@ -92,7 +109,8 @@ class CreateTask extends Component {
         .catch(error => {
 
           if (error.name === 'NoConnection') {
-            this._createTaskLocallyAndRedirect(taskName)
+            this._createTaskLocallyAndRedirect(taskName, taskNotes,
+               taskDueDateTimeUtc)
           } else {
             this.setState({
               creationError: error.message,
@@ -102,14 +120,19 @@ class CreateTask extends Component {
         })
       })
     } else {
-      this._createTaskLocallyAndRedirect(taskName)
+      this._createTaskLocallyAndRedirect(taskName, taskNotes,
+         taskDueDateTimeUtc)
     }
   }
 
-  _createTaskLocallyAndRedirect = (name) => {
-    let task = TaskController.constructTaskLocally(name)
+  _createTaskLocallyAndRedirect = (name, notes, dueDateTimeUtc) => {
+    // create task locally; user it not logged in or has no network connection
+    let task = TaskController.constructTaskLocally(name, notes, dueDateTimeUtc)
     TaskStorage.createOrUpdateTask(task)
     this.props.createOrUpdateTask(task)
+    this.props.addPendingTaskCreate(task)
+
+    // navigate to main on success
     this.props.navigator.pop()
   }
 
@@ -254,6 +277,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   createOrUpdateTask: TaskActions.createOrUpdateTask,
+  addPendingTaskCreate: TaskActions.addPendingTaskCreate
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateTask)

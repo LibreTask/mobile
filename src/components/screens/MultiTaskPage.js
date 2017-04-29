@@ -19,6 +19,7 @@ import { connect } from 'react-redux'
 import * as _ from 'lodash'
 
 import * as SideMenuActions from '../../actions/ui/sidemenu'
+import * as TaskViewActions from '../actions/ui/taskview'
 import * as TaskActions from '../../actions/entities/task'
 import * as TaskController from '../../models/controllers/task'
 import * as TaskStorage from '../../models/storage/task-storage'
@@ -27,6 +28,7 @@ import * as UserController from '../../models/controllers/user'
 import AppStyles from '../../styles'
 import AppConfig from '../../config'
 import AppConstants from '../../constants'
+import DateUtils from '../utils/date-utils'
 
 import NavigationBar from 'react-native-navbar'
 import NavbarTitle from '../navbar/NavbarTitle'
@@ -101,6 +103,8 @@ class MultiTaskPage extends Component {
       let tasks = this._filterTasksToDisplay(nextProps.tasks)
       this.setState({dataSource: this.state.dataSource.cloneWithRows(tasks)})
     }
+
+    // TODO - "should refresh view"
   }
 
   _sortTasksByDateAndInsertHeaders = (tasks) => {
@@ -285,22 +289,31 @@ class MultiTaskPage extends Component {
           taskId={task.id}
           onCheckBoxClicked={ async (isCompleted) => {
               task.isCompleted = isCompleted
+              task.completionDateTimeUtc = (new Date()).getTime()
+
+              let userId = this.props.profile.id
+              let password = this.props.profile.password
+
+              if (!task.isCompleted && task.completionDateTimeUtc) {
+                // if the task is "unchecked", delete the completion time
+                task.completionDateTimeUtc = undefined
+              }
 
               if (UserController.canAccessNetwork(this.props.profile)) {
-                TaskController.updateTask(task, this.props.profile.id,
-                   this.props.profile.password)
+                TaskController.updateTask(task, userId, password)
                    .then(response => {
-                     this._updateTaskLocally(task)
+                     // use the task in the reponse; it is the most up-to-date
+                     this._updateTaskLocally(response.task)
                    })
                    .catch(error => {
                      if (error.name === 'NoConnection') {
-                       this._updateTaskLocally(task)
+                       this._updateTaskLocally(task, true)
                      } else {
                        // TODO
                      }
                    })
               } else {
-                this._updateTaskLocally(task)
+                this._updateTaskLocally(task, true)
               }
           }}
           onPress={() => {
@@ -320,7 +333,17 @@ class MultiTaskPage extends Component {
     return <View></View>
   }
 
-  _updateTaskLocally = (task) => {
+  _updateTaskLocally = (task, queueTaskUpdate) => {
+
+    if (queueTaskUpdate) {
+
+      // mark update time, before queueing
+      task.updatedAtDateTimeUtc = new Date()
+
+      // task is queued only when network could not be reached
+      this.props.addPendingTaskUpdate(task)
+    }
+
     TaskStorage.createOrUpdateTask(task)
     this.props.createOrUpdateTask(task)
   }
@@ -457,6 +480,40 @@ class MultiTaskPage extends Component {
     )
   }
 
+  _getTasksToDisplay() {
+
+    // TODO - utilize this logic
+
+    let tasks = []
+
+    for (let taskId in this.props.tasks) {
+      let task = this.props.tasks[taskId]
+
+      if (!task) continue;
+
+      if (task.isDeleted) continue; // do not display deleted tasks
+
+      if (task.isCompleted) {
+
+        // continue if, for some reason, we do not have the date recorded
+        if (!task.completionDateTimeUtc) continue;
+
+        // only display completed tasks less than one day ago
+        if (new Date(task.completionDateTimeUtc) < DateUtils.yesterday()) {
+          continue;
+        }
+
+        // do not display the completed task, unless the
+        // showCompletedTasks flag is set to true
+        if (!this.props.showCompletedTasks) continue;
+      }
+
+      tasks.push(task)
+    }
+
+    return this._sortTasksByDateAndInsertHeaders(tasks)
+  }
+
   _renderTasks = () => {
     // if no tasks exist display text so that the screen is not blank
     if (this.state.dataSource.getRowCount() === 0) {
@@ -470,7 +527,6 @@ class MultiTaskPage extends Component {
           </Text>
         )
     }
-
 
     return (
       <ListView
@@ -534,12 +590,16 @@ const mapStateToProps = (state, ownProps) => {
     isLoggedIn: state.user.isLoggedIn,
     profile: state.user.profile,
     tasks: state.entities.tasks,
+    showCompletedTasks: state.ui.taskview.showCompletedTasks,
+    shouldRefreshTaskView: state.ui.taskview.shouldRefreshTaskView
   }
 }
 
 const mapDispatchToProps = {
   createOrUpdateTask: TaskActions.createOrUpdateTask,
+  addPendingTaskUpdate: TaskActions.addPendingTaskUpdate,
   toggleSideMenu: SideMenuActions.toggleSideMenu,
+  refreshTaskView: TaskViewActions.refreshTaskView,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MultiTaskPage)

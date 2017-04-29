@@ -77,24 +77,29 @@ class SingleTaskPage extends Component {
           text: 'Yes',
           onPress: async () => {
 
+            let task = this.state.editedTask
+            task.isDeleted = true
+
             if (UserController.canAccessNetwork(this.props.profile)) {
+
               TaskController.deleteTask(
-                this.props.task.id,
+                this.task.id,
                 this.props.profile.id,
                 this.props.profile.password
               )
               .then(response => {
-                this._deleteTaskLocallyAndRedirect(this.props.task.id)
+                // use the task in the reponse; it is the most up-to-date
+                this._deleteTaskLocallyAndRedirect(response.task)
               })
               .catch(error => {
                 if (error.name === 'NoConnection') {
-                  this._deleteTaskLocallyAndRedirect(this.props.task.id)
+                  this._deleteTaskLocallyAndRedirect(task, true)
                 } else {
                   // TODO
                 }
               })
             } else {
-              this._deleteTaskLocallyAndRedirect(this.props.task.id)
+              this._deleteTaskLocallyAndRedirect(task, true)
             }
           }
         },
@@ -102,9 +107,27 @@ class SingleTaskPage extends Component {
     )
   }
 
-  _deleteTaskLocallyAndRedirect = (taskId) => {
-    TaskStorage.deleteTaskByTaskId(taskId)
-    this.props.deleteTask(taskId)
+  _deleteTaskLocallyAndRedirect = (task, queueTaskDeletion) => {
+
+    if (queueTaskDeletion) {
+
+      // mark update time, before queueing
+      task.updatedAtDateTimeUtc = new Date()
+
+      // task is queued only when network could not be reached
+      this.props.addPendingTaskDelete(task)
+    }
+
+    /*
+     The task has been marked `isDeleted = true`.
+
+     We choose to "createOrUpdateTask" the task, even though it is being
+     deleted, so that we can correctly manage the sync. Without a reference to
+     this task, a sync might receive an outdated (undeleted) version of the
+     task and incorrectly re-recreate it.
+    */
+    TaskStorage.createOrUpdateTask(task)
+    this.props.createOrUpdateTask(task)
 
     this.props.navigator.replace({
       title: 'Main',
@@ -147,16 +170,16 @@ class SingleTaskPage extends Component {
       nameValidationError: ''
     })
 
-    if (UserController.canAccessNetwork(this.props.profile)) {
+    if (UserController.canAccessNetwork(profile)) {
       TaskController.updateTask(this.state.task, profile.id, profile.password)
       .then(response => {
-
+        // use the task in the reponse; it is the most up-to-date
         this._updateTaskLocally(response.task)
       })
       .catch(error => {
 
         if (error.name === 'NoConnection') {
-          this._updateTaskLocally(this.state.task)
+          this._updateTaskLocally(this.state.task, true)
         } else {
           this.setState({
             isUpdating: false,
@@ -166,11 +189,21 @@ class SingleTaskPage extends Component {
         }
       })
     } else {
-      this._updateTaskLocally(this.state.task)
+      this._updateTaskLocally(this.state.task, true)
     }
   }
 
-  _updateTaskLocally = (task) => {
+  _updateTaskLocally = (task, queueTaskUpdate) => {
+
+    if (queueTaskUpdate) {
+
+      // mark update time, before queueing
+      task.updatedAtDateTimeUtc = new Date()
+
+      // task is queued only when network could not be reached
+      this.props.addPendingTaskUpdate(task)
+    }
+
     TaskStorage.createOrUpdateTask(task)
     this.props.createOrUpdateTask(task)
 
@@ -386,6 +419,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
   createOrUpdateTask: TaskActions.createOrUpdateTask,
   deleteTask: TaskActions.deleteTask,
+  addPendingTaskUpdate: TaskActions.addPendingTaskUpdate,
+  addPendingTaskDelete: TaskActions.addPendingTaskDelete,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleTaskPage)
