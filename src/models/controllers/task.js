@@ -5,7 +5,7 @@
 
 import { invoke, constructAuthHeader } from '../../middleware/api'
 
-const uuid = require('node-uuid')
+const uuidV4 = require('uuid/v4')
 
 /*
   Only invoked when a Task need to be created client side, rather than server
@@ -26,7 +26,7 @@ export const constructTaskLocally = (taskName, taskNotes,
     updatedAtDateTimeUtc: creationDateTimeUtc,
 
     dueDateTimeUtc: taskDueDateTimeUtc,
-    id: 'client-task-' + uuid.v4(),
+    id: 'client-task-' + uuidV4(),
     // Notably, no userId is assigned because one may not exist.
     // A successful sync will rectify any discrepencies.
   }

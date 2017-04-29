@@ -153,9 +153,9 @@ const mapDispatchToProps = {
   createOrUpdateProfile: UserActions.createOrUpdateProfile,
   deleteProfile: UserActions.deleteProfile,
   deleteAllTasks: TaskActions.deleteAllTasks,
-  startSync: SyncActions.startSync,
-  stopSync: SyncActions.stopSync,
-  sync: SyncActions.sync,
+  //startSync: SyncActions.startSync,
+  //stopSync: SyncActions.stopSync,
+  //sync: SyncActions.sync,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppContainer)
