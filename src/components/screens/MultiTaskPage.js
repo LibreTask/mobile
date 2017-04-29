@@ -18,7 +18,7 @@ import { connect } from 'react-redux'
 
 import * as _ from 'lodash'
 
-import * as SideMenuActions from '../../actions/sidemenu'
+import * as SideMenuActions from '../../actions/ui/sidemenu'
 import * as TaskActions from '../../actions/entities/task'
 import * as TaskController from '../../models/controllers/task'
 import * as TaskStorage from '../../models/storage/task-storage'

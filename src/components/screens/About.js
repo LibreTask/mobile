@@ -14,7 +14,7 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import * as SideMenuActions from '../../actions/sidemenu'
+import * as SideMenuActions from '../../actions/ui/sidemenu'
 
 import NavigationBar from 'react-native-navbar'
 import NavbarTitle from '../navbar/NavbarTitle'

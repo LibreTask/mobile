@@ -1,6 +1,6 @@
 /*
  * @link https://www.algernon.io/
- * @license https://github.com/AlgernonLabs/desktop/blob/master/LICENSE.md
+ * @license https://github.com/AlgernonLabs/mobile/blob/master/LICENSE.md
  */
 
 import {
@@ -12,15 +12,16 @@ import {
   FUTURE_TASKS,
   OVERDUE_TASKS,
   TASKS_WITH_NO_DATE,
-  TOGGLE_SHOW_COMPLETED_TASKS
-} from '../../actions/taskview'
-import {
-  updateObject,
-  createReducer,
-} from '../reducer-utils'
+  TOGGLE_SHOW_COMPLETED_TASKS,
+  REFRESH_TASK_VIEW,
+  STOP_REFRESH_TASK_VIEW
+} from '../../actions/ui/taskview'
+import { updateObject } from '../reducer-utils'
 
 const initialState = {
-  showCompletedTasks: true // default to true
+  showCompletedTasks: true, // default to true
+  shouldRefreshTaskView: false,
+  lastTaskViewRefreshDate: undefined
 }
 initialState[TODAYS_TASKS] = { isCollapsed: false }
 initialState[TOMORROWS_TASKS] = { isCollapsed: true }
@@ -30,6 +31,11 @@ initialState[TASKS_WITH_NO_DATE] = { isCollapsed: true }
 
 export default function taskviewReducer(state = initialState, action) {
   switch (action.type) {
+    case REFRESH_TASK_VIEW:
+      return updateObject(state, {
+        shouldRefreshTaskView: action.shouldRefreshTaskView,
+        lastTaskViewRefreshDate: action.refreshDate
+      })
     case COLLAPSE_CATEGORY:
       let collapsedCategory = {}
       collapsedCategory[action.category] = { isCollapsed: true }

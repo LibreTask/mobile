@@ -11,10 +11,9 @@ import taskview from './ui/taskview'
 import userReducer from './user'
 import tasksReducer from './entities/tasks'
 
-import syncReducer from './sync'
-
 const entitiesReducer = combineReducers({
-  tasks: tasksReducer,
+  task: tasksReducer,
+  user: userReducer
 })
 
 const uiReducer = combineReducers({
@@ -25,8 +24,6 @@ const uiReducer = combineReducers({
 const appReducer = combineReducers({
   ui: uiReducer,
   entities: entitiesReducer,
-  user: userReducer,
-  sync: syncReducer
 })
 
 const rootReducer = (state, action) => {

@@ -4,6 +4,7 @@
  */
 
 import NoConnection from './errors/NoConnection'
+import ErrorCodes from './errors/ErrorCodes'
 
 const API_ROOT = 'http://192.168.1.111:3001/api/v1/client/'
 const Buffer = require('buffer').Buffer
@@ -15,6 +16,26 @@ export function constructAuthHeader(userId, password) {
   }
 
   return 'Basic ' + new Buffer(userId + ':' + password).toString('base64')
+}
+
+// TODO - move this to its own module
+function humanReadableError(error) {
+
+  try {
+    let jsonError = JSON.parse(error.error)
+
+    if (jsonError.errorCode === ErrorCodes.USER_DOES_NOT_EXIST) {
+      return 'That user does not exist'
+    } else if (jsonError.errorCode === ErrorCodes.EMAIL_IS_ALREADY_USED) {
+      return 'That email is already used'
+    } else if (jsonError.errorCode === ErrorCodes.INVALID_LOGIN) {
+      return 'Either email or password is invalid'
+    } else {
+      return 'Something went wrong, please try again later'
+    }
+  } catch (err) {
+      return 'Something went wrong, please try again later'
+  }
 }
 
 export function invoke(request) {
@@ -36,7 +57,7 @@ export function invoke(request) {
     if (error.error && error.error.code === 'ECONNREFUSED') {
       throw new NoConnection()
     } else {
-      throw new Error('Something went wrong, please try again later')
+      throw new Error(humanReadableError(error))
     }
   })
 }

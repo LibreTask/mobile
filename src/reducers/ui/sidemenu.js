@@ -7,7 +7,7 @@ import {
   SIDEMENU_TOGGLE,
   SIDEMENU_OPEN,
   SIDEMENU_CLOSE,
-} from '../../actions/sidemenu'
+} from '../../actions/ui/sidemenu'
 
 const initialState = {
   isOpen: false,

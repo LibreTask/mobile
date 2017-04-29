@@ -17,7 +17,7 @@ import SideMenu from 'react-native-side-menu'
 
 import * as _ from 'lodash'
 
-import * as SideMenuActions from '../actions/sidemenu'
+import * as SideMenuActions from '../actions/ui/sidemenu'
 import * as UserController from '../models/controllers/user'
 
 import * as ProfileStorage from '../models/storage/profile-storage'
@@ -25,8 +25,6 @@ import * as TaskStorage from '../models/storage/task-storage'
 
 import * as UserActions from '../actions/entities/user'
 import * as TaskActions from '../actions/entities/task'
-
-import * as SyncActions from '../actions/sync'
 
 import AppStyles from '../styles'
 import AppConfig from '../config'

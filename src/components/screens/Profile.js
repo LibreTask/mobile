@@ -15,7 +15,7 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import * as SideMenuActions from '../../actions/sidemenu'
+import * as SideMenuActions from '../../actions/ui/sidemenu'
 import * as UserActions from '../../actions/entities/user'
 import * as UserController from '../../models/controllers/user'
 import * as ProfileStorage from '../../models/storage/profile-storage'

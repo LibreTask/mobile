@@ -6,7 +6,6 @@
 import { invoke, constructAuthHeader } from '../../middleware/api'
 
 export const canAccessNetwork = (profile) => {
-
   return profile && profile.currentPlan === 'premium'
 }
 
@@ -63,17 +62,18 @@ export const updateProfile = (profile) => {
   return invoke(request)
 }
 
+
 export const deleteProfile = (profile) => {
 
   const request = {
     endpoint: `user/delete`,
     method: 'DELETE',
-    headers: {
+     headers: {
        'Accept': 'application/json',
        'Content-Type': 'application/json',
        'Authorization': constructAuthHeader(profile.id, profile.password)
-   }
- }
+     }
+  }
 
   return invoke(request)
 }
@@ -81,54 +81,68 @@ export const deleteProfile = (profile) => {
 export const fetchProfile = (userId, password) => {
 
   const request = {
-    endpoint: `user/get-by-id/${userId}`,
+    endpoint: `user/get-profile-by-id/id=${userId}`,
     method: 'GET',
      headers: {
        'Accept': 'application/json',
        'Content-Type': 'application/json',
+       'Authorization': constructAuthHeader(userId, password)
      },
-     body: JSON.stringify({
-       id: userId,
-       password: password,
-     })
   }
 
   return invoke(request)
 }
 
-export const upgradeAccount = (userId, password) => {
+import * as ProfileStorage from '../storage/profile-storage'
 
-  const request = {
-    endpoint: `user/upgrade-account`,
-    method: 'POST',
-     headers: {
-       'Accept': 'application/json',
-       'Content-Type': 'application/json',
-       'Authorization': constructAuthHeader(userId, password)
-     },
-     body: JSON.stringify({
-       id: userId,
-       password: password,
-     })
+// TODO - move this method to general-purpose file
+async function getState() {
+
+  let profile = undefined
+  let isLoggedIn = false
+
+  try {
+    profile = await ProfileStorage.getMyProfile()
+  } catch (err) { /* ignore */ }
+
+  try {
+    isLoggedIn = await ProfileStorage.isLoggedIn()
+  } catch (err) { /* ignore */ }
+
+  return {
+    user: {
+      profile: profile,
+      isLoggedIn: isLoggedIn
+    }
   }
-
-  return invoke(request)
 }
 
-export const downgradeAccount = (userId, password) => {
-  const request = {
-    endpoint: `user/downgrade-account`,
-    method: 'POST',
-     headers: {
-       'Accept': 'application/json',
-       'Content-Type': 'application/json',
-       'Authorization': constructAuthHeader(userId, password)
-     },
-     body: JSON.stringify({
-       id: userId,
-       password: password,
-     })
+export const syncUser = async () => {
+
+  const state = await getState()
+
+  if (!state.user.isLoggedIn) {
+    return;
   }
 
-  return invoke(request)
+  const userId = state.user.profile.id
+  const password = state.user.profile.password
+
+  return fetchProfile(userId, password)
+  .then( response => {
+
+    if (response.profile) {
+
+      // TODO - refine password management scheme
+      response.profile.password = password
+      ProfileStorage.createOrUpdateProfile(response.profile)
+    }
+
+    return response
+  })
+  .catch( err => {
+    // TODO
+    console.log("user err...")
+    console.dir(err)
+  })
 }
