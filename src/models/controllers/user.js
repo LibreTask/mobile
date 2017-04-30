@@ -121,12 +121,12 @@ export const syncUser = async () => {
 
   const state = await getState()
 
-  if (!state.user.isLoggedIn) {
+  if (!state.entities.user.isLoggedIn) {
     return;
   }
 
-  const userId = state.user.profile.id
-  const password = state.user.profile.password
+  const userId = state.entities.user.profile.id
+  const password = state.entities.user.profile.password
 
   return fetchProfile(userId, password)
   .then( response => {

@@ -157,15 +157,15 @@ export const syncTasks = async (lastSuccessfulSyncDateTimeUtc) => {
   console.log("state...")
   console.dir(state)
 
-  if (!state.user.isLoggedIn) {
+  if (!state.entities.user.isLoggedIn) {
     return;
   }
 
   // TODO - refine
   const isoDateTimeUtc = lastSuccessfulSyncDateTimeUtc.toISOString()
 
-  const userId = state.user.profile.id
-  const password = state.user.profile.password
+  const userId = state.entities.user.profile.id
+  const password = state.entities.user.profile.password
 
   // TODO - pass in (and store) the actual date
 

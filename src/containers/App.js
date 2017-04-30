@@ -141,9 +141,9 @@ class AppContainer extends Component {
 
 const mapStateToProps = (state) => ({
   sideMenuIsOpen: state.ui.sideMenu.isOpen,
-  isLoggedIn: state.user.isLoggedIn,
-  profile: state.user.profile,
-  isSyncing: state.sync.isSyncing
+  isLoggedIn: state.entities.user.isLoggedIn,
+  profile: state.entities.user.profile,
+//  isSyncing: state.sync.isSyncing
 })
 
 const mapDispatchToProps = {

@@ -587,8 +587,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, ownProps) => {
 
   return {
-    isLoggedIn: state.user.isLoggedIn,
-    profile: state.user.profile,
+    isLoggedIn: state.entities.user.isLoggedIn,
+    profile: state.entities.user.profile,
     tasks: state.entities.tasks,
     showCompletedTasks: state.ui.taskview.showCompletedTasks,
     shouldRefreshTaskView: state.ui.taskview.shouldRefreshTaskView
