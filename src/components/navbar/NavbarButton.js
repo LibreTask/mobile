@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     top: 4,
   },
   leftNavButton: {
-    left: 20,
+    left: 40,
     top: 4,
   },
 })
