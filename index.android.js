@@ -9,4 +9,4 @@ import { AppRegistry } from 'react-native'
 import AppContainer from './src/containers'
 import AppConstants from './src/constants'
 
-AppRegistry.registerComponent('Endora', () => AppContainer)
+AppRegistry.registerComponent('Algernon', () => AppContainer)
