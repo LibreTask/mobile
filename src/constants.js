@@ -13,6 +13,10 @@ const CONSTANTS = {
   WEBSITE_LINK: 'https://algernon.io',
   SOURCE_CODE_LINK: 'https://github.com/AlgernonLabs/mobile',
 
+  LEFT_NAV_LOCATION: 'LEFT_NAV_LOCATION',
+  MEDIUM_RIGHT_NAV_LOCATION: 'MEDIUM_RIGHT_NAV_LOCATION',
+  FAR_RIGHT_NAV_LOCATION: 'FAR_RIGHT_NAV_LOCATION',
+
   APP_NAME: 'Algernon',
 
   // TODO - move these button constants to more appropriate location

@@ -14,10 +14,11 @@ import AppConstants from '../../constants'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-class NavbarRightButton extends Component {
+class NavbarButton extends Component {
   static propTypes = {
     onPress: PropTypes.func.isRequired,
     icon: PropTypes.string.isRequired,
+    navButtonLocation: PropTypes.string.isRequired,
   }
 
   render = () => {
@@ -65,4 +66,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default NavbarRightButton
+export default NavbarButton
