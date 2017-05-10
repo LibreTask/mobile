@@ -522,9 +522,23 @@ class MultiTaskPage extends Component {
         // for this scenario, like a link, etc
 
         return (
-          <Text style={[AppStyles.padding, AppStyles.paddingVertical,  AppStyles.baseTextLarge]}>
-            Create a task.
-          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              this.props.navigator.push({
+                title: 'Create Task',
+                component: CreateTask,
+                index: 2,
+                transition: 'FloatFromBottom',
+              })
+            }}
+            activeOpacity={0.7}>
+            <View style={[AppStyles.padding, styles.taskRowInner]}>
+
+              <Text style={[AppStyles.baseText, AppStyles.linkText, AppStyles.centered]}>
+                {'Create Task'}
+              </Text>
+            </View>
+          </TouchableOpacity>
         )
     }
 
