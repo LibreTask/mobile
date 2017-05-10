@@ -58,8 +58,12 @@ class CreateTask extends Component {
     }
 
     let taskName = this.state.taskName || ''
-    let taskNotes = this.state.taskNotes || ''
-    let dueDateTimeUtc = this.state.taskDueDateTimeUtc
+
+    // only include optional attributes if their icon is selected
+    let taskNotes = this.state.notesIconSelected
+      ? this.state.taskNotes : ''
+    let taskDueDateTimeUtc = this.state.calendarIconSelected
+      ? this.state.taskDueDateTimeUtc : undefined
 
     let nameValidationError = ''
     let notesValidationError = ''
@@ -75,6 +79,7 @@ class CreateTask extends Component {
 
     if (nameValidationError) {
       this.setState({
+        creationError: '',
         nameValidationError: nameValidationError,
         notesValidationError: notesValidationError
       })
@@ -241,6 +246,10 @@ class CreateTask extends Component {
           </View>
 
           {this._constructNotesTextEdit()}
+
+          <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
+            {this.state.creationError}
+          </Text>
 
           <View style={[AppStyles.row]}>
 

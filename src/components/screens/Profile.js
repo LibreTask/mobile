@@ -156,6 +156,8 @@ class Profile extends Component {
 
     if (emailValidationError || nameValidationError) {
       this.setState({
+        updateError: '',
+        updateSuccess: '',
         emailValidationError: emailValidationError,
         nameValidationError: nameValidationError
       })
@@ -303,6 +305,14 @@ class Profile extends Component {
               {this.state.emailValidationError}
             </Text>
           </View>
+
+          <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
+            {this.state.updateError}
+          </Text>
+
+          <Text style={[AppStyles.baseTextSmall, AppStyles.successText]}>
+            {this.state.updateSuccess}
+          </Text>
 
           <View style={[AppStyles.row]}>
             <View style={[AppStyles.button]}>

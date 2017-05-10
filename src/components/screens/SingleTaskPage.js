@@ -155,6 +155,8 @@ class SingleTaskPage extends Component {
 
     if (nameValidationError || notesValidationError) {
       this.setState({
+        updateError: '',
+        updateSuccess: '',
         nameValidationError: nameValidationError,
         notesValidationError: notesValidationError
       })

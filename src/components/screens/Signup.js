@@ -82,6 +82,7 @@ class Signup extends Component {
     if (passwordValidationError || emailValidationError
       || confirmPasswordValidationError) {
       this.setState({
+        signupError: '',
         emailValidationError: emailValidationError,
         passwordValidationError: passwordValidationError,
         confirmPasswordValidationError: confirmPasswordValidationError
@@ -203,6 +204,10 @@ class Signup extends Component {
               {this.state.confirmPasswordValidationError}
             </Text>
           </View>
+
+          <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
+            {this.state.signupError}
+          </Text>
 
           <View style={[AppStyles.button]}>
             <Button
