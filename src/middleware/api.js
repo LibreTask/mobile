@@ -6,7 +6,7 @@
 import NoConnection from './errors/NoConnection'
 import ErrorCodes from './errors/ErrorCodes'
 
-const API_ROOT = 'http://192.168.1.111:3001/api/v1/client/'
+const API_ROOT = 'http://192.168.1.111:3001/api/v1/'
 const Buffer = require('buffer').Buffer
 
 export function constructAuthHeader(userId, password) {

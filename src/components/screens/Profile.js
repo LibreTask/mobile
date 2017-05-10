@@ -42,7 +42,6 @@ class Profile extends Component {
       isUpdating: false,
       updateError: '',
       updateSuccess: '',
-      nameValidationError: '',
       emailValidationError: '',
       myProfile: this.props.profile
     }
@@ -140,26 +139,19 @@ class Profile extends Component {
 
   _onSubmitEdit = async () => {
 
-    let updatedName = this.state.myProfile.name || ''
     let updatedEmail = this.state.myProfile.email || ''
 
     let emailValidationError = ''
-    let nameValidationError = ''
 
     if (!Validator.isEmail(updatedEmail)) {
       emailValidationError = 'Email is not valid'
     }
 
-    if (!Validator.isLength(updatedName, {min: 0, max: 100})) {
-      nameValidationError = 'Name must be between 0 and 100 characters'
-    }
-
-    if (emailValidationError || nameValidationError) {
+    if (emailValidationError) {
       this.setState({
         updateError: '',
         updateSuccess: '',
         emailValidationError: emailValidationError,
-        nameValidationError: nameValidationError
       })
 
       return; // validation failed; cannot updated profile
@@ -170,7 +162,6 @@ class Profile extends Component {
       updateSuccess: '',
       updateError: '',
       emailValidationError: '',
-      nameValidationError: ''
     })
 
     UserController.updateProfile(this.state.myProfile)
@@ -271,23 +262,6 @@ class Profile extends Component {
           <Text style={[AppStyles.errorText]}>
             {this.state.updateError}
           </Text>
-
-          <View style={[AppStyles.paddingVertical]}>
-            <Text style={[AppStyles.baseText]}>
-              Name
-            </Text>
-            <TextInput
-              style={[AppStyles.baseText]}
-              onChangeText={(updatedName) => {
-                let profile = this.state.myProfile
-                profile.name = updatedName
-                this.setState({ myProfile: profile })
-              }}
-              value={this.state.myProfile.name}/>
-              <Text style={[AppStyles.errorText]}>
-                {this.state.nameValidationError}
-              </Text>
-          </View>
 
           <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>
