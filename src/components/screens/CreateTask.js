@@ -6,6 +6,9 @@
 import React, { Component, PropTypes } from 'react'
 import {
   Button,
+  DatePickerAndroid,
+  Keyboard,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -47,7 +50,8 @@ class CreateTask extends Component {
       nameValidationError: '',
       notesValidationError: '',
       notesIconSelected: false,
-      calendarIconSelected: false
+      calendarIconSelected: false,
+      displayingDateDialog: false,
     }
   }
 
@@ -73,7 +77,7 @@ class CreateTask extends Component {
     }
 
     if (this.state.notesIconSelected
-        && !Validator.isLength(notes, {min: 0, max: 5000})) {
+        && !Validator.isLength(taskNotes, {min: 0, max: 5000})) {
         notesValidationError = 'Notes must be between 0 and 5000 characters'
     }
 
@@ -163,6 +167,64 @@ class CreateTask extends Component {
     )
   }
 
+  _renderDatePicker = () => {
+
+    if (Platform.OS === 'ios') {
+      this._renderIOSDatePicker()
+    } else {
+      this._renderAndroidDatePicker()
+    }
+
+    Keyboard.dismiss()
+  }
+
+  _renderIOSDatePicker = () => {
+    // TODO
+  }
+
+  _renderAndroidDatePicker = async () => {
+    try {
+      var options = this.taskDueDateTimeUtc ?
+        {date: this.state.taskDueDateTimeUtc} : {}
+
+      var newState = {
+        displayingDateDialog: false // stop displaying in all scenarios
+      };
+      const {action, year, month, day} = await DatePickerAndroid.open(options);
+      if (action !== DatePickerAndroid.dismissedAction) {
+        var date = new Date(year, month, day);
+        newState['taskDueDateTimeUtc'] = date
+      }
+      this.setState(newState);
+    } catch ({code, message}) {
+      console.warn(`Error in example '${stateKey}': `, message);
+    }
+  }
+
+  _constructDatePicker = () => {
+
+    if (!this.state.calendarIconSelected) {
+      return <View/>
+    }
+
+    // TODO - format date in cleaner way
+
+    return (
+      <View style={[AppStyles.paddingVertical]}>
+        <Text style={[AppStyles.baseText]}>Due Date</Text>
+        <TextInput
+          style={[AppStyles.baseText]}
+          onFocus={() => {
+            this.setState({
+              displayingDateDialog: true
+            })
+          }}
+          value={this.state.taskDueDateTimeUtc ?
+             this.state.taskDueDateTimeUtc.toLocaleString() : ''}/>
+      </View>
+    )
+  }
+
   _constructNavbar = () => {
 
     let title = 'Create Task'
@@ -206,7 +268,7 @@ class CreateTask extends Component {
         <TouchableOpacity
           onPress={() => {
             this.setState({
-              calendarIconSelected: !this.state.calendarIconSelected
+              calendarIconSelected: !this.state.calendarIconSelected,
             })
           }}
           style={styles.mediumIcon}
@@ -221,6 +283,12 @@ class CreateTask extends Component {
   }
 
   render = () => {
+
+    // TODO - move this to more suitable area
+    if (this.state.displayingDateDialog) {
+      this._renderDatePicker()
+    }
+
     return (
       <ScrollView automaticallyAdjustContentInsets={false}
         ref={'scrollView'}
@@ -246,6 +314,7 @@ class CreateTask extends Component {
           </View>
 
           {this._constructNotesTextEdit()}
+          {this._constructDatePicker()}
 
           <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
             {this.state.creationError}
