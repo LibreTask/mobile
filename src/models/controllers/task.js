@@ -195,7 +195,7 @@ export const syncTasks = async (lastSuccessfulSyncDateTimeUtc) => {
     /*
 
     if (response.tasks && response.length > 0) {
-      TaskStorage.createOrUpdateTasks(response.state.entities.task.tasks)
+      TaskStorage.createOrUpdateTasks(response.state.entities.tasks)
     }
 
     */

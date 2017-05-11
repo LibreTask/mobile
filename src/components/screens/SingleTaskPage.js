@@ -9,6 +9,7 @@ import {
   Button,
   DatePickerAndroid,
   DatePickerIOS,
+  Keyboard,
   Picker,
   Platform,
   ScrollView,
@@ -56,7 +57,8 @@ class SingleTaskPage extends Component {
       task: this._getTask(),
 
       nameValidationError: '',
-      notesValidationError: ''
+      notesValidationError: '',
+      displayingDateDialog: false
     }
   }
 
@@ -77,7 +79,7 @@ class SingleTaskPage extends Component {
           text: 'Yes',
           onPress: async () => {
 
-            let task = this.state.editedTask
+            let task = this.state.task
             task.isDeleted = true
 
             if (UserController.canAccessNetwork(this.props.profile)) {
@@ -219,60 +221,41 @@ class SingleTaskPage extends Component {
     }, 1500) // remove message after 1.5 seconds
   }
 
-  _showDatePicker = async () => {
-
-    let chosenDate = this.state.task.dueDateTimeUtc;
-    let minDate = new Date()
-    let maxDate = new Date()
-    maxDate.setFullYear(maxDate.getFullYear() + 10) // aribtrarily add 10 years
-
-    if (!chosenDate) {
-      chosenDate = new Date() // aribtrarily choose today
-    }
+  _renderDatePicker = () => {
 
     if (Platform.OS === 'ios') {
-      // TODO -
+      this._renderIOSDatePicker()
     } else {
-
-      let options = {
-        date: chosenDate,
-        minDate: minDate,
-        maxDate: maxDate
-      }
-
-      try {
-        const {year, month, day} = await DatePickerAndroid.open(options)
-        let task = this.state.task
-        task.dueDateTimeUtc = (new Date(year, month, day)).toString()
-        this.setState({ task: task })
-      } catch (error) {
-        console.log("error: " + error)
-        // TODO -
-      }
+      this._renderAndroidDatePicker()
     }
+
+    Keyboard.dismiss()
   }
 
-  _currentDateToText = () => {
+  _renderIOSDatePicker = () => {
+    // TODO
+  }
 
-    // TODO - refine this approach
+  _renderAndroidDatePicker = async () => {
+    try {
+      var options = this.state.task.dueDateTimeUtc ?
+        {date: new Date(this.state.task.dueDateTimeUtc)} : {}
 
-    let dateString;
-    let dateStringStyle = [AppStyles.baseText]
-    if (this.state.task.dueDateTimeUtc) {
+      let updatedTask = this.state.task
 
-      // TODO - refine how we format date (and move to utils)
+      const {action, year, month, day} = await DatePickerAndroid.open(options);
 
-      dateString = dateFormat(this.state.task.dueDateTimeUtc, 'mmmm d')
-    } else {
-      dateString = 'Select a due date'
-      dateStringStyle.push(AppStyles.linkText)
+      if (action !== DatePickerAndroid.dismissedAction) {
+        updatedTask.dueDateTimeUtc = new Date(year, month, day)
+      }
+
+      this.setState({
+        task: updatedTask,
+        displayingDateDialog: false
+      });
+    } catch ({code, message}) {
+      console.warn(`Error in example '${stateKey}': `, message);
     }
-
-    return (
-      <Text style={dateStringStyle}>
-        {dateString}
-      </Text>
-    )
   }
 
   _constructNavbar = () => {
@@ -325,31 +308,24 @@ class SingleTaskPage extends Component {
 
   render = () => {
 
-    /*
+    // TODO - move this to more suitable area
+    if (this.state.displayingDateDialog) {
+      this._renderDatePicker()
+    }
 
-    TODO
+    // TODO - refine this approach
 
-    <View>
-      <Text style={[AppStyles.baseText]}>Priority</Text>
-      <TextInput
-        style={[AppStyles.baseText]}
-        onChangeText={(updatedNotes) => this.setState({
-          currenNotes: updatedNotes
-        })}
-        value={this.state.currentNotes}/>
-    </View>
+    let dateString;
+    let dateStringStyle = [AppStyles.baseText]
+    if (this.state.task.dueDateTimeUtc) {
 
-    <View>
-      <Text style={[AppStyles.baseText]}>Recurring Status</Text>
-      <TextInput
-        style={[AppStyles.baseText]}
-        onChangeText={(updatedNotes) => this.setState({
-          currenNotes: updatedNotes
-        })}
-        value={this.state.currentNotes}/>
-    </View>
-    */
+      // TODO - refine how we format date (and move to utils)
 
+      dateString = dateFormat(this.state.task.dueDateTimeUtc, 'mmmm d')
+    } else {
+      dateString = 'Select a due date'
+      dateStringStyle.push(AppStyles.linkText)
+    }
 
     return (
       <ScrollView automaticallyAdjustContentInsets={false}
@@ -399,12 +375,15 @@ class SingleTaskPage extends Component {
           </View>
 
           <View style={[AppStyles.paddingVertical]}>
-          <Text style={[AppStyles.baseText]}>Due Date</Text>
-          <TouchableOpacity
-            style={[ AppStyles.paddingRight, AppStyles.paddingLeft]}
-            onPress={this._showDatePicker.bind(this)}>
-              {this._currentDateToText()}
-            </TouchableOpacity>
+            <Text style={[AppStyles.baseText]}>Due Date</Text>
+            <TextInput
+              style={[AppStyles.baseText, dateStringStyle]}
+              onFocus={() => {
+                this.setState({
+                  displayingDateDialog: true
+                })
+              }}
+              value={dateString}/>
           </View>
         </View>
       </ScrollView>

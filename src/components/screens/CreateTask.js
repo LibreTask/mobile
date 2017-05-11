@@ -184,7 +184,7 @@ class CreateTask extends Component {
 
   _renderAndroidDatePicker = async () => {
     try {
-      var options = this.taskDueDateTimeUtc ?
+      var options = this.state.taskDueDateTimeUtc ?
         {date: this.state.taskDueDateTimeUtc} : {}
 
       var newState = {
