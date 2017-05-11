@@ -37,13 +37,18 @@ class TaskRow extends Component {
   render = () => {
     let { title, onPress } = this.props;
 
+    let rowStyle = this.state.isCurrentlyCompleted ?
+      styles.completedRow : styles.uncompletedRow
+
     return (
       <TouchableOpacity
         onPress={onPress}
         activeOpacity={0.7}>
-        <View style={[AppStyles.padding, styles.taskRowInner]}>
+        <View style={[AppStyles.padding, styles.taskRowInner, rowStyle]}>
           <CheckBox
             label={''}
+            containerStyle={styles.container}
+            checkboxStyle={styles.checkboxContainer}
             checked={this.state.isCurrentlyCompleted}
             onChange={(checked) => {
 
@@ -72,6 +77,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     flexDirection: 'row',
     flex: 1,
+  },
+  completedRow: {
+    opacity: 0.3
+  },
+  uncompletedRow: {
+    opacity: 1
+  },
+
+  // increase padding + margin so that rows are easier to check
+  checkbox: {
+    padding: 10
+  },
+  checkboxContainer: {
+    marginLeft: 5,
+    marginRight: 30
   },
 })
 

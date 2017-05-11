@@ -415,7 +415,7 @@ class SingleTaskPage extends Component {
 const mapStateToProps = (state) => ({
   isLoggedIn: state.entities.user.isLoggedIn,
   profile: state.entities.user.profile,
-  tasks: state.entities.tasks,
+  tasks: state.entities.task.tasks,
 })
 
 const mapDispatchToProps = {

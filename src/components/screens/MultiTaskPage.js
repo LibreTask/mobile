@@ -480,7 +480,7 @@ class MultiTaskPage extends Component {
     )
   }
 
-  _getTasksToDisplay() {
+  _getTasksToDisplayFOOBAR() {
 
     // TODO - utilize this logic
 
@@ -603,7 +603,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     isLoggedIn: state.entities.user.isLoggedIn,
     profile: state.entities.user.profile,
-    tasks: state.entities.tasks,
+    tasks: state.entities.task.tasks,
     showCompletedTasks: state.ui.taskview.showCompletedTasks,
     shouldRefreshTaskView: state.ui.taskview.shouldRefreshTaskView
   }

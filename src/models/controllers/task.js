@@ -21,6 +21,8 @@ export const constructTaskLocally = (taskName, taskNotes,
     name: taskName,
     notes: taskNotes,
     creationDateTimeUtc: creationDateTimeUtc,
+    isCompleted: false,
+    completionDateTimeUtc: undefined,
 
     // initially updateTime = creationTime
     updatedAtDateTimeUtc: creationDateTimeUtc,
@@ -193,7 +195,7 @@ export const syncTasks = async (lastSuccessfulSyncDateTimeUtc) => {
     /*
 
     if (response.tasks && response.length > 0) {
-      TaskStorage.createOrUpdateTasks(response.state.entities.tasks)
+      TaskStorage.createOrUpdateTasks(response.state.entities.task.tasks)
     }
 
     */
