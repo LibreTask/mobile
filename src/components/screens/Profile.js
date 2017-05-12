@@ -43,7 +43,7 @@ class Profile extends Component {
       updateError: '',
       updateSuccess: '',
       emailValidationError: '',
-      myProfile: this.props.profile
+      myProfile: this.props.user.profile
     }
   }
 
@@ -54,7 +54,7 @@ class Profile extends Component {
     UserController.upgradeAccount(userId, pw)
     .then(response => {
 
-      let profile = this.props.profile
+      let profile = this.props.user.profile
       profile.plan = 'premium' // TODO - constants
 
       ProfileStorage.createOrUpdateProfile(profile)
@@ -79,7 +79,7 @@ class Profile extends Component {
     let pw = this.state.myProfile.password
     UserController.downgradeAccount(userId, pw)
     .then(response => {
-      let profile = this.props.profile
+      let profile = this.props.user.profile
       profile.plan = 'basic' // TODO - constants
 
       ProfileStorage.createOrUpdateProfile(profile)
@@ -111,7 +111,10 @@ class Profile extends Component {
         {
           text: 'Yes',
           onPress: async () => {
-            UserController.deleteProfile(this.props.myProfile)
+            UserController.deleteProfile(this.state.myProfile)
+              .then(response => {
+                this._deleteProfileLocallyAndRedirect()
+              })
               .catch(error => {
                 if (error.name === 'NoConnection') {
                   this._deleteProfileLocallyAndRedirect()
@@ -168,7 +171,7 @@ class Profile extends Component {
     .then(response => {
 
         // TODO - handle password better
-        response.password = this.state.myProfile.password
+        response.password = this.props.user.password
 
         ProfileStorage.createOrUpdateProfile(response.profile)
         this.props.createOrUpdateProfile(response.profile)
@@ -280,14 +283,6 @@ class Profile extends Component {
             </Text>
           </View>
 
-          <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
-            {this.state.updateError}
-          </Text>
-
-          <Text style={[AppStyles.baseTextSmall, AppStyles.successText]}>
-            {this.state.updateSuccess}
-          </Text>
-
           <View style={[AppStyles.row]}>
             <View style={[AppStyles.button]}>
               <Button
@@ -315,7 +310,7 @@ class Profile extends Component {
 
 const mapStateToProps = (state) => ({
   isLoggedIn: state.entities.user.isLoggedIn,
-  profile: state.entities.user.profile
+  user: state.entities.user
 })
 
 const mapDispatchToProps = {
