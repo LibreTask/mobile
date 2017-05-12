@@ -18,6 +18,7 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
+import dateFormat from 'dateformat'
 import Validator from 'validator'
 
 import * as TaskActions from '../../actions/entities/task'
@@ -207,7 +208,8 @@ class CreateTask extends Component {
       return <View/>
     }
 
-    // TODO - format date in cleaner way
+    let dateString = this.state.taskDueDateTimeUtc ?
+      dateFormat(this.state.taskDueDateTimeUtc, 'mmmm d yyyy') : ''
 
     return (
       <View style={[AppStyles.paddingVertical]}>
@@ -219,8 +221,7 @@ class CreateTask extends Component {
               displayingDateDialog: true
             })
           }}
-          value={this.state.taskDueDateTimeUtc ?
-             this.state.taskDueDateTimeUtc.toLocaleString() : ''}/>
+          value={dateString}/>
       </View>
     )
   }

@@ -321,7 +321,7 @@ class SingleTaskPage extends Component {
 
       // TODO - refine how we format date (and move to utils)
 
-      dateString = dateFormat(this.state.task.dueDateTimeUtc, 'mmmm d')
+      dateString = dateFormat(this.state.task.dueDateTimeUtc, 'mmmm d yyyy')
     } else {
       dateString = 'Select a due date'
       dateStringStyle.push(AppStyles.linkText)
