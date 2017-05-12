@@ -46,6 +46,7 @@ export const signup = (email, password) => {
 }
 
 export const updateProfile = (profile) => {
+
   const request = {
     endpoint: `user/update`,
     method: 'POST',

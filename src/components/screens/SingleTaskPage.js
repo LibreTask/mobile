@@ -85,7 +85,7 @@ class SingleTaskPage extends Component {
             if (UserController.canAccessNetwork(this.props.profile)) {
 
               TaskController.deleteTask(
-                this.task.id,
+                task.id,
                 this.props.profile.id,
                 this.props.profile.password
               )
