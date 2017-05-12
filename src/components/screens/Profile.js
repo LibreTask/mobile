@@ -19,6 +19,7 @@ import * as SideMenuActions from '../../actions/ui/sidemenu'
 import * as UserActions from '../../actions/entities/user'
 import * as UserController from '../../models/controllers/user'
 import * as ProfileStorage from '../../models/storage/profile-storage'
+import * as TaskActions from '../../actions/entities/task'
 
 import NavigationBar from 'react-native-navbar'
 import NavbarTitle from '../navbar/NavbarTitle'
@@ -129,8 +130,9 @@ class Profile extends Component {
   }
 
   _deleteProfileLocallyAndRedirect = () => {
-    ProfileStorage.deleteProfile()
     this.props.deleteProfile()
+    this.props.deleteAllTasks()
+    ProfileStorage.logout()
 
      // profile deletion ui update
      this.props.navigator.replace({
@@ -317,6 +319,7 @@ const mapDispatchToProps = {
   createOrUpdateProfile: UserActions.createOrUpdateProfile,
   deleteProfile: UserActions.deleteProfile,
   toggleSideMenu: SideMenuActions.toggleSideMenu,
+  deleteAllTasks: TaskActions.deleteAllTasks,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile)
