@@ -88,6 +88,25 @@ class MultiTaskPage extends Component {
     for (let taskId in tasks) {
       let task = tasks[taskId]
 
+      if (!task) continue;
+
+      if (task.isDeleted) continue; // do not display deleted tasks
+
+      if (task.isCompleted) {
+
+        // continue if, for some reason, we do not have the date recorded
+        if (!task.completionDateTimeUtc) continue;
+
+        // only display completed tasks less than one day ago
+        if (new Date(task.completionDateTimeUtc) < DateUtils.yesterday()) {
+          continue;
+        }
+
+        // do not display the completed task, unless the
+        // showCompletedTasks flag is set to true
+        if (!this.props.showCompletedTasks) continue;
+      }
+
       tasksToDisplay.push(task)
     }
 
@@ -478,40 +497,6 @@ class MultiTaskPage extends Component {
         leftButton={leftNavBarButton}
         rightButton={rightNavButtons}/>
     )
-  }
-
-  _getTasksToDisplayFOOBAR() {
-
-    // TODO - utilize this logic
-
-    let tasks = []
-
-    for (let taskId in this.props.tasks) {
-      let task = this.props.tasks[taskId]
-
-      if (!task) continue;
-
-      if (task.isDeleted) continue; // do not display deleted tasks
-
-      if (task.isCompleted) {
-
-        // continue if, for some reason, we do not have the date recorded
-        if (!task.completionDateTimeUtc) continue;
-
-        // only display completed tasks less than one day ago
-        if (new Date(task.completionDateTimeUtc) < DateUtils.yesterday()) {
-          continue;
-        }
-
-        // do not display the completed task, unless the
-        // showCompletedTasks flag is set to true
-        if (!this.props.showCompletedTasks) continue;
-      }
-
-      tasks.push(task)
-    }
-
-    return this._sortTasksByDateAndInsertHeaders(tasks)
   }
 
   _renderTasks = () => {
