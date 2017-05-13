@@ -114,12 +114,42 @@ class MultiTaskPage extends Component {
   }
 
   componentWillReceiveProps = (nextProps) => {
-    if (!_.isEqual(this.props.tasks, nextProps.tasks)) {
-      let tasks = this._filterTasksToDisplay(nextProps.tasks)
-      this.setState({dataSource: this.state.dataSource.cloneWithRows(tasks)})
-    }
+    this._refreshEntireList(nextProps.tasks)
+  }
 
-    // TODO - "should refresh view"
+  // TODO - reevaluate this solution;
+    // it probably is a horrible misuse of React Native
+  _refreshEntireList = (tasks) => {
+    let filteredTasks = this._filterTasksToDisplay(tasks)
+    this.setState({
+      dataSource: new ListView.DataSource({
+        /*
+          TODO - Fix this stupid hack! Not safe for production.
+
+          ReactNative's ListView behavior is such that an element is not
+          re-rendered unless the function rowHasChanged returns true.
+          That aspect of ListView makes our use-case extremely
+          difficult to achieve.
+
+          We want to update every element of the ListView if the state
+          has changed. That seems like a simple ask, right? No! We do
+          not store whether a task should be collapsed in the actual
+          dataSource state object, because that leads to unnecessary
+          duplication, especially if a category of tasks has many
+          elements.
+
+          Until a better fix is discovered, we will recreate the
+          dataSource object so that a complete re-render is forced.
+          To be precise, an ideal solution would be to completely
+          remove this setState callback and still have the ListView
+          update every element whenever the state is updated.
+
+          Related:
+          http://stackoverflow.com/questions/33436902/how-force-redraw-listview-when-this-state-changed-but-not-the-datasource
+        */
+        rowHasChanged: (row1, row2) => true,
+      }).cloneWithRows(filteredTasks)
+    })
   }
 
   _sortTasksByDateAndInsertHeaders = (tasks) => {
@@ -306,15 +336,16 @@ class MultiTaskPage extends Component {
               task.isCompleted = isCompleted
               task.completionDateTimeUtc = (new Date()).getTime()
 
-              let userId = this.props.profile.id
-              let password = this.props.profile.password
-
               if (!task.isCompleted && task.completionDateTimeUtc) {
                 // if the task is "unchecked", delete the completion time
                 task.completionDateTimeUtc = undefined
               }
 
               if (UserController.canAccessNetwork(this.props.profile)) {
+
+                let userId = this.props.profile.id
+                let password = this.props.profile.password
+
                 TaskController.updateTask(task, userId, password)
                    .then(response => {
                      // use the task in the reponse; it is the most up-to-date
@@ -398,36 +429,7 @@ class MultiTaskPage extends Component {
           }
 
           this.setState(stateUpdate, () => {
-            let tasks = this._filterTasksToDisplay(this.props.tasks)
-            this.setState({
-              dataSource: new ListView.DataSource({
-                /*
-                  TODO - Fix this stupid hack! Not safe for production.
-
-                  ReactNative's ListView behavior is such that an element is not
-                  re-rendered unless the function rowHasChanged returns true.
-                  That aspect of ListView makes our use-case extremely
-                  difficult to achieve.
-
-                  We want to update every element of the ListView if the state
-                  has changed. That seems like a simple ask, right? No! We do
-                  not store whether a task should be collapsed in the actual
-                  dataSource state object, because that leads to unnecessary
-                  duplication, especially if a category of tasks has many
-                  elements.
-
-                  Until a better fix is discovered, we will recreate the
-                  dataSource object so that a complete re-render is forced.
-                  To be precise, an ideal solution would be to completely
-                  remove this setState callback and still have the ListView
-                  update every element whenever the state is updated.
-
-                  Related:
-                  http://stackoverflow.com/questions/33436902/how-force-redraw-listview-when-this-state-changed-but-not-the-datasource
-                */
-                rowHasChanged: (row1, row2) => true,
-              }).cloneWithRows(tasks)
-            })
+            this._refreshEntireList(this.props.tasks)
           })
         }}>
         <View style={[AppStyles.row]}>
