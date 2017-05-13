@@ -55,7 +55,7 @@ class MultiTaskPage extends Component {
       rowHasChanged: (row1, row2) => true,
     })
 
-    let tasks = this._getTasksToDisplay()
+    let tasks = this._filterTasksToDisplay(this.props.tasks)
 
     this.state = {
       willFocusSubscription: null,
@@ -111,10 +111,6 @@ class MultiTaskPage extends Component {
     }
 
     return this._sortTasksByDateAndInsertHeaders(tasksToDisplay)
-  }
-
-  _getTasksToDisplay = () => {
-    return this._filterTasksToDisplay(this.props.tasks)
   }
 
   componentWillReceiveProps = (nextProps) => {
