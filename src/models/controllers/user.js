@@ -6,7 +6,11 @@
 import { invoke, constructAuthHeader } from '../../middleware/api'
 
 export const canAccessNetwork = (profile) => {
-  return profile && profile.currentPlan === 'premium'
+
+  let today = new Date()
+
+  return profile && profile.currentPlan === 'premium' &&
+    new Date(profile.planExpirationDateTimeUtc) > today
 }
 
 export const login = (email, password) => {
