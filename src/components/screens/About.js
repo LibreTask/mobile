@@ -3,7 +3,7 @@
  * @license https://github.com/AlgernonLabs/mobile/blob/master/LICENSE.md
  */
 
-import React, { Component } from 'react'
+import React, { Component } from "react";
 import {
   Button,
   Linking,
@@ -11,48 +11,51 @@ import {
   Text,
   TouchableOpacity,
   ScrollView
-} from 'react-native'
-import { connect } from 'react-redux'
+} from "react-native";
+import { connect } from "react-redux";
 
-import * as SideMenuActions from '../../actions/ui/sidemenu'
+import * as SideMenuActions from "../../actions/ui/sidemenu";
 
-import NavigationBar from 'react-native-navbar'
-import NavbarTitle from '../navbar/NavbarTitle'
-import NavbarButton from '../navbar/NavbarButton'
+import NavigationBar from "react-native-navbar";
+import NavbarTitle from "../navbar/NavbarTitle";
+import NavbarButton from "../navbar/NavbarButton";
 
-import AppConfig from '../../config'
-import AppStyles from '../../styles'
-import AppConstants from '../../constants'
+import AppConfig from "../../config";
+import AppStyles from "../../styles";
+import AppConstants from "../../constants";
 
 class About extends Component {
-	static componentName = 'About'
+  static componentName = "About";
 
   _constructNavbar = () => {
-
-    let title = 'About'
+    let title = "About";
     let leftNavBarButton = (
       <NavbarButton
         navButtonLocation={AppConstants.LEFT_NAV_LOCATION}
-        onPress={()=>{
-          this.props.toggleSideMenu()
+        onPress={() => {
+          this.props.toggleSideMenu();
         }}
-        icon={'bars'} />
-    )
+        icon={"bars"}
+      />
+    );
 
     return (
       <NavigationBar
         title={<NavbarTitle title={title || null} />}
-        statusBar={{style: 'light-content', hidden: false}}
+        statusBar={{ style: "light-content", hidden: false }}
         style={[AppStyles.navbar]}
         tintColor={AppConfig.primaryColor}
-        leftButton={leftNavBarButton}/>
-    )
-  }
+        leftButton={leftNavBarButton}
+      />
+    );
+  };
 
   render = () => {
     return (
-      <ScrollView automaticallyAdjustContentInsets={false}
-        style={[AppStyles.container]}>
+      <ScrollView
+        automaticallyAdjustContentInsets={false}
+        style={[AppStyles.container]}
+      >
 
         {this._constructNavbar()}
 
@@ -71,9 +74,9 @@ class About extends Component {
           <TouchableOpacity
             style={[AppStyles.paddingVertical]}
             onPress={() => {
-              Linking.openURL(AppConstants.WEBSITE_LINK)
+              Linking.openURL(AppConstants.WEBSITE_LINK);
             }}
-            >
+          >
             <Text style={[AppStyles.baseTextSmall, AppStyles.linkText]}>
               Website
             </Text>
@@ -84,9 +87,9 @@ class About extends Component {
           <TouchableOpacity
             style={[AppStyles.paddingVertical]}
             onPress={() => {
-              Linking.openURL(AppConstants.SOURCE_CODE_LINK)
+              Linking.openURL(AppConstants.SOURCE_CODE_LINK);
             }}
-            >
+          >
             <Text style={[AppStyles.baseTextSmall, AppStyles.linkText]}>
               Source Code
             </Text>
@@ -97,9 +100,9 @@ class About extends Component {
           <TouchableOpacity
             style={[AppStyles.paddingVertical]}
             onPress={() => {
-              Linking.openURL(AppConstants.PRODUCT_PRIVACY_LINK)
+              Linking.openURL(AppConstants.PRODUCT_PRIVACY_LINK);
             }}
-            >
+          >
             <Text style={[AppStyles.baseTextSmall, AppStyles.linkText]}>
               Privacy Policy
             </Text>
@@ -110,9 +113,9 @@ class About extends Component {
           <TouchableOpacity
             style={[AppStyles.paddingVertical]}
             onPress={() => {
-              Linking.openURL(AppConstants.PRODUCT_TERMS_LINK)
+              Linking.openURL(AppConstants.PRODUCT_TERMS_LINK);
             }}
-            >
+          >
             <Text style={[AppStyles.baseTextSmall, AppStyles.linkText]}>
               Terms of Service
             </Text>
@@ -122,14 +125,16 @@ class About extends Component {
 
         </View>
       </ScrollView>
-    )
-  }
+    );
+  };
 }
 
-const mapStateToProps = (state) => ({ /* TODO */ })
+const mapStateToProps = state => ({
+  /* TODO */
+});
 
 const mapDispatchToProps = {
-  toggleSideMenu: SideMenuActions.toggleSideMenu,
-}
+  toggleSideMenu: SideMenuActions.toggleSideMenu
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(About)
+export default connect(mapStateToProps, mapDispatchToProps)(About);

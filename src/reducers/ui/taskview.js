@@ -15,19 +15,19 @@ import {
   TOGGLE_SHOW_COMPLETED_TASKS,
   REFRESH_TASK_VIEW,
   STOP_REFRESH_TASK_VIEW
-} from '../../actions/ui/taskview'
-import { updateObject } from '../reducer-utils'
+} from "../../actions/ui/taskview";
+import { updateObject } from "../reducer-utils";
 
 const initialState = {
   showCompletedTasks: true, // default to true
   shouldRefreshTaskView: false,
   lastTaskViewRefreshDate: undefined
-}
-initialState[TODAYS_TASKS] = { isCollapsed: false }
-initialState[TOMORROWS_TASKS] = { isCollapsed: true }
-initialState[FUTURE_TASKS] = { isCollapsed: true }
-initialState[OVERDUE_TASKS] = { isCollapsed: true }
-initialState[TASKS_WITH_NO_DATE] = { isCollapsed: true }
+};
+initialState[TODAYS_TASKS] = { isCollapsed: false };
+initialState[TOMORROWS_TASKS] = { isCollapsed: true };
+initialState[FUTURE_TASKS] = { isCollapsed: true };
+initialState[OVERDUE_TASKS] = { isCollapsed: true };
+initialState[TASKS_WITH_NO_DATE] = { isCollapsed: true };
 
 export default function taskviewReducer(state = initialState, action) {
   switch (action.type) {
@@ -35,26 +35,26 @@ export default function taskviewReducer(state = initialState, action) {
       return updateObject(state, {
         shouldRefreshTaskView: action.shouldRefreshTaskView,
         lastTaskViewRefreshDate: action.refreshDate
-      })
+      });
     case COLLAPSE_CATEGORY:
-      let collapsedCategory = {}
-      collapsedCategory[action.category] = { isCollapsed: true }
-      return updateObject(state, collapsedCategory)
+      let collapsedCategory = {};
+      collapsedCategory[action.category] = { isCollapsed: true };
+      return updateObject(state, collapsedCategory);
     case SHOW_CATEGORY:
-      let shownCategory = {}
-      shownCategory[action.category] = { isCollapsed: false }
-      return updateObject(state, shownCategory)
+      let shownCategory = {};
+      shownCategory[action.category] = { isCollapsed: false };
+      return updateObject(state, shownCategory);
     case TOGGLE_CATEGORY:
-      let toggledCategory = {}
+      let toggledCategory = {};
       toggledCategory[action.category] = {
         isCollapsed: !state[action.category].isCollapsed
-      }
-      return updateObject(state, toggledCategory)
+      };
+      return updateObject(state, toggledCategory);
     case TOGGLE_SHOW_COMPLETED_TASKS:
       return updateObject(state, {
         showCompletedTasks: !state.showCompletedTasks
-      })
+      });
     default:
-      return state
+      return state;
   }
 }

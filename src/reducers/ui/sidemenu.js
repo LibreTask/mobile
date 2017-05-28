@@ -6,13 +6,13 @@
 import {
   SIDEMENU_TOGGLE,
   SIDEMENU_OPEN,
-  SIDEMENU_CLOSE,
-} from '../../actions/ui/sidemenu'
+  SIDEMENU_CLOSE
+} from "../../actions/ui/sidemenu";
 
 const initialState = {
   isOpen: false,
-  disableGestures: false,
-}
+  disableGestures: false
+};
 
 export default function sideMenuReducer(state = initialState, action) {
   switch (action.type) {
@@ -20,18 +20,18 @@ export default function sideMenuReducer(state = initialState, action) {
       return {
         ...state,
         isOpen: !state.isOpen
-      }
+      };
     case SIDEMENU_OPEN:
       return {
         ...state,
         isOpen: true
-      }
+      };
     case SIDEMENU_CLOSE:
       return {
         ...state,
         isOpen: false
-      }
+      };
     default:
-      return state
+      return state;
   }
 }

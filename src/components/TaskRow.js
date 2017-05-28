@@ -3,19 +3,13 @@
  * @license https://github.com/AlgernonLabs/mobile/blob/master/LICENSE.md
  */
 
-import React, { Component, PropTypes } from 'react'
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-} from 'react-native'
+import React, { Component, PropTypes } from "react";
+import { StyleSheet, View, Text, Image, TouchableOpacity } from "react-native";
 
-import CheckBox from 'react-native-checkbox'
+import CheckBox from "react-native-checkbox";
 
-import AppStyles from '../styles'
-import AppConfig from '../config'
+import AppStyles from "../styles";
+import AppConfig from "../config";
 
 class TaskRow extends Component {
   static propTypes = {
@@ -23,42 +17,40 @@ class TaskRow extends Component {
     title: PropTypes.string.isRequired,
     taskId: PropTypes.string.isRequired,
     isInitiallyCompleted: PropTypes.bool.isRequired,
-    onCheckBoxClicked: PropTypes.func.isRequired,
-  }
+    onCheckBoxClicked: PropTypes.func.isRequired
+  };
 
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       isCurrentlyCompleted: this.props.isInitiallyCompleted
-    }
+    };
   }
 
   render = () => {
     let { title, onPress } = this.props;
 
-    let rowStyle = this.state.isCurrentlyCompleted ?
-      styles.completedRow : styles.uncompletedRow
+    let rowStyle = this.state.isCurrentlyCompleted
+      ? styles.completedRow
+      : styles.uncompletedRow;
 
     return (
-      <TouchableOpacity
-        onPress={onPress}
-        activeOpacity={0.7}>
+      <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
         <View style={[AppStyles.padding, styles.taskRowInner, rowStyle]}>
           <CheckBox
-            label={''}
+            label={""}
             containerStyle={styles.container}
             checkboxStyle={styles.checkboxContainer}
             checked={this.state.isCurrentlyCompleted}
-            onChange={(checked) => {
+            onChange={checked => {
+              let updatedCheckedValue = !checked;
 
-              let updatedCheckedValue = !checked
-
-              this.props.onCheckBoxClicked(updatedCheckedValue)
+              this.props.onCheckBoxClicked(updatedCheckedValue);
 
               this.setState({
                 isCurrentlyCompleted: updatedCheckedValue
-              })
+              });
             }}
           />
 
@@ -67,16 +59,16 @@ class TaskRow extends Component {
           </Text>
         </View>
       </TouchableOpacity>
-    )
-  }
+    );
+  };
 }
 
 const styles = StyleSheet.create({
   taskRowInner: {
     borderBottomColor: AppConfig.borderColor,
     borderBottomWidth: 1,
-    flexDirection: 'row',
-    flex: 1,
+    flexDirection: "row",
+    flex: 1
   },
   completedRow: {
     opacity: 0.3
@@ -92,7 +84,7 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     marginLeft: 5,
     marginRight: 30
-  },
-})
+  }
+});
 
-export default TaskRow
+export default TaskRow;

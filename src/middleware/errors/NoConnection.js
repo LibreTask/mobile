@@ -12,12 +12,12 @@
   this state to the server.
 */
 function NoConnection(message) {
-  this.name = 'NoConnection'
-  this.message = message
-    || 'Could not reach the server, please try again later'
-  this.stack = (new Error()).stack;
+  this.name = "NoConnection";
+  this.message =
+    message || "Could not reach the server, please try again later";
+  this.stack = new Error().stack;
 }
-NoConnection.prototype = Object.create(Error.prototype)
+NoConnection.prototype = Object.create(Error.prototype);
 NoConnection.prototype.constructor = NoConnection;
 
-export default NoConnection
+export default NoConnection;

@@ -3,31 +3,29 @@
  * @license https://github.com/AlgernonLabs/mobile/blob/master/LICENSE.md
  */
 
-import React, { Component } from 'react'
-import {
-  StyleSheet,
-} from 'react-native'
+import React, { Component } from "react";
+import { StyleSheet } from "react-native";
 
-import AppConfig from './config'
+import AppConfig from "./config";
 
 module.exports = StyleSheet.create({
   baseTextSmall: {
     fontFamily: AppConfig.baseFont,
-    fontWeight: '500',
+    fontWeight: "500",
     color: AppConfig.textColor,
-    fontSize: AppConfig.baseFontSize * 0.75,
+    fontSize: AppConfig.baseFontSize * 0.75
   },
   baseText: {
     fontFamily: AppConfig.baseFont,
-    fontWeight: '500',
+    fontWeight: "500",
     color: AppConfig.textColor,
-    fontSize: AppConfig.baseFontSize,
+    fontSize: AppConfig.baseFontSize
   },
   baseTextLarge: {
     fontFamily: AppConfig.baseFont,
-    fontWeight: '500',
+    fontWeight: "500",
     color: AppConfig.textColor,
-    fontSize: AppConfig.baseFontSize * 1.25,
+    fontSize: AppConfig.baseFontSize * 1.25
   },
   errorText: {
     color: AppConfig.errorColor,
@@ -41,32 +39,32 @@ module.exports = StyleSheet.create({
     color: AppConfig.linkColor
   },
   container: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     flex: 1,
-    flexDirection: 'column',
-    position: 'relative',
+    flexDirection: "column",
+    position: "relative"
   },
   containerCentered: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center"
   },
   containerStretched: {
-    justifyContent: 'center',
-    alignItems: 'stretch',
+    justifyContent: "center",
+    alignItems: "stretch"
   },
   rightAligned: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end"
   },
   centered: {
-    textAlign: 'center',
+    textAlign: "center"
   },
   textRightAligned: {
-    textAlign: 'right',
+    textAlign: "right"
   },
   row: {
     left: 0,
     right: 0,
-    flexDirection: 'row',
+    flexDirection: "row"
   },
   padding: {
     paddingHorizontal: 20,
@@ -89,6 +87,6 @@ module.exports = StyleSheet.create({
     backgroundColor: AppConfig.borderColor
   },
   rightNavButtons: {
-    flexDirection: 'row'
+    flexDirection: "row"
   }
-})
+});

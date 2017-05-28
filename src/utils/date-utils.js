@@ -5,20 +5,20 @@
 
 const DateUtils = {
   yesterday: function() {
-    let date = new Date()
-    date.setDate(date.getDate() - 1)
-    return date
+    let date = new Date();
+    date.setDate(date.getDate() - 1);
+    return date;
   },
   lastMonth: function() {
-    let date = new Date()
-    date.setMonth(date.getMonth()-1)
-    return date
+    let date = new Date();
+    date.setMonth(date.getMonth() - 1);
+    return date;
   },
   fiveMinutesAgo: function() {
-    let date = new Date()
-    date.setMinutes(date.getMinutes()-5)
-    return date
+    let date = new Date();
+    date.setMinutes(date.getMinutes() - 5);
+    return date;
   }
-}
+};
 
 module.exports = DateUtils;
