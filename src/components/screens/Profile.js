@@ -7,6 +7,7 @@ import React, { Component, PropTypes } from "react";
 import {
   Alert,
   Button,
+  Linking,
   StyleSheet,
   View,
   Text,
@@ -49,57 +50,6 @@ class Profile extends Component {
       myProfile: this.props.user.profile
     };
   }
-
-  _onAccountUpgrade = () => {
-    // TODO - collect user payment information with dialog
-    let userId = this.state.myProfile.id;
-    let pw = this.state.myProfile.password;
-    UserController.upgradeAccount(userId, pw)
-      .then(response => {
-        let profile = this.props.user.profile;
-        profile.plan = "premium"; // TODO - constants
-
-        ProfileStorage.createOrUpdateProfile(profile);
-        this.props.createOrUpdateProfile(profile);
-
-        // update profile stored in state variable
-        let stateProfile = this.state.myProfile;
-        myProfile.plan = "premium";
-        this.setState({ myProfile: stateProfile });
-      })
-      .catch(error => {
-        this.setState({
-          isUpdating: false,
-          updateError: error.message,
-          updateSuccess: ""
-        });
-      });
-  };
-
-  _onAccountDowngrade = () => {
-    let userId = this.state.myProfile.id;
-    let pw = this.state.myProfile.password;
-    UserController.downgradeAccount(userId, pw)
-      .then(response => {
-        let profile = this.props.user.profile;
-        profile.plan = "basic"; // TODO - constants
-
-        ProfileStorage.createOrUpdateProfile(profile);
-        this.props.createOrUpdateProfile(profile);
-
-        // update profile stored in state variable
-        let stateProfile = this.state.myProfile;
-        myProfile.plan = "premium";
-        this.setState({ myProfile: stateProfile });
-      })
-      .catch(error => {
-        this.setState({
-          isUpdating: false,
-          updateError: error.message,
-          updateSuccess: ""
-        });
-      });
-  };
 
   _onDelete = () => {
     Alert.alert("", "Are you sure you want to delete your account?", [
@@ -203,7 +153,7 @@ class Profile extends Component {
             <Button
               title="Downgrade"
               onPress={() => {
-                this._onAccountDowngrade();
+                Linking.openURL(AppConstants.ACCOUNT_UPGRADE_LINK);
               }}
             />
           </View>
@@ -216,7 +166,7 @@ class Profile extends Component {
             <Button
               title="Upgrade"
               onPress={() => {
-                this._onAccountUpgrade();
+                Linking.openURL(AppConstants.ACCOUNT_UPGRADE_LINK);
               }}
             />
           </View>
