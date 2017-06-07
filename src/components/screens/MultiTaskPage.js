@@ -38,6 +38,7 @@ import TaskRow from "../TaskRow";
 
 import CreateTask from "./CreateTask";
 import SingleTaskPage from "./SingleTaskPage";
+import Settings from "./Settings";
 
 class MultiTaskPage extends Component {
   static componentName = "MultiTaskPage";
@@ -481,9 +482,14 @@ class MultiTaskPage extends Component {
       <NavbarButton
         navButtonLocation={AppConstants.FAR_RIGHT_NAV_LOCATION}
         onPress={() => {
-          // TODO
+          this.props.navigator.push({
+            title: "Settings",
+            component: Settings,
+            index: 2,
+            transition: "FloatFromBottom"
+          });
         }}
-        icon={"ellipsis-v"}
+        icon={"cog"}
       />
     );
 
