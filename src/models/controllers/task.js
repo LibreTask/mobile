@@ -30,7 +30,7 @@ export const constructTaskLocally = (
     updatedAtDateTimeUtc: creationDateTimeUtc,
 
     dueDateTimeUtc: taskDueDateTimeUtc,
-    id: "client-task-" + uuidV4()
+    id: "client-task-" + uuid.v4()
     // Notably, no userId is assigned because one may not exist.
     // A successful sync will rectify any discrepencies.
   };
@@ -41,6 +41,8 @@ export const createTaskFromQueue = (task, userId, password) => {
     task.name,
     task.notes,
     task.dueDateTimeUtc,
+    task.isCompleted,
+    task.completionDateTimeUtc,
     userId,
     password
   );
@@ -50,6 +52,8 @@ export const createTask = (
   taskName,
   taskNotes,
   taskDueDateTimeUtc,
+  isCompleted,
+  completionDateTimeUtc,
   userId,
   password
 ) => {
@@ -64,8 +68,17 @@ export const createTask = (
     body: JSON.stringify({
       name: taskName,
       notes: taskNotes,
-      dueDateTimeUtc: taskDueDateTimeUtc
-      // TODO -
+      dueDateTimeUtc: taskDueDateTimeUtc,
+
+      /*
+          It is possible to create a task that has already been completed.
+
+          This scenario occurs when the client is unable to reach the server,
+          and, consequently, the task has been created (and updated) LOCALLY.
+          In other words, the CREATE + UPDATE is being bundled together here.
+       */
+      isCompleted: isCompleted ? true : false,
+      completionDateTimeUtc: completionDateTimeUtc
     })
   };
 
@@ -174,15 +187,15 @@ export const syncTasks = async lastSuccessfulSyncDateTimeUtc => {
   console.log("state...");
   console.dir(state);
 
-  if (!state.entities.user.isLoggedIn) {
+  if (!state.user.isLoggedIn) {
     return;
   }
 
   // TODO - refine
   const isoDateTimeUtc = lastSuccessfulSyncDateTimeUtc.toISOString();
 
-  const userId = state.entities.user.profile.id;
-  const password = state.entities.user.profile.password;
+  const userId = state.user.profile.id;
+  const password = state.user.profile.password;
 
   // TODO - pass in (and store) the actual date
 

@@ -13,8 +13,9 @@ import {
   REMOVE_PENDING_TASK_DELETE,
   START_QUEUED_TASK_SUBMIT,
   STOP_QUEUED_TASK_SUBMIT,
+  START_TASK_CLEANUP,
+  STOP_TASK_CLEANUP,
   CREATE_OR_UPDATE_TASK,
-  CREATE_OR_UPDATE_TASKS,
   DELETE_ALL_TASKS,
   DELETE_TASK,
   START_TASK_SYNC,
@@ -250,6 +251,22 @@ function endTaskSync(state, action) {
   });
 }
 
+function startTaskCleanup(state, action) {
+  return updateObject(state, {
+    isCleaningUpTasks: true,
+    taskCleanupIntervalId: action.intervalId
+  });
+}
+
+function stopTaskSync(state, action) {
+  clearInterval(state.intervalId); // TODO - is this the best place to do it?
+
+  return updateObject(state, {
+    isCleaningUpTasks: false,
+    taskCleanupIntervalId: undefined
+  });
+}
+
 function deleteAllTasks(state, action) {
   return updateObject(state, {
     tasks: {
@@ -414,7 +431,9 @@ const initialState = {
   syncIntervalId: undefined, // used to cancel sync
   lastSuccessfulSyncDateTimeUtc: undefined,
   isSubmittingQueuedTasks: false,
-  queuedTaskSubmitIntervalId: undefined
+  queuedTaskSubmitIntervalId: undefined,
+  isCleaningUpTasks: false,
+  taskCleanupIntervalId: undefined
 };
 
 function tasksReducer(state = initialState, action) {
@@ -440,6 +459,16 @@ function tasksReducer(state = initialState, action) {
     case END_TASK_SYNC:
       return endTaskSync(state, action);
     /*
+      TODO - doc
+    */
+    case START_TASK_CLEANUP:
+      return startTaskCleanup(state, action);
+    /*
+      TODO - doc
+    */
+    case STOP_TASK_CLEANUP:
+      return stopTaskCleanup(state, action);
+    /*
      TODO - doc
     */
     case SYNC_TASKS:
@@ -449,11 +478,6 @@ function tasksReducer(state = initialState, action) {
     */
     case CREATE_OR_UPDATE_TASK:
       return addTask(state, action);
-    /*
-      TODO - doc
-    */
-    case CREATE_OR_UPDATE_TASKS:
-      return addTasks(state, action);
     /*
       TODO - doc
     */

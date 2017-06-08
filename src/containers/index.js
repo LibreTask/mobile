@@ -9,6 +9,7 @@ import { Provider } from "react-redux";
 import configureStore from "../store/configureStore";
 import App from "./App";
 
+
 const store = configureStore();
 
 // TODO - combine store with history (ie, the contents of AsyncStorage)
