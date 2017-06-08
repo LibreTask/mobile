@@ -21,6 +21,8 @@ import { connect } from "react-redux";
 import dateFormat from "dateformat";
 import Validator from "validator";
 
+import * as TaskViewActions from '../../actions/ui/taskview'
+
 import * as TaskActions from "../../actions/entities/task";
 import * as TaskController from "../../models/controllers/task";
 import * as TaskStorage from "../../models/storage/task-storage";
@@ -153,6 +155,8 @@ class CreateTask extends Component {
     TaskStorage.createOrUpdateTask(task);
     this.props.createOrUpdateTask(task);
     this.props.addPendingTaskCreate(task);
+
+    this.props.refreshTaskViewCollapseStatus()
 
     // navigate to main on success
     this.props.navigator.pop();
@@ -374,7 +378,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   createOrUpdateTask: TaskActions.createOrUpdateTask,
-  addPendingTaskCreate: TaskActions.addPendingTaskCreate
+  addPendingTaskCreate: TaskActions.addPendingTaskCreate,
+  refreshTaskViewCollapseStatus: TaskViewActions.refreshTaskViewCollapseStatus
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateTask);

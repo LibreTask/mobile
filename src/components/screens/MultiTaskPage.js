@@ -29,6 +29,7 @@ import AppStyles from "../../styles";
 import AppConfig from "../../config";
 import AppConstants from "../../constants";
 import DateUtils from "../../utils/date-utils";
+import TaskUtils from '../../utils/task-utils'
 
 import NavigationBar from "react-native-navbar";
 import NavbarTitle from "../navbar/NavbarTitle";
@@ -88,25 +89,9 @@ class MultiTaskPage extends Component {
     for (let taskId in tasks) {
       let task = tasks[taskId];
 
-      if (!task) continue;
-
-      if (task.isDeleted) continue; // do not display deleted tasks
-
-      if (task.isCompleted) {
-        // continue if, for some reason, we do not have the date recorded
-        if (!task.completionDateTimeUtc) continue;
-
-        // only display completed tasks less than one day ago
-        if (new Date(task.completionDateTimeUtc) < DateUtils.yesterday()) {
-          continue;
-        }
-
-        // do not display the completed task, unless the
-        // showCompletedTasks flag is set to true
-        if (!this.props.showCompletedTasks) continue;
+      if (TaskUtils.shouldRenderTask(task, this.props.showCompletedTasks)) {
+        tasksToDisplay.push(task);
       }
-
-      tasksToDisplay.push(task);
     }
 
     return this._sortTasksByDateAndInsertHeaders(tasksToDisplay);
@@ -268,56 +253,21 @@ class MultiTaskPage extends Component {
     });
   };
 
-  _shouldRenderTask = task => {
-    // TODO - hide if older than today and already completed
-
-    if (
-      task.displayCategory === "No Date" &&
-      this.state.tasksWithNoDateCollapsed
-    ) {
-      return false;
-    }
-
-    if (task.displayCategory === "Today" && this.state.todaysTasksCollapsed) {
-      return false;
-    }
-
-    if (
-      task.displayCategory === "Tomorrow" &&
-      this.state.tomorrowsTasksCollapsed
-    ) {
-      return false;
-    }
-
-    if (task.displayCategory === "Future" && this.state.futureTasksCollapsed) {
-      return false;
-    }
-
-    if (
-      task.displayCategory === "Overdue" &&
-      this.state.overdueTasksCollapsed
-    ) {
-      return false;
-    }
-
-    return true;
-  };
-
-  _isHeaderCurrentlyCollapsed = header => {
-    if (header.name === "No Date") {
-      return this.state.tasksWithNoDateCollapsed;
-    } else if (header.name === "Today") {
-      return this.state.todaysTasksCollapsed;
-    } else if (header.name === "Tomorrow") {
-      return this.state.tomorrowsTasksCollapsed;
-    } else if (header.name === "Future") {
-      return this.state.futureTasksCollapsed;
-    } else if (header.name === "Overdue") {
-      return this.state.overdueTasksCollapsed;
+  _isHeaderCurrentlyCollapsed(category) {
+    if (category === "No Date") {
+      return this._viewIsCollapsed(TaskViewActions.TASKS_WITH_NO_DATE);
+    } else if (category === "Today") {
+      return this._viewIsCollapsed(TaskViewActions.TODAYS_TASKS);
+    } else if (category === "Tomorrow") {
+      return this._viewIsCollapsed(TaskViewActions.TOMORROWS_TASKS);
+    } else if (category === "Future") {
+      return this._viewIsCollapsed(TaskViewActions.FUTURE_TASKS);
+    } else if (category === "Overdue") {
+      return this._viewIsCollapsed(TaskViewActions.OVERDUE_TASKS);
     } else {
       return false; // TODO - what here?
     }
-  };
+  }
 
   _renderRow = row => {
     try {
@@ -328,7 +278,8 @@ class MultiTaskPage extends Component {
   };
 
   _renderTask = task => {
-    if (this._shouldRenderTask(task)) {
+    // only render if header is not collapsed
+    if (!this._isHeaderCurrentlyCollapsed(task.displayCategory)) {
       return (
         <TaskRow
           title={task.name}
@@ -380,6 +331,11 @@ class MultiTaskPage extends Component {
 
     return <View />;
   };
+
+  // TODO - clean up this sloppy logic / indirection; should not need a function
+  _viewIsCollapsed(view) {
+    return this.props.taskCategories[view].isCollapsed;
+  }
 
   _updateTaskLocally = (task, queueTaskUpdate) => {
     if (queueTaskUpdate) {
@@ -611,6 +567,7 @@ const mapStateToProps = (state, ownProps) => {
     isLoggedIn: state.entities.user.isLoggedIn,
     profile: state.entities.user.profile,
     tasks: state.entities.task.tasks,
+    taskCategories: state.ui.taskview,
     showCompletedTasks: state.ui.taskview.showCompletedTasks,
     shouldRefreshTaskView: state.ui.taskview.shouldRefreshTaskView
   };

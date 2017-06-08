@@ -21,6 +21,8 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 
+import * as TaskViewActions from '../../actions/ui/taskview'
+
 import * as UserController from "../../models/controllers/user";
 import * as TaskController from "../../models/controllers/task";
 import * as TaskStorage from "../../models/storage/task-storage";
@@ -106,6 +108,7 @@ class SingleTaskPage extends Component {
   };
 
   _deleteTaskLocallyAndRedirect = (task, queueTaskDeletion) => {
+
     if (queueTaskDeletion) {
       // mark update time, before queueing
       task.updatedAtDateTimeUtc = new Date();
@@ -124,6 +127,8 @@ class SingleTaskPage extends Component {
     */
     TaskStorage.createOrUpdateTask(task);
     this.props.createOrUpdateTask(task);
+
+    this.props.refreshTaskViewCollapseStatus()
 
     this.props.navigator.replace({
       title: "Main",
@@ -201,6 +206,8 @@ class SingleTaskPage extends Component {
 
     TaskStorage.createOrUpdateTask(task);
     this.props.createOrUpdateTask(task);
+
+    this.props.refreshTaskViewCollapseStatus()
 
     this.setState({
       updateSuccess: "Update successful!",
@@ -400,7 +407,8 @@ const mapDispatchToProps = {
   createOrUpdateTask: TaskActions.createOrUpdateTask,
   deleteTask: TaskActions.deleteTask,
   addPendingTaskUpdate: TaskActions.addPendingTaskUpdate,
-  addPendingTaskDelete: TaskActions.addPendingTaskDelete
+  addPendingTaskDelete: TaskActions.addPendingTaskDelete,
+  refreshTaskViewCollapseStatus: TaskViewActions.refreshTaskViewCollapseStatus
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleTaskPage);
