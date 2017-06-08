@@ -60,14 +60,8 @@ class MultiTaskPage extends Component {
     let tasks = this._filterTasksToDisplay(this.props.tasks);
 
     this.state = {
-      willFocusSubscription: null,
       isRefreshing: false,
       dataSource: dataSource.cloneWithRows(tasks),
-      todaysTasksCollapsed: false, // only initially display todays
-      tomorrowsTasksCollapsed: true,
-      futureTasksCollapsed: true,
-      overdueTasksCollapsed: true,
-      tasksWithNoDateCollapsed: false
     };
   }
 
@@ -253,7 +247,10 @@ class MultiTaskPage extends Component {
     });
   };
 
-  _isHeaderCurrentlyCollapsed(category) {
+  _isHeaderCurrentlyCollapsed = (category) => {
+
+    console.log("category: " + category)
+
     if (category === "No Date") {
       return this._viewIsCollapsed(TaskViewActions.TASKS_WITH_NO_DATE);
     } else if (category === "Today") {
@@ -351,7 +348,7 @@ class MultiTaskPage extends Component {
   };
 
   _renderHeader = header => {
-    let headerCollapseStatusImage = this._isHeaderCurrentlyCollapsed(header)
+    let headerCollapseStatusImage = this._isHeaderCurrentlyCollapsed(header.name)
       ? require("../../images/arrow_right_black.png")
       : require("../../images/arrow_down_black.png");
 
@@ -360,33 +357,21 @@ class MultiTaskPage extends Component {
         <TouchableOpacity
           key={"menu-item-lists"}
           onPress={() => {
-            let stateUpdate = {};
 
             if (header.name === "No Date") {
-              stateUpdate = {
-                tasksWithNoDateCollapsed: !this.state.tasksWithNoDateCollapsed
-              };
+              this.props.toggleTaskView(TaskViewActions.TASKS_WITH_NO_DATE);
             } else if (header.name === "Today") {
-              stateUpdate = {
-                todaysTasksCollapsed: !this.state.todaysTasksCollapsed
-              };
+              this.props.toggleTaskView(TaskViewActions.TODAYS_TASKS);
             } else if (header.name === "Tomorrow") {
-              stateUpdate = {
-                tomorrowsTasksCollapsed: !this.state.tomorrowsTasksCollapsed
-              };
+              this.props.toggleTaskView(TaskViewActions.TOMORROWS_TASKS);
             } else if (header.name === "Future") {
-              stateUpdate = {
-                futureTasksCollapsed: !this.state.futureTasksCollapsed
-              };
+              this.props.toggleTaskView(TaskViewActions.FUTURE_TASKS);
             } else if (header.name === "Overdue") {
-              stateUpdate = {
-                overdueTasksCollapsed: !this.state.overdueTasksCollapsed
-              };
+              this.props.toggleTaskView(TaskViewActions.OVERDUE_TASKS);
             }
 
-            this.setState(stateUpdate, () => {
-              this._refreshEntireList(this.props.tasks);
-            });
+            // TODO - should we delay here?
+            this._refreshEntireList(this.props.tasks);
           }}
         >
           <View style={[AppStyles.row]}>
@@ -577,6 +562,7 @@ const mapDispatchToProps = {
   createOrUpdateTask: TaskActions.createOrUpdateTask,
   addPendingTaskUpdate: TaskActions.addPendingTaskUpdate,
   toggleSideMenu: SideMenuActions.toggleSideMenu,
+  toggleTaskView: TaskViewActions.toggleCategory,
   refreshTaskView: TaskViewActions.refreshTaskView
 };
 
