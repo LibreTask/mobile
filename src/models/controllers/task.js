@@ -30,7 +30,7 @@ export const constructTaskLocally = (
     updatedAtDateTimeUtc: creationDateTimeUtc,
 
     dueDateTimeUtc: taskDueDateTimeUtc,
-    id: "client-task-" + uuid.v4()
+    id: "client-task-" + uuidV4()
     // Notably, no userId is assigned because one may not exist.
     // A successful sync will rectify any discrepencies.
   };

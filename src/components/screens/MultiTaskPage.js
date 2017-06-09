@@ -29,7 +29,7 @@ import AppStyles from "../../styles";
 import AppConfig from "../../config";
 import AppConstants from "../../constants";
 import DateUtils from "../../utils/date-utils";
-import TaskUtils from '../../utils/task-utils'
+import TaskUtils from "../../utils/task-utils";
 
 import NavigationBar from "react-native-navbar";
 import NavbarTitle from "../navbar/NavbarTitle";
@@ -61,7 +61,7 @@ class MultiTaskPage extends Component {
 
     this.state = {
       isRefreshing: false,
-      dataSource: dataSource.cloneWithRows(tasks),
+      dataSource: dataSource.cloneWithRows(tasks)
     };
   }
 
@@ -247,9 +247,8 @@ class MultiTaskPage extends Component {
     });
   };
 
-  _isHeaderCurrentlyCollapsed = (category) => {
-
-    console.log("category: " + category)
+  _isHeaderCurrentlyCollapsed = category => {
+    console.log("category: " + category);
 
     if (category === "No Date") {
       return this._viewIsCollapsed(TaskViewActions.TASKS_WITH_NO_DATE);
@@ -264,7 +263,7 @@ class MultiTaskPage extends Component {
     } else {
       return false; // TODO - what here?
     }
-  }
+  };
 
   _renderRow = row => {
     try {
@@ -348,7 +347,9 @@ class MultiTaskPage extends Component {
   };
 
   _renderHeader = header => {
-    let headerCollapseStatusImage = this._isHeaderCurrentlyCollapsed(header.name)
+    let headerCollapseStatusImage = this._isHeaderCurrentlyCollapsed(
+      header.name
+    )
       ? require("../../images/arrow_right_black.png")
       : require("../../images/arrow_down_black.png");
 
@@ -357,7 +358,6 @@ class MultiTaskPage extends Component {
         <TouchableOpacity
           key={"menu-item-lists"}
           onPress={() => {
-
             if (header.name === "No Date") {
               this.props.toggleTaskView(TaskViewActions.TASKS_WITH_NO_DATE);
             } else if (header.name === "Today") {
@@ -542,8 +542,8 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: "row",
     flex: 1,
-    paddingTop: 5,
-    paddingHorizontal: 5
+    paddingTop: 10,
+    paddingHorizontal: 10
   }
 });
 

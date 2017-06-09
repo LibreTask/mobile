@@ -21,7 +21,7 @@ import { connect } from "react-redux";
 import dateFormat from "dateformat";
 import Validator from "validator";
 
-import * as TaskViewActions from '../../actions/ui/taskview'
+import * as TaskViewActions from "../../actions/ui/taskview";
 
 import * as TaskActions from "../../actions/entities/task";
 import * as TaskController from "../../models/controllers/task";
@@ -107,11 +107,15 @@ class CreateTask extends Component {
         () => {
           let userId = this.props.profile.id;
           let password = this.props.profile.password;
+          let isCompleted = false;
+          let completionDateTimeUtc = undefined;
 
           TaskController.createTask(
             taskName,
             taskNotes,
             taskDueDateTimeUtc,
+            isCompleted,
+            completionDateTimeUtc,
             userId,
             password
           )
@@ -156,7 +160,7 @@ class CreateTask extends Component {
     this.props.createOrUpdateTask(task);
     this.props.addPendingTaskCreate(task);
 
-    this.props.refreshTaskViewCollapseStatus()
+    this.props.refreshTaskViewCollapseStatus();
 
     // navigate to main on success
     this.props.navigator.pop();
