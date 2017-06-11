@@ -185,7 +185,7 @@ export const syncTasks = async lastSuccessfulSyncDateTimeUtc => {
   const state = await getState();
 
   console.log("state...");
-  console.dir(state);
+  //console.dir(state);
 
   if (!state.user.isLoggedIn) {
     return;
@@ -216,7 +216,7 @@ export const syncTasks = async lastSuccessfulSyncDateTimeUtc => {
       // TODO - log / inspect object / persist if necessary
 
       console.log("abc response...");
-      console.dir(response);
+      //console.dir(response);
 
       /*
 
@@ -230,6 +230,6 @@ export const syncTasks = async lastSuccessfulSyncDateTimeUtc => {
     })
     .catch(err => {
       console.log("task err...");
-      console.dir(err);
+      //console.dir(err);
     });
 };

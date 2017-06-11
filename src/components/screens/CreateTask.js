@@ -26,6 +26,7 @@ import * as TaskViewActions from "../../actions/ui/taskview";
 import * as TaskActions from "../../actions/entities/task";
 import * as TaskController from "../../models/controllers/task";
 import * as TaskStorage from "../../models/storage/task-storage";
+import * as TaskQueue from "../../models/storage/task-queue";
 import * as UserController from "../../models/controllers/user";
 
 import NavigationBar from "react-native-navbar";
@@ -157,6 +158,7 @@ class CreateTask extends Component {
     // create task locally; user it not logged in or has no network connection
     let task = TaskController.constructTaskLocally(name, notes, dueDateTimeUtc);
     TaskStorage.createOrUpdateTask(task);
+    TaskQueue.queueTaskCreate(task);
     this.props.createOrUpdateTask(task);
     this.props.addPendingTaskCreate(task);
 

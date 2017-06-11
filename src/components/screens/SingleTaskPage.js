@@ -21,11 +21,12 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 
-import * as TaskViewActions from '../../actions/ui/taskview'
+import * as TaskViewActions from "../../actions/ui/taskview";
 
 import * as UserController from "../../models/controllers/user";
 import * as TaskController from "../../models/controllers/task";
 import * as TaskStorage from "../../models/storage/task-storage";
+import * as TaskQueue from "../../models/storage/task-queue";
 import * as TaskActions from "../../actions/entities/task";
 
 import NavigationBar from "react-native-navbar";
@@ -108,7 +109,6 @@ class SingleTaskPage extends Component {
   };
 
   _deleteTaskLocallyAndRedirect = (task, queueTaskDeletion) => {
-
     if (queueTaskDeletion) {
       // mark update time, before queueing
       task.updatedAtDateTimeUtc = new Date();
@@ -126,9 +126,10 @@ class SingleTaskPage extends Component {
      task and incorrectly re-recreate it.
     */
     TaskStorage.createOrUpdateTask(task);
+    TaskQueue.queueTaskDelete(task);
     this.props.createOrUpdateTask(task);
 
-    this.props.refreshTaskViewCollapseStatus()
+    this.props.refreshTaskViewCollapseStatus();
 
     this.props.navigator.replace({
       title: "Main",
@@ -205,9 +206,10 @@ class SingleTaskPage extends Component {
     }
 
     TaskStorage.createOrUpdateTask(task);
+    TaskQueue.queueTaskUpdate(task);
     this.props.createOrUpdateTask(task);
 
-    this.props.refreshTaskViewCollapseStatus()
+    this.props.refreshTaskViewCollapseStatus();
 
     this.setState({
       updateSuccess: "Update successful!",

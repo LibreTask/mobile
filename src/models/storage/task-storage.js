@@ -7,6 +7,18 @@ import { AsyncStorage } from "react-native";
 
 import * as _ from "lodash";
 
+export async function getHashOfAllTasks() {
+  let taskHash = {};
+
+  let tasks = await getAllTasks();
+
+  _.forEach(tasks, function(task) {
+    taskHash[task.id] = task;
+  });
+
+  return taskHash;
+}
+
 export async function getAllTasks() {
   const allKeys = await AsyncStorage.getAllKeys();
   let tasks = [];

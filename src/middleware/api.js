@@ -52,8 +52,19 @@ export function invoke(request) {
   })
     .then(response => response.json())
     .catch(error => {
-      if (error.error && error.error.code === "ECONNREFUSED") {
-        throw new NoConnection();
+      var output = "";
+      for (var property in error) {
+        output += property + ": " + error[property] + "; ";
+      }
+      console.log("error: " + output);
+      console.log("inital error: " + error);
+
+      if (error instanceof TypeError) {
+        if (error.message === "Network request failed") {
+          throw new NoConnection();
+        } else {
+          throw new Error(humanReadableError(error));
+        }
       } else {
         throw new Error(humanReadableError(error));
       }

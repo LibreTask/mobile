@@ -63,7 +63,7 @@ export default class AppContainer extends Component {
     let isLoggedIn = false;
 
     try {
-      tasks = await TaskStorage.getAllTasks();
+      tasks = await TaskStorage.getHashOfAllTasks();
     } catch (err) {
       /* ignore */
     }

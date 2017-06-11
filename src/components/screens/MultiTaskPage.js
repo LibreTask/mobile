@@ -23,6 +23,7 @@ import * as TaskViewActions from "../../actions/ui/taskview";
 import * as TaskActions from "../../actions/entities/task";
 import * as TaskController from "../../models/controllers/task";
 import * as TaskStorage from "../../models/storage/task-storage";
+import * as TaskQueue from "../../models/storage/task-queue";
 import * as UserController from "../../models/controllers/user";
 
 import AppStyles from "../../styles";
@@ -343,6 +344,7 @@ class MultiTaskPage extends Component {
     }
 
     TaskStorage.createOrUpdateTask(task);
+    TaskQueue.queueTaskUpdate(task);
     this.props.createOrUpdateTask(task);
   };
 

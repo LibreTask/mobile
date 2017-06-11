@@ -45,7 +45,7 @@ export const SYNC_USER = "SYNC_USER";
 export const syncUser = () => {
   return function(dispatch, getState) {
     console.log("sync user state...");
-    console.dir(getState());
+    //console.dir(getState());
 
     // only sync is the user is logged in
     if (getState().entities.user.isLoggedIn) {
@@ -65,7 +65,7 @@ export const syncUser = () => {
         })
         .catch(error => {
           console.log("sync profile error....");
-          console.dir(error);
+          //console.dir(error);
         });
     }
   };

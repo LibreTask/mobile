@@ -24,16 +24,16 @@ export async function getQueuedTaskByTaskId(taskId) {
   return await AsyncStorage.getItem(`queue/task${taskId}`);
 }
 
-export async function getTasksByOperation(operation) {
+export async function getHashOfTasksByOperation(operation) {
   const allKeys = await AsyncStorage.getAllKeys();
-  let tasks = [];
+  let tasks = {};
 
   for (let key of allKeys) {
     if (key.indexOf("queue/task") !== -1) {
       let task = JSON.parse(await AsyncStorage.getItem(key));
 
       if (task.operation === operation) {
-        tasks.push(task)
+        tasks[task.id] = task;
       }
     }
   }
@@ -42,32 +42,15 @@ export async function getTasksByOperation(operation) {
 }
 
 export async function getAllPendingUpdates() {
-  return await getTasksByOperation(UPDATE)
+  return await getHashOfTasksByOperation(UPDATE);
 }
 
 export async function getAllPendingDeletes() {
-  return await getTasksByOperation(DELETE)
+  return await getHashOfTasksByOperation(DELETE);
 }
 
 export async function getAllPendingCreates() {
-  return await getTasksByOperation(CREATE)
-}
-
-async function _getPendingTasks(map) {
-  // TODO - look into "design doc" for map queries
-
-  const allKeys = await AsyncStorage.getAllKeys();
-  let tasks = [];
-
-  for (let key of allKeys) {
-    if (key.indexOf("queue/task") !== -1) {
-      let task = JSON.parse(await AsyncStorage.getItem(key));
-
-      tasks.push(task);
-    }
-  }
-
-  return tasks;
+  return await getHashOfTasksByOperation(CREATE);
 }
 
 export function queueTaskCreate(task) {
@@ -83,11 +66,9 @@ export function queueTaskDelete(task) {
 }
 
 function _upsertTask(task, operation) {
+  task.operation = operation;
 
-  task.operation = operation
-  task.type = "queue/task"
-
-  return AsyncStorage.setItem(`tasks/${task.id}`, JSON.stringify(task));
+  return AsyncStorage.setItem(`queue/task/${task.id}`, JSON.stringify(task));
 }
 
 export function dequeueTaskByTaskId(taskId) {
