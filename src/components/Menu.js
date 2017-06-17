@@ -77,18 +77,19 @@ class Menu extends Component {
     let menuItems = [];
 
     menuItems.push(
-      <TouchableOpacity
-        key={`menu-item-all-tasks`}
-        onPress={() => {
-          navigate("All Tasks", MultiTaskPage);
-        }}
-      >
-        <View style={[styles.menuItem]}>
-          <Text style={[AppStyles.baseText, styles.menuItemText]}>
-            {"Tasks"}
-          </Text>
-        </View>
-      </TouchableOpacity>
+      <View key={`menu-item-all-tasks`} style={[styles.menuItemContainer]}>
+        <TouchableOpacity
+          onPress={() => {
+            navigate("All Tasks", MultiTaskPage);
+          }}
+        >
+          <View style={[styles.menuItem]}>
+            <Text style={[AppStyles.baseText, styles.menuItemText]}>
+              {"Tasks"}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
     );
 
     /*
@@ -105,65 +106,66 @@ class Menu extends Component {
     */
 
     menuItems.push(
-      <TouchableOpacity
-        key={"menu-item-profile"}
-        onPress={() => this._navigateToProfileIfLoggedIn(this.props)}
-      >
-        <View style={[styles.menuItem]}>
-          <Text style={[AppStyles.baseText, styles.menuItemText]}>
-            {"Profile"}
-          </Text>
-        </View>
-      </TouchableOpacity>
+      <View key={"menu-item-profile"} style={[styles.menuItemContainer]}>
+        <TouchableOpacity
+          onPress={() => this._navigateToProfileIfLoggedIn(this.props)}
+        >
+          <View style={[styles.menuItem]}>
+            <Text style={[AppStyles.baseText, styles.menuItemText]}>
+              {"Profile"}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
     );
 
     menuItems.push(
-      <TouchableOpacity
-        key={"menu-item-about"}
-        onPress={() => navigate("About", About, this.props)}
-      >
-        <View style={[styles.menuItem]}>
-          <Text style={[AppStyles.baseText, styles.menuItemText]}>
-            {"About"}
-          </Text>
-        </View>
-      </TouchableOpacity>
+      <View key={"menu-item-about"} style={[styles.menuItemContainer]}>
+        <TouchableOpacity onPress={() => navigate("About", About, this.props)}>
+          <View style={[styles.menuItem]}>
+            <Text style={[AppStyles.baseText, styles.menuItemText]}>
+              {"About"}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
     );
 
     // show logout menu-item
     if (this.props.isLoggedIn) {
       menuItems.push(
-        <TouchableOpacity
-          key={"menu-item-logout"}
-          onPress={() => {
-            Alert.alert("", "Are you sure you want to logout?", [
-              {
-                text: "Close",
-                onPress: () => {
-                  /* do nothing */
-                }
-              },
-              {
-                text: "Yes",
-                onPress: () => {
-                  // remove profile and all entities
-                  this.props.deleteProfile();
-                  this.props.deleteAllTasks();
-                  ProfileStorage.logout();
+        <View key={"menu-item-logout"} style={[styles.menuItemContainer]}>
+          <TouchableOpacity
+            onPress={() => {
+              Alert.alert("", "Are you sure you want to logout?", [
+                {
+                  text: "Close",
+                  onPress: () => {
+                    /* do nothing */
+                  }
+                },
+                {
+                  text: "Yes",
+                  onPress: () => {
+                    // remove profile and all entities
+                    this.props.deleteProfile();
+                    this.props.deleteAllTasks();
+                    ProfileStorage.logout();
 
-                  // logout requires ui update
-                  navigate("All Tasks", MultiTaskPage);
+                    // logout requires ui update
+                    navigate("All Tasks", MultiTaskPage);
+                  }
                 }
-              }
-            ]);
-          }}
-        >
-          <View style={[styles.menuItem]}>
-            <Text style={[AppStyles.baseText, styles.menuItemText]}>
-              {"Logout"}
-            </Text>
-          </View>
-        </TouchableOpacity>
+              ]);
+            }}
+          >
+            <View style={[styles.menuItem]}>
+              <Text style={[AppStyles.baseText, styles.menuItemText]}>
+                {"Logout"}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       );
     }
 
@@ -236,9 +238,11 @@ const styles = StyleSheet.create({
     padding: 10
   },
   menuItem: {
-    borderBottomWidth: 1,
-    borderBottomColor: AppConfig.borderColor,
     paddingBottom: 20
+  },
+  menuItemContainer: {
+    borderBottomWidth: 1,
+    borderBottomColor: AppConfig.borderColor
   },
   menuItemText: {
     marginTop: 20,
