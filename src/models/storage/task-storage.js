@@ -12,9 +12,9 @@ export async function getHashOfAllTasks() {
 
   let tasks = await getAllTasks();
 
-  _.forEach(tasks, function(task) {
+  for (let task of tasks) {
     taskHash[task.id] = task;
-  });
+  }
 
   return taskHash;
 }

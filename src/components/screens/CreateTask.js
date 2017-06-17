@@ -33,6 +33,7 @@ import NavigationBar from "react-native-navbar";
 import NavbarTitle from "../navbar/NavbarTitle";
 import NavbarButton from "../navbar/NavbarButton";
 
+import DateUtils from "../../utils/date-utils";
 import AppConfig from "../../config";
 import AppStyles from "../../styles";
 import AppConstants from "../../constants";
@@ -219,6 +220,7 @@ class CreateTask extends Component {
       );
       if (action !== DatePickerAndroid.dismissedAction) {
         var date = new Date(year, month, day);
+        date = DateUtils.oneSecondBeforeMidnight(date);
         newState["taskDueDateTimeUtc"] = date;
       }
       this.setState(newState);

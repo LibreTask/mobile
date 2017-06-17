@@ -36,6 +36,7 @@ import NavbarButton from "../navbar/NavbarButton";
 import dateFormat from "dateformat";
 import Validator from "validator";
 
+import DateUtils from "../../utils/date-utils";
 import AppConfig from "../../config";
 import AppStyles from "../../styles";
 import AppConstants from "../../constants";
@@ -249,6 +250,9 @@ class SingleTaskPage extends Component {
 
       if (action !== DatePickerAndroid.dismissedAction) {
         updatedTask.dueDateTimeUtc = new Date(year, month, day);
+        updatedTask.dueDateTimeUtc = DateUtils.oneSecondBeforeMidnight(
+          updatedTask.dueDateTimeUtc
+        );
       }
 
       this.setState({

@@ -23,7 +23,7 @@ import * as UserController from "../models/controllers/user";
 import * as ProfileStorage from "../models/storage/profile-storage";
 import * as TaskStorage from "../models/storage/task-storage";
 
-import * as TaskViewActions from "../actions/ui/taskview"
+import * as TaskViewActions from "../actions/ui/taskview";
 
 import * as UserActions from "../actions/entities/user";
 import * as TaskActions from "../actions/entities/task";
@@ -37,11 +37,13 @@ import Menu from "../components/Menu";
 import MultiTaskPage from "../components/screens/MultiTaskPage";
 
 class AppContainer extends Component {
-
   _startTaskSync = () => {
     if (!this.props.isSyncingTasks) {
       let intervalId = setInterval(() => {
         this.props.syncTasks();
+
+        // refresh task view after each sync
+        this.props.refreshTaskViewCollapseStatus();
       }, AppConstants.SYNC_INTERVAL_MILLIS);
 
       // register intervalId so we can cancel later
@@ -110,6 +112,9 @@ class AppContainer extends Component {
     this._startUIRefreshCheck();
     this._startSubmissionOfQueuedTasks();
     this._startTaskCleanup();
+
+    // refresh task view at startup
+    this.props.refreshTaskViewCollapseStatus();
   };
 
   componentWillUnmount() {
@@ -249,6 +254,7 @@ const mapDispatchToProps = {
   startQueuedTaskSubmit: TaskActions.startQueuedTaskSubmit,
   stopQueuedTaskSubmission: TaskActions.stopQueuedTaskSubmission,
   refreshTaskView: TaskViewActions.refreshTaskView,
+  refreshTaskViewCollapseStatus: TaskViewActions.refreshTaskViewCollapseStatus,
   stopTaskViewRefresh: TaskViewActions.stopTaskViewRefresh
 };
 
