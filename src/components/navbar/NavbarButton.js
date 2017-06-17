@@ -40,7 +40,7 @@ class NavbarButton extends Component {
         activeOpacity={0.7}
         style={style}
       >
-        <Icon name={this.props.icon} size={30} color={"#000000"} />
+        <Icon name={this.props.icon} size={30} color={"#FFFFFF"} />
       </TouchableOpacity>
     );
   };

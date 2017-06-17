@@ -88,5 +88,16 @@ module.exports = StyleSheet.create({
   },
   rightNavButtons: {
     flexDirection: "row"
+  },
+  navbar: {
+    margin: "auto"
+  },
+  navbarContainer: {
+    backgroundColor: AppConfig.primaryColor,
+    paddingTop: 5,
+    paddingBottom: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: "black",
+    borderStyle: "solid"
   }
 });

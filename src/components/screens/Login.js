@@ -128,13 +128,15 @@ class Login extends Component {
     );
 
     return (
-      <NavigationBar
-        title={<NavbarTitle title={title || null} />}
-        statusBar={{ style: "light-content", hidden: false }}
-        style={[AppStyles.navbar]}
-        tintColor={AppConfig.primaryColor}
-        leftButton={leftNavBarButton}
-      />
+      <View style={[AppStyles.navbarContainer]}>
+        <NavigationBar
+          title={<NavbarTitle title={title || null} />}
+          statusBar={{ style: "light-content", hidden: false }}
+          style={[AppStyles.navbar]}
+          tintColor={AppConfig.primaryColor}
+          leftButton={leftNavBarButton}
+        />
+      </View>
     );
   };
 

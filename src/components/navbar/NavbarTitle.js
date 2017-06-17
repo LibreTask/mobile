@@ -7,6 +7,7 @@ import React, { Component, PropTypes } from "react";
 import { StyleSheet, Text } from "react-native";
 
 import AppConstants from "../../constants";
+import AppStyles from "../../styles";
 
 class NavbarTitle extends Component {
   static propTypes = {
@@ -15,7 +16,7 @@ class NavbarTitle extends Component {
 
   render = () => {
     return (
-      <Text style={[styles.navbarTitle]}>
+      <Text style={[AppStyles.baseText, styles.navbarTitle]}>
         {this.props.title || AppConstants.APP_NAME}
       </Text>
     );
@@ -24,9 +25,7 @@ class NavbarTitle extends Component {
 
 const styles = StyleSheet.create({
   navbarTitle: {
-    color: "#ffffff",
-    bottom: 6,
-    fontSize: 13
+    color: "#ffffff"
   }
 });
 
