@@ -82,8 +82,15 @@ const styles = StyleSheet.create({
     padding: 10
   },
   checkboxContainer: {
+    /*
+     keep the icon large so that user
+     does not have trouble clicking it
+    */
+    width: 30,
+    height: 30,
+    padding: 10,
     marginLeft: 5,
-    marginRight: 30
+    marginRight: 10
   }
 });
 

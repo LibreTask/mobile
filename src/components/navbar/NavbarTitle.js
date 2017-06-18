@@ -25,7 +25,9 @@ class NavbarTitle extends Component {
 
 const styles = StyleSheet.create({
   navbarTitle: {
-    color: "#ffffff"
+    color: "#ffffff",
+    alignItems: "center",
+    justifyContent: "center"
   }
 });
 

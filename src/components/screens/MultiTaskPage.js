@@ -216,36 +216,13 @@ class MultiTaskPage extends Component {
   };
 
   _fetchData = async () => {
-    this.setState({ isRefreshing: true });
+    /*
+      Manually refreshing the list via swipe down is currently
+      not supported.
 
-    // TODO - ensure that this works even if no profile specified
-    // eg offline usage?
-
-    let attributes = {};
-
-    let hasNetworkConnection = true; // TODO
-
-    let tasks;
-
-    if (this.props.isLoggedIn && hasNetworkConnection) {
-      tasks = await TaskController.fetchTasksByAttributes(
-        attributes,
-        this.props.profile.id,
-        this.props.profile.password
-      );
-    } else {
-      // no network or not logged in, revert to local storage
-      tasks = await TaskStorage.getAllTasks();
-    }
-
-    if (tasks.length > 0) {
-      tasks = this._sortTasksByDateAndInsertHeaders(tasks);
-    }
-
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(tasks),
-      isRefreshing: false
-    });
+      TODO - implement it
+    */
+    return;
   };
 
   _isHeaderCurrentlyCollapsed = category => {
@@ -377,14 +354,14 @@ class MultiTaskPage extends Component {
           }}
         >
           <View style={[AppStyles.row]}>
-            <View>
+            <View style={styles.headerText}>
               <Image
                 key={`${header.name}-collapse-image`}
                 style={styles.icon}
                 source={headerCollapseStatusImage}
               />
             </View>
-            <View>
+            <View style={styles.headerText}>
               <Text style={[AppStyles.baseText]}>{header.name}</Text>
             </View>
           </View>
@@ -508,6 +485,7 @@ class MultiTaskPage extends Component {
         enableEmptySections={true}
         refreshControl={
           <RefreshControl
+            enabled={false}
             refreshing={this.state.isRefreshing}
             onRefresh={this._fetchData}
             tintColor={AppConfig.primaryColor}
@@ -539,9 +517,15 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent"
   },
   icon: {
-    marginTop: 4,
-    width: 30,
-    height: 30
+    width: 32,
+    height: 32,
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  headerText: {
+    justifyContent: "center",
+    alignItems: "center"
   },
   headerRow: {
     flexDirection: "row",

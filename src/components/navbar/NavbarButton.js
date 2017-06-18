@@ -49,15 +49,18 @@ class NavbarButton extends Component {
 const styles = StyleSheet.create({
   mediumRightNavButton: {
     right: 50,
-    top: 4
+    alignItems: "center",
+    justifyContent: "center"
   },
   farRightNavButton: {
     right: 20,
-    top: 4
+    alignItems: "center",
+    justifyContent: "center"
   },
   leftNavButton: {
     left: 40,
-    top: 4
+    alignItems: "center",
+    justifyContent: "center"
   }
 });
 
