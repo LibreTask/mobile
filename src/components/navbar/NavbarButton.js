@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   leftNavButton: {
-    left: 40,
+    left: 20,
     alignItems: "center",
     justifyContent: "center"
   }
