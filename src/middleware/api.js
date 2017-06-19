@@ -3,10 +3,12 @@
  * @license https://github.com/AlgernonLabs/mobile/blob/master/LICENSE.md
  */
 
-import NoConnection from "./errors/NoConnection";
+import RetryableError from "./errors/RetryableError";
 import ErrorCodes from "./errors/ErrorCodes";
 
 const API_ROOT = "http://192.168.1.111:3001/api/v1/";
+const MAX_RETRIES = 3;
+
 const Buffer = require("buffer").Buffer;
 
 export function constructAuthHeader(userId, password) {
@@ -18,6 +20,7 @@ export function constructAuthHeader(userId, password) {
 }
 
 // TODO - move this to its own module
+// TODO - use a hash for this
 function humanReadableError(error) {
   try {
     let jsonError = JSON.parse(error.error);
@@ -36,11 +39,31 @@ function humanReadableError(error) {
   }
 }
 
-export function invoke(request) {
-  let { endpoint } = request;
+export function invoke(request, retriesRemaining) {
+  const { endpoint, method, headers, body } = request;
 
-  const { method, headers, body } = request;
+  return _invoke(endpoint, method, headers, body).catch(err => {
+    if (retriesRemaining === undefined) {
+      retriesRemaining = MAX_RETRIES;
+    }
 
+    let shouldRetry = err instanceof RetryableError;
+    shouldRetry &= method === "GET";
+    shouldRetry &= retriesRemaining >= 1;
+
+    if (shouldRetry) {
+      let retryAttemptNumber = MAX_RETRIES - retriesRemaining;
+
+      return _retryWait(retryAttemptNumber).then(() => {
+        return invoke(request, retriesRemaining - 1);
+      });
+    } else {
+      throw err;
+    }
+  });
+}
+
+function _invoke(endpoint, method, headers, body) {
   const fullUrl = endpoint.indexOf(API_ROOT) === -1
     ? API_ROOT + endpoint
     : endpoint;
@@ -50,7 +73,13 @@ export function invoke(request) {
     headers: headers,
     body: body
   })
-    .then(response => response.json())
+    .then(response => {
+      if (response.status >= 500) {
+        throw new RetryableError();
+      } else {
+        return response.json();
+      }
+    })
     .catch(error => {
       var output = "";
       for (var property in error) {
@@ -59,9 +88,11 @@ export function invoke(request) {
       console.log("error: " + output);
       console.log("inital error: " + error);
 
+      // TODO - refine retry logic
+
       if (error instanceof TypeError) {
         if (error.message === "Network request failed") {
-          throw new NoConnection();
+          throw new RetryableError();
         } else {
           throw new Error(humanReadableError(error));
         }
@@ -69,4 +100,13 @@ export function invoke(request) {
         throw new Error(humanReadableError(error));
       }
     });
+}
+
+function _retryWait(retryAttemptNumber) {
+  // TODO - refine this value
+  let retryDurationMillis = 1000 * 1.5 ** retryAttemptNumber;
+
+  console.log("retrying for: " + retryDurationMillis);
+
+  return new Promise(resolve => setTimeout(resolve, retryDurationMillis));
 }
