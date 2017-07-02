@@ -104,7 +104,7 @@ function _invoke(endpoint, method, headers, body) {
 
 function _retryWait(retryAttemptNumber) {
   // TODO - refine this value
-  let retryDurationMillis = 1000 * 1.5 ** retryAttemptNumber;
+  let retryDurationMillis = 1000 * 1.5 * retryAttemptNumber;
 
   console.log("retrying for: " + retryDurationMillis);
 

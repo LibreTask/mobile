@@ -333,40 +333,39 @@ class MultiTaskPage extends Component {
       : require("../../images/arrow_down_black.png");
 
     return (
-      <View style={styles.headerRow}>
-        <TouchableOpacity
-          key={"menu-item-lists"}
-          onPress={() => {
-            if (header.name === "No Date") {
-              this.props.toggleTaskView(TaskViewActions.TASKS_WITH_NO_DATE);
-            } else if (header.name === "Today") {
-              this.props.toggleTaskView(TaskViewActions.TODAYS_TASKS);
-            } else if (header.name === "Tomorrow") {
-              this.props.toggleTaskView(TaskViewActions.TOMORROWS_TASKS);
-            } else if (header.name === "Future") {
-              this.props.toggleTaskView(TaskViewActions.FUTURE_TASKS);
-            } else if (header.name === "Overdue") {
-              this.props.toggleTaskView(TaskViewActions.OVERDUE_TASKS);
-            }
+      <TouchableOpacity
+        key={"menu-item-lists"}
+        style={styles.headerRow}
+        onPress={() => {
+          if (header.name === "No Date") {
+            this.props.toggleTaskView(TaskViewActions.TASKS_WITH_NO_DATE);
+          } else if (header.name === "Today") {
+            this.props.toggleTaskView(TaskViewActions.TODAYS_TASKS);
+          } else if (header.name === "Tomorrow") {
+            this.props.toggleTaskView(TaskViewActions.TOMORROWS_TASKS);
+          } else if (header.name === "Future") {
+            this.props.toggleTaskView(TaskViewActions.FUTURE_TASKS);
+          } else if (header.name === "Overdue") {
+            this.props.toggleTaskView(TaskViewActions.OVERDUE_TASKS);
+          }
 
-            // TODO - should we delay here?
-            this._refreshEntireList(this.props.tasks);
-          }}
-        >
-          <View style={[AppStyles.row]}>
-            <View style={styles.headerText}>
-              <Image
-                key={`${header.name}-collapse-image`}
-                style={styles.icon}
-                source={headerCollapseStatusImage}
-              />
-            </View>
-            <View style={styles.headerText}>
-              <Text style={[AppStyles.baseText]}>{header.name}</Text>
-            </View>
+          // TODO - should we delay here?
+          this._refreshEntireList(this.props.tasks);
+        }}
+      >
+        <View style={[AppStyles.row]}>
+          <View style={styles.headerText}>
+            <Image
+              key={`${header.name}-collapse-image`}
+              style={styles.icon}
+              source={headerCollapseStatusImage}
+            />
           </View>
-        </TouchableOpacity>
-      </View>
+          <View style={styles.headerText}>
+            <Text style={[AppStyles.baseText]}>{header.name}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
     );
   };
 
