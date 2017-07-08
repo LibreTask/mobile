@@ -224,10 +224,8 @@ class Profile extends Component {
       // Styling here is intended to be identical to a non-disabled TextField.
       return (
         <View style={[AppStyles.paddingVertical]}>
-          <Text style={[AppStyles.baseText]}>
-            Premium Plan Expiration
-          </Text>
-          <Text style={[AppStyles.baseText]}>
+          <Text style={[AppStyles.baseText]}>Premium Plan Expiration</Text>
+          <Text style={[AppStyles.baseTextLight]}>
             {formattedExpirationDate}
           </Text>
         </View>
@@ -243,11 +241,9 @@ class Profile extends Component {
         automaticallyAdjustContentInsets={false}
         style={[AppStyles.container]}
       >
-
         {this._constructNavbar()}
 
         <View style={[AppStyles.padding]}>
-
           <Text style={[AppStyles.successText]}>
             {this.state.updateSuccess}
           </Text>
@@ -257,11 +253,9 @@ class Profile extends Component {
           </Text>
 
           <View style={[AppStyles.paddingVertical]}>
-            <Text style={[AppStyles.baseText]}>
-              Email
-            </Text>
+            <Text style={[AppStyles.baseText]}>Email</Text>
             <TextInput
-              style={[AppStyles.baseText]}
+              style={[AppStyles.baseTextLight]}
               onChangeText={updatedEmail => {
                 let profile = this.state.myProfile;
                 profile.email = updatedEmail;

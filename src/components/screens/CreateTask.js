@@ -178,7 +178,7 @@ class CreateTask extends Component {
       <View style={[AppStyles.paddingVertical]}>
         <Text style={[AppStyles.baseText]}>Notes</Text>
         <TextInput
-          style={[AppStyles.baseText]}
+          style={[AppStyles.baseTextLight]}
           onChangeText={updatedNotes => {
             this.setState({ taskNotes: updatedNotes });
           }}
@@ -242,7 +242,7 @@ class CreateTask extends Component {
       <View style={[AppStyles.paddingVertical]}>
         <Text style={[AppStyles.baseText]}>Due Date</Text>
         <TextInput
-          style={[AppStyles.baseText]}
+          style={[AppStyles.baseTextLight]}
           onFocus={() => {
             this.setState({
               displayingDateDialog: true
@@ -330,15 +330,13 @@ class CreateTask extends Component {
         style={[AppStyles.container]}
         contentContainerStyle={[AppStyles.containerStretched]}
       >
-
         {this._constructNavbar()}
 
         <View style={[AppStyles.padding]}>
-
           <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>Name</Text>
             <TextInput
-              style={[AppStyles.baseText]}
+              style={[AppStyles.baseTextLight]}
               onChangeText={updatedName => {
                 this.setState({ taskName: updatedName });
               }}
@@ -358,7 +356,6 @@ class CreateTask extends Component {
           </Text>
 
           <View style={[AppStyles.row]}>
-
             <View style={[AppStyles.button]}>
               <Button title={"Create Task"} onPress={this._createTask} />
             </View>
@@ -366,7 +363,6 @@ class CreateTask extends Component {
 
           {this._constructAttributeIcons()}
         </View>
-
       </ScrollView>
     );
   };

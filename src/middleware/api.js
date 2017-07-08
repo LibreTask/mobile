@@ -6,7 +6,10 @@
 import RetryableError from "./errors/RetryableError";
 import ErrorCodes from "./errors/ErrorCodes";
 
-const API_ROOT = "http://192.168.1.111:3001/api/v1/";
+const API_ROOT = "http://174.138.64.49/api/v1/";
+// TEST ENV - "http://192.168.1.111:3001/api/v1/";
+// PROD ENV - "http://174.138.64.49/api/v1/";
+// (production does not need port due to NGINX proxy)
 const MAX_RETRIES = 3;
 
 const Buffer = require("buffer").Buffer;
@@ -64,9 +67,8 @@ export function invoke(request, retriesRemaining) {
 }
 
 function _invoke(endpoint, method, headers, body) {
-  const fullUrl = endpoint.indexOf(API_ROOT) === -1
-    ? API_ROOT + endpoint
-    : endpoint;
+  const fullUrl =
+    endpoint.indexOf(API_ROOT) === -1 ? API_ROOT + endpoint : endpoint;
 
   return fetch(fullUrl, {
     method: method,

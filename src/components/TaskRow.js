@@ -54,7 +54,7 @@ class TaskRow extends Component {
             }}
           />
 
-          <Text style={[AppStyles.baseText]}>
+          <Text style={[AppStyles.baseTextLight]}>
             {title}
           </Text>
         </View>
@@ -65,8 +65,10 @@ class TaskRow extends Component {
 
 const styles = StyleSheet.create({
   taskRowInner: {
-    borderBottomColor: AppConfig.borderColor,
-    borderBottomWidth: 1,
+    //  TODO - have border style ONLY between elements
+    //    For example, if only one element exists, we will not have any border
+    //  borderBottomColor: AppConfig.borderColor,
+    //  borderBottomWidth: 1,
     flexDirection: "row",
     flex: 1
   },

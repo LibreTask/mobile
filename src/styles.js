@@ -21,6 +21,12 @@ module.exports = StyleSheet.create({
     color: AppConfig.textColor,
     fontSize: AppConfig.baseFontSize
   },
+  baseTextLight: {
+    fontFamily: AppConfig.baseFont,
+    fontWeight: "400",
+    color: AppConfig.textColor,
+    fontSize: AppConfig.baseFontSize
+  },
   baseTextLarge: {
     fontFamily: AppConfig.baseFont,
     fontWeight: "500",

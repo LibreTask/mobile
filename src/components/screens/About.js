@@ -58,17 +58,16 @@ class About extends Component {
         automaticallyAdjustContentInsets={false}
         style={[AppStyles.container]}
       >
-
         {this._constructNavbar()}
 
         <View style={[AppStyles.padding]}>
-
           <Text style={[AppStyles.paddingVertical, AppStyles.baseTextLarge]}>
             Algernon
           </Text>
 
-          <Text style={[AppStyles.paddingVertical, AppStyles.baseText]}>
-            Organize your goals, track your progress, and have updates seamlessly sync across all of your devices.
+          <Text style={[AppStyles.paddingVertical, AppStyles.baseTextLight]}>
+            Organize your goals, track your progress, and have updates
+            seamlessly sync across all of your devices.
           </Text>
 
           <View style={[AppStyles.divider]} />
@@ -79,7 +78,7 @@ class About extends Component {
               Linking.openURL(AppConstants.WEBSITE_LINK);
             }}
           >
-            <Text style={[AppStyles.baseTextSmall, AppStyles.linkText]}>
+            <Text style={[AppStyles.baseTextLight, AppStyles.linkText]}>
               Website
             </Text>
           </TouchableOpacity>
@@ -92,7 +91,7 @@ class About extends Component {
               Linking.openURL(AppConstants.SOURCE_CODE_LINK);
             }}
           >
-            <Text style={[AppStyles.baseTextSmall, AppStyles.linkText]}>
+            <Text style={[AppStyles.baseTextLight, AppStyles.linkText]}>
               Source Code
             </Text>
           </TouchableOpacity>
@@ -105,7 +104,7 @@ class About extends Component {
               Linking.openURL(AppConstants.PRODUCT_PRIVACY_LINK);
             }}
           >
-            <Text style={[AppStyles.baseTextSmall, AppStyles.linkText]}>
+            <Text style={[AppStyles.baseTextLight, AppStyles.linkText]}>
               Privacy Policy
             </Text>
           </TouchableOpacity>
@@ -118,13 +117,12 @@ class About extends Component {
               Linking.openURL(AppConstants.PRODUCT_TERMS_LINK);
             }}
           >
-            <Text style={[AppStyles.baseTextSmall, AppStyles.linkText]}>
+            <Text style={[AppStyles.baseTextLight, AppStyles.linkText]}>
               Terms of Service
             </Text>
           </TouchableOpacity>
 
           <View style={[AppStyles.divider]} />
-
         </View>
       </ScrollView>
     );

@@ -161,16 +161,14 @@ class Signup extends Component {
         style={[AppStyles.container]}
         contentContainerStyle={[AppStyles.containerStretched]}
       >
-
         {this._constructNavbar()}
 
         <View style={[AppStyles.padding]}>
-
           <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>Email</Text>
             <TextInput
               keyboardType="email-address"
-              style={[AppStyles.baseText]}
+              style={[AppStyles.baseTextLight]}
               onChangeText={updatedEmail => {
                 this.setState({ email: updatedEmail });
               }}
@@ -183,11 +181,10 @@ class Signup extends Component {
           </View>
 
           <View style={[AppStyles.paddingVertical]}>
-
             <Text style={[AppStyles.baseText]}>Password</Text>
             <TextInput
               secureTextEntry={true}
-              style={[AppStyles.baseText]}
+              style={[AppStyles.baseTextLight]}
               onChangeText={updatedPassword => {
                 this.setState({ password: updatedPassword });
               }}
@@ -203,7 +200,7 @@ class Signup extends Component {
             <Text style={[AppStyles.baseText]}>Confirm Password</Text>
             <TextInput
               secureTextEntry={true}
-              style={[AppStyles.baseText]}
+              style={[AppStyles.baseTextLight]}
               onChangeText={updatedConfirmPassword => {
                 this.setState({ confirmPassword: updatedConfirmPassword });
               }}

@@ -219,7 +219,7 @@ class SingleTaskPage extends Component {
 
     setTimeout(() => {
       this.setState({ updateSuccess: "" });
-    }, 1500); // remove message after 1.5 seconds
+    }, 2000); // remove message after 2 seconds
   };
 
   _renderDatePicker = () => {
@@ -326,7 +326,7 @@ class SingleTaskPage extends Component {
     // TODO - refine this approach
 
     let dateString;
-    let dateStringStyle = [AppStyles.baseText];
+    let dateStringStyle = [AppStyles.baseTextLight];
     if (this.state.task.dueDateTimeUtc) {
       // TODO - refine how we format date (and move to utils)
 
@@ -341,23 +341,13 @@ class SingleTaskPage extends Component {
         automaticallyAdjustContentInsets={false}
         style={[AppStyles.container]}
       >
-
         {this._constructNavbar()}
 
         <View style={[AppStyles.padding]}>
-
-          <Text style={[AppStyles.successText]}>
-            {this.state.updateSuccess}
-          </Text>
-
-          <Text style={[AppStyles.errorText]}>
-            {this.state.updateError}
-          </Text>
-
           <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>Name</Text>
             <TextInput
-              style={[AppStyles.baseText]}
+              style={[AppStyles.baseTextLight]}
               onChangeText={updatedName => {
                 let task = this.state.task;
                 task.name = updatedName;
@@ -373,7 +363,7 @@ class SingleTaskPage extends Component {
           <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>Notes</Text>
             <TextInput
-              style={[AppStyles.baseText]}
+              style={[AppStyles.baseTextLight]}
               onChangeText={updatedNotes => {
                 let task = this.state.task;
                 task.notes = updatedNotes;
@@ -390,7 +380,7 @@ class SingleTaskPage extends Component {
           <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>Due Date</Text>
             <TextInput
-              style={[AppStyles.baseText, dateStringStyle]}
+              style={[AppStyles.baseTextLight, dateStringStyle]}
               onFocus={() => {
                 this.setState({
                   displayingDateDialog: true
@@ -399,6 +389,14 @@ class SingleTaskPage extends Component {
               value={dateString}
             />
           </View>
+
+          <Text style={[AppStyles.successText]}>
+            {this.state.updateSuccess}
+          </Text>
+
+          <Text style={[AppStyles.errorText]}>
+            {this.state.updateError}
+          </Text>
         </View>
       </ScrollView>
     );
