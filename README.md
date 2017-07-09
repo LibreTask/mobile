@@ -18,4 +18,28 @@ I implemented port forwarding (with chrome://inspect/devices). Port 8081 is forw
 
 ---
 
-## Building
+## Building ANDROID
+https://facebook.github.io/react-native/docs/signed-apk-android.html
+
+replace values with your own naming
+
+1. `keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000`
+
+2. move my-release-key.keystore to android/app
+
+3.     Edit the file ~/.gradle/gradle.properties and add the following (replace ***** with the correct keystore password, alias and key password),
+
+MYAPP_RELEASE_STORE_FILE=my-release-key.keystore
+MYAPP_RELEASE_KEY_ALIAS=my-key-alias
+MYAPP_RELEASE_STORE_PASSWORD=123456
+MYAPP_RELEASE_KEY_PASSWORD=123456
+
+4. (ensure build.grade correctly uses the above global constants)
+
+5. run `cd android && ./gradlew assembleRelease` which will output the APK
+
+6. `react-native run-android --variant=release`
+
+---
+
+## Building iOS
