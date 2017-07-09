@@ -119,8 +119,12 @@ class Menu extends Component {
       </View>
     );
 
+    // The last element should not have a bar underneath it; this is purely a
+    // design consideration. Only display 'About' with a bar if user logged in.
+    let aboutStyle = this.props.isLoggedIn ? styles.menuItemContainer : {};
+
     menuItems.push(
-      <View key={"menu-item-about"} style={[styles.menuItemContainer]}>
+      <View key={"menu-item-about"} style={[aboutStyle]}>
         <TouchableOpacity onPress={() => navigate("About", About, this.props)}>
           <View style={[styles.menuItem]}>
             <Text style={[AppStyles.baseText, styles.menuItemText]}>
@@ -134,7 +138,7 @@ class Menu extends Component {
     // show logout menu-item
     if (this.props.isLoggedIn) {
       menuItems.push(
-        <View key={"menu-item-logout"} style={[styles.menuItemContainer]}>
+        <View key={"menu-item-logout"}>
           <TouchableOpacity
             onPress={() => {
               Alert.alert("", "Are you sure you want to logout?", [
@@ -186,7 +190,6 @@ class Menu extends Component {
 
     return (
       <View style={[AppStyles.padding, styles.userGreeting]}>
-
         <Text style={[AppStyles.baseText, styles.userGreetingText]}>
           {greeting}
         </Text>
@@ -216,8 +219,9 @@ class Menu extends Component {
         ]}
       >
         <View style={[styles.menuContainer]}>
-
-          <View style={[styles.menu]}>{menuItems}</View>
+          <View style={[styles.menu]}>
+            {menuItems}
+          </View>
         </View>
       </ScrollView>
     );

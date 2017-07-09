@@ -183,13 +183,13 @@ class Login extends Component {
             </Text>
           </View>
 
-          <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
-            {this.state.loginError}
-          </Text>
-
           <View style={[AppStyles.button, AppStyles.paddingVertical]}>
             <Button title={"Login"} onPress={this._login} />
           </View>
+
+          <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
+            {this.state.loginError}
+          </Text>
 
           <TouchableOpacity
             style={[AppStyles.paddingVertical]}
@@ -197,13 +197,23 @@ class Login extends Component {
               Linking.openURL(AppConstants.PASSWORD_RESET_LINK);
             }}
           >
-            <Text>Forgot password?</Text>
+            <Text style={[AppStyles.baseLinkText, styles.resetPasswordLink]}>
+              Forgot password?
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
     );
   };
 }
+
+const styles = StyleSheet.create({
+  resetPasswordLink: {
+    color: AppConfig.linkColor,
+    marginTop: 15,
+    marginBottom: 15
+  }
+});
 
 const mapStateToProps = state => ({
   /* TODO */

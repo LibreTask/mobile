@@ -24,15 +24,13 @@ export function constructAuthHeader(userId, password) {
 
 // TODO - move this to its own module
 // TODO - use a hash for this
-function humanReadableError(error) {
+function humanReadableError(errorCode) {
   try {
-    let jsonError = JSON.parse(error.error);
-
-    if (jsonError.errorCode === ErrorCodes.USER_DOES_NOT_EXIST) {
+    if (errorCode === ErrorCodes.USER_DOES_NOT_EXIST) {
       return "That user does not exist";
-    } else if (jsonError.errorCode === ErrorCodes.EMAIL_IS_ALREADY_USED) {
+    } else if (errorCode === ErrorCodes.EMAIL_IS_ALREADY_USED) {
       return "That email is already used";
-    } else if (jsonError.errorCode === ErrorCodes.INVALID_LOGIN) {
+    } else if (errorCode === ErrorCodes.INVALID_LOGIN) {
       return "Either email or password is invalid";
     } else {
       return "Something went wrong, please try again later";
@@ -78,26 +76,21 @@ function _invoke(endpoint, method, headers, body) {
     .then(response => {
       if (response.status >= 500) {
         throw new RetryableError();
+      }
+      return response.json();
+    })
+    .then(response => {
+      if (response.errorCode) {
+        throw new Error(humanReadableError(response.errorCode));
       } else {
-        return response.json();
+        return response;
       }
     })
     .catch(error => {
-      var output = "";
-      for (var property in error) {
-        output += property + ": " + error[property] + "; ";
-      }
-      console.log("error: " + output);
-      console.log("inital error: " + error);
-
       // TODO - refine retry logic
 
-      if (error instanceof TypeError) {
-        if (error.message === "Network request failed") {
-          throw new RetryableError();
-        } else {
-          throw new Error(humanReadableError(error));
-        }
+      if (error instanceof Error) {
+        throw error;
       } else {
         throw new Error(humanReadableError(error));
       }

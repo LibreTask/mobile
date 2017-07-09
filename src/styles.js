@@ -9,6 +9,12 @@ import { StyleSheet } from "react-native";
 import AppConfig from "./config";
 
 module.exports = StyleSheet.create({
+  baseLinkText: {
+    fontFamily: AppConfig.baseFont,
+    fontWeight: "400",
+    color: AppConfig.linkColor,
+    fontSize: AppConfig.baseFontSize * 0.8
+  },
   baseTextSmall: {
     fontFamily: AppConfig.baseFont,
     fontWeight: "500",

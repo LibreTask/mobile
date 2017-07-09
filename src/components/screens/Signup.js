@@ -212,13 +212,13 @@ class Signup extends Component {
             </Text>
           </View>
 
-          <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
-            {this.state.signupError}
-          </Text>
-
           <View style={[AppStyles.button]}>
             <Button title={"Signup"} onPress={this._signup} />
           </View>
+
+          <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
+            {this.state.signupError}
+          </Text>
         </View>
       </ScrollView>
     );
