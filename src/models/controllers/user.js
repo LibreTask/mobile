@@ -124,10 +124,10 @@ async function getState() {
 export const syncUser = async () => {
   const state = await getState();
 
-  console.log("sync user state...");
+  console.log("FROM CONTROLLER sync user state...");
   //console.dir(state);
 
-  if (!state.user.isLoggedIn) {
+  if (!state.user || !state.user.isLoggedIn) {
     return;
   }
 
@@ -136,7 +136,7 @@ export const syncUser = async () => {
 
   return fetchProfile(userId, password)
     .then(response => {
-      if (response.profile) {
+      if (response && response.profile) {
         // TODO - refine password management scheme
         response.profile.password = password;
         ProfileStorage.createOrUpdateProfile(response.profile);

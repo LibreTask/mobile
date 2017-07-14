@@ -187,7 +187,7 @@ export const syncTasks = async lastSuccessfulSyncDateTimeUtc => {
   console.log("state...");
   //console.dir(state);
 
-  if (!state.user.isLoggedIn) {
+  if (!state.user || !state.user.isLoggedIn) {
     return;
   }
 

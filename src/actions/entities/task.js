@@ -61,10 +61,10 @@ export const syncTasks = () => {
     console.log("sync task state...");
     //////console.dir(getState());
 
-    let profile = getState().entities.user.profile;
+    let user = getState().entities.user;
 
     // only sync if the user can access the network
-    if (UserController.canAccessNetwork(profile)) {
+    if (user && UserController.canAccessNetwork(user.profile)) {
       // if no successful sync has been recorded, sync entire last month
       let lastSuccessfulSyncDateTimeUtc =
         getState().entities.task.lastSuccessfulSyncDateTimeUtc ||
@@ -79,14 +79,14 @@ export const syncTasks = () => {
           // logic on it.
           dispatch({
             type: SYNC_TASKS,
-            tasks: response.tasks,
+            tasks: response && response.tasks ? response.tasks : [],
 
             // set 'lastSync' time as five minutes ago, to provide small buffer
             lastSuccessfulSyncDateTimeUtc: DateUtils.fiveMinutesAgo()
           });
         })
         .catch(error => {
-          console.log("sync error....");
+          console.log("sync error: " + error);
           ////console.dir(error);
         });
     }
@@ -242,7 +242,7 @@ export const cleanupTasks = () => {
 
   return function(dispatch, getState) {
     const pendingTaskActions = getState().entities.task.pendingTaskActions;
-    const tasks = getState().entities.task.tasks;
+    const tasks = getState().entities.task.tasks || [];
 
     for (let taskId in tasks) {
       let task = tasks[taskId];
