@@ -69,24 +69,21 @@ class Settings extends Component {
         automaticallyAdjustContentInsets={false}
         style={[AppStyles.container]}
       >
-
         {this._constructNavbar()}
 
         <View style={[AppStyles.padding]}>
-
           <Text style={[AppStyles.paddingVertical, AppStyles.baseTextLarge]}>
             Settings
           </Text>
 
           <CheckBox
-            labelStyle={AppStyles.baseText}
+            labelStyle={AppStyles.baseTextLight}
             label={"Hide completed tasks"}
             checked={this.props.showCompletedTasks}
             onChange={checked => {
               this.props.toggleShowCompletedTasks();
             }}
           />
-
         </View>
       </ScrollView>
     );

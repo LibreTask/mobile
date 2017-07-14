@@ -41,11 +41,15 @@ module.exports = StyleSheet.create({
   },
   errorText: {
     color: AppConfig.errorColor,
-    fontSize: AppConfig.baseFontSize
+    fontSize: AppConfig.baseFontSize,
+    fontWeight: "400",
+    fontSize: AppConfig.baseFontSize * 0.8
   },
   successText: {
     color: AppConfig.successColor,
-    fontSize: AppConfig.baseFontSize
+    fontSize: AppConfig.baseFontSize,
+    fontWeight: "400",
+    fontSize: AppConfig.baseFontSize * 0.8
   },
   linkText: {
     color: AppConfig.linkColor
