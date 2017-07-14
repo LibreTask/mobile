@@ -15,6 +15,9 @@ It seems the IP:PORT, derived from running `ifconfig` is not working.
 
 I implemented port forwarding (with chrome://inspect/devices). Port 8081 is forwarded to localhost:8081, and I set the React Native application to look for localhost:8081.
 
+---
+
+NOTE: for the Android/IOS build process you might need to link new modules (especially "assets" like images, etc) via `react-native link`
 
 ---
 
