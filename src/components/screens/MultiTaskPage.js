@@ -456,7 +456,7 @@ class MultiTaskPage extends Component {
           }}
           activeOpacity={0.7}
         >
-          <View style={[AppStyles.padding, styles.taskRowInner]}>
+          <View style={[AppStyles.paddingMinimal]}>
             <Text
               style={[
                 AppStyles.baseText,
@@ -509,11 +509,6 @@ class MultiTaskPage extends Component {
 }
 
 const styles = StyleSheet.create({
-  createTaskRowInner: {
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: AppConfig.borderColor
-  },
   createTaskRowText: {
     textAlign: "center",
     fontWeight: "500",

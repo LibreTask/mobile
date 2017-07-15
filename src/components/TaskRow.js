@@ -37,7 +37,7 @@ class TaskRow extends Component {
 
     return (
       <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
-        <View style={[AppStyles.padding, styles.taskRowInner, rowStyle]}>
+        <View style={[AppStyles.paddingMinimal, styles.taskRowInner, rowStyle]}>
           <CheckBox
             label={""}
             containerStyle={styles.container}

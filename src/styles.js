@@ -86,6 +86,10 @@ module.exports = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20
   },
+  paddingMinimal: {
+    paddingHorizontal: 15,
+    paddingVertical: 15
+  },
   paddingHorizontal: {
     paddingHorizontal: 20
   },
