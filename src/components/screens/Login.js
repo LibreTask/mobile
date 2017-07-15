@@ -209,9 +209,7 @@ class Login extends Component {
 
 const styles = StyleSheet.create({
   resetPasswordLink: {
-    color: AppConfig.linkColor,
-    marginTop: 15,
-    marginBottom: 15
+    color: AppConfig.linkColor
   }
 });
 
