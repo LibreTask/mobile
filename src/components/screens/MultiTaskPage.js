@@ -216,6 +216,9 @@ class MultiTaskPage extends Component {
   };
 
   _fetchData = async () => {
+    // TODO - set state.isRefreshing
+
+    this.props.syncTasks();
     /*
       Manually refreshing the list via swipe down is currently
       not supported.
@@ -362,7 +365,9 @@ class MultiTaskPage extends Component {
             />
           </View>
           <View style={styles.headerText}>
-            <Text style={[AppStyles.baseText]}>{header.name}</Text>
+            <Text style={[AppStyles.baseText]}>
+              {header.name}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -452,7 +457,6 @@ class MultiTaskPage extends Component {
           activeOpacity={0.7}
         >
           <View style={[AppStyles.padding, styles.taskRowInner]}>
-
             <Text
               style={[
                 AppStyles.baseText,
@@ -546,6 +550,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = {
+  syncTasks: TaskActions.syncTasks,
   createOrUpdateTask: TaskActions.createOrUpdateTask,
   addPendingTaskUpdate: TaskActions.addPendingTaskUpdate,
   toggleSideMenu: SideMenuActions.toggleSideMenu,

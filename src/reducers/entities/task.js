@@ -1,6 +1,6 @@
 /*
  * @link https://www.algernon.io/
- * @license https://github.com/AlgernonLabs/mobile/blob/master/LICENSE.md
+ * @license https://github.com/AlgernonLabs/desktop/blob/master/LICENSE.md
  */
 
 import { combineReducers } from "redux";
@@ -156,6 +156,9 @@ function removePendingTaskCreate(state, action) {
     action.taskId
   );
 
+  // TODO - we must also update update / delete now that we have
+  // the REAL task ID
+
   let taskMap = {};
   for (let task of remainingTasks) {
     taskMap[task.id] = task;
@@ -165,16 +168,47 @@ function removePendingTaskCreate(state, action) {
   let serverAssignedTaskId = action.serverAssignedTaskId;
 
   // TODO - refine the approach of replacing the existing task
+
+  /*
+    Each task has a unique ID. This identifier is usually assigned by the
+    server. However, if for some reason, the client is unable to reach the
+    server, the client will create a temporary ID and then queue the task
+    for creation.
+
+    Later, when the client can finally reach the server, the server will give
+    the task a new ID. Here we replace the old, client-assigned ID with the new,
+    server-assigned ID.
+
+    Three places must be checked
+    1. state.tasks
+        --- this is where all tasks live
+    2. state.pendingTaskActions.update
+        --- unlikely but possible the task is also queued for an update
+    3. state.pendingTaskActions.delete
+        --- unlikely but possible the task is also queued for deletion
+  */
   let task = Object.assign({}, state.tasks[clientAssignedTaskId]);
   task.id = serverAssignedTaskId;
   delete state.tasks[clientAssignedTaskId]; // delete existing task
   state.tasks[serverAssignedTaskId] = task; // replace with new ID
 
+  let pendingUpdates = state.pendingTaskActions.update || {};
+  if (clientAssignedTaskId in pendingUpdates) {
+    delete pendingUpdates[clientAssignedTaskId]; // delete existing task
+    pendingUpdates[serverAssignedTaskId] = task; // replace with new ID
+  }
+
+  let pendingDeletes = state.pendingTaskActions.delete || {};
+  if (clientAssignedTaskId in pendingDeletes) {
+    delete pendingDeletes[clientAssignedTaskId]; // delete existing task
+    pendingDeletes[serverAssignedTaskId] = task; // replace with new ID
+  }
+
   return updateObject(state, {
     pendingTaskActions: {
       create: taskMap,
-      update: state.pendingTaskActions.update,
-      delete: state.pendingTaskActions.delete
+      update: pendingUpdates,
+      delete: pendingDeletes
     }
   });
 }
@@ -311,8 +345,9 @@ function addNormalizedTask(state, normalizedTask) {
 }
 
 /*
-  Always update lastSuccessfulSyncDateTimeUtc, because it is assumed that
-  this reducer is ONLY invoked after a successful sync.
+  This function always updates the value lastSuccessfulSyncDateTimeUtc. This is
+  because it is assumed that this function is ONLY invoked after a successful
+  sync.
 */
 function syncTasks(state, action) {
   const syncedTasks = action.tasks;
@@ -386,27 +421,37 @@ function syncedTaskDoesNotConflictWithQueuedTask(state, syncedTask) {
   console.log("synced task...");
   console.dir(syncedTask);
 
-  if (syncedTask.id in pendingTaskActions.create) {
+  if (pendingTaskActions.create && syncedTask.id in pendingTaskActions.create) {
     // This should never happen. It would indicate either a bug (most likely)
     // or a UUID collision resulting from a client-assigned id being identical
     // to a server-assignd id (near impossible).
     throw new Error("Synced task was found in to-be-created queue.");
-  } else if (syncedTask.id in pendingTaskActions.update) {
-    let queuedTask = pendingTaskActions.update[syncTask.id];
+  } else if (
+    pendingTaskActions.update &&
+    syncedTask.id in pendingTaskActions.update
+  ) {
+    let queuedTask = pendingTaskActions.update[syncedTask.id];
 
     // TODO - improve
 
-    if (syncTask.updatedAtDateTimeUtc > queuedTask.updatedAtDateTimeUtc) {
+    // Always update if the queuedTask has undefined updatedAtDateTimeUtc AND
+    // the syncedTask does not.
+    if (syncedTask.updatedAtDateTimeUtc > queuedTask.updatedAtDateTimeUtc) {
       return false;
     } else {
       return false;
     }
-  } else if (syncedTask.id in pendingTaskActions.delete) {
-    let queuedTask = pendingTaskActions.delete[syncTask.id];
+  } else if (
+    pendingTaskActions.delete &&
+    syncedTask.id in pendingTaskActions.delete
+  ) {
+    let queuedTask = pendingTaskActions.delete[syncedTask.id];
 
     // TODO - improve
 
-    if (syncTask.updatedAtDateTimeUtc > queuedTask.updatedAtDateTimeUtc) {
+    // Always update if the queuedTask has undefined updatedAtDateTimeUtc AND
+    // the syncedTask does not.
+    if (syncedTask.updatedAtDateTimeUtc > queuedTask.updatedAtDateTimeUtc) {
       return false;
     } else {
       return false;

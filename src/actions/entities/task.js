@@ -1,6 +1,6 @@
 /*
  * @link https://www.algernon.io/
- * @license https://github.com/AlgernonLabs/mobile/blob/master/LICENSE.md
+ * @license https://github.com/AlgernonLabs/desktop/blob/master/LICENSE.md
  */
 
 import * as TaskController from "../../models/controllers/task";
@@ -183,6 +183,12 @@ export const submitQueuedTasks = () => {
       for (let taskId in pendingTaskActions.delete) {
         let task = pendingTaskActions.delete[taskId];
 
+        console.log("delete task form queue...");
+        console.log("task...");
+        console.dir(task);
+        console.log("userid: " + userId);
+        console.log("password: " + password);
+
         TaskController.deleteTaskFromQueue(task, userId, password)
           .then(response => {
             TaskQueue.dequeueTaskByTaskId(task.id);
@@ -242,7 +248,7 @@ export const cleanupTasks = () => {
 
   return function(dispatch, getState) {
     const pendingTaskActions = getState().entities.task.pendingTaskActions;
-    const tasks = getState().entities.task.tasks || [];
+    const tasks = getState().entities.task.tasks || {};
 
     for (let taskId in tasks) {
       let task = tasks[taskId];
@@ -257,7 +263,8 @@ export const cleanupTasks = () => {
       }
     }
 
-    for (let taskId in pendingTaskActions.update) {
+    let pendingUpdates = pendingTaskActions.update || {};
+    for (let taskId in pendingUpdates) {
       let task = pendingTaskActions.update[taskId];
 
       if (cleanupTask(task)) {
@@ -270,7 +277,8 @@ export const cleanupTasks = () => {
       }
     }
 
-    for (let taskId in pendingTaskActions.create) {
+    let pendingCreates = pendingTaskActions.create || {};
+    for (let taskId in pendingCreates) {
       let task = pendingTaskActions.create[taskId];
 
       if (cleanupTask(task)) {
@@ -283,7 +291,8 @@ export const cleanupTasks = () => {
       }
     }
 
-    for (let taskId in pendingTaskActions.delete) {
+    let pendingDeletes = pendingTaskActions.delete || {};
+    for (let taskId in pendingDeletes) {
       let task = pendingTaskActions.delete[taskId];
 
       if (cleanupTask(task)) {
