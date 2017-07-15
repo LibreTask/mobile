@@ -78,10 +78,11 @@ class Settings extends Component {
 
           <CheckBox
             labelStyle={AppStyles.baseTextLight}
-            label={"Hide completed tasks"}
+            label={"Show completed tasks"}
             checked={this.props.showCompletedTasks}
             onChange={checked => {
-              this.props.toggleShowCompletedTasks();
+              let updatedStatus = !this.props.showCompletedTasks;
+              this.props.toggleShowCompletedTasks(updatedStatus);
             }}
           />
         </View>

@@ -78,13 +78,13 @@ class MultiTaskPage extends Component {
     return false;
   };
 
-  _filterTasksToDisplay = tasks => {
+  _filterTasksToDisplay = (tasks, showCompletedTasks) => {
     let tasksToDisplay = [];
 
     for (let taskId in tasks) {
       let task = tasks[taskId];
 
-      if (TaskUtils.shouldRenderTask(task, this.props.showCompletedTasks)) {
+      if (TaskUtils.shouldRenderTask(task, showCompletedTasks)) {
         tasksToDisplay.push(task);
       }
     }
@@ -93,13 +93,14 @@ class MultiTaskPage extends Component {
   };
 
   componentWillReceiveProps = nextProps => {
-    this._refreshEntireList(nextProps.tasks);
+    // must pass in all props that are used to refresh the screen
+    this._refreshEntireList(nextProps.tasks, nextProps.showCompletedTasks);
   };
 
   // TODO - reevaluate this solution;
   // it probably is a horrible misuse of React Native
-  _refreshEntireList = tasks => {
-    let filteredTasks = this._filterTasksToDisplay(tasks);
+  _refreshEntireList = (tasks, showCompletedTasks) => {
+    let filteredTasks = this._filterTasksToDisplay(tasks, showCompletedTasks);
     this.setState({
       dataSource: new ListView.DataSource({
         /*
@@ -229,8 +230,6 @@ class MultiTaskPage extends Component {
   };
 
   _isHeaderCurrentlyCollapsed = category => {
-    console.log("category: " + category);
-
     if (category === "No Date") {
       return this._viewIsCollapsed(TaskViewActions.TASKS_WITH_NO_DATE);
     } else if (category === "Today") {
@@ -353,7 +352,10 @@ class MultiTaskPage extends Component {
           }
 
           // TODO - should we delay here?
-          this._refreshEntireList(this.props.tasks);
+          this._refreshEntireList(
+            this.props.tasks,
+            this.props.showCompletedTasks
+          );
         }}
       >
         <View style={[AppStyles.row]}>

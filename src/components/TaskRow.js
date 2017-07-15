@@ -31,6 +31,8 @@ class TaskRow extends Component {
   render = () => {
     let { title, onPress } = this.props;
 
+    console.log("isCurrentlyCompleted: " + this.state.isCurrentlyCompleted);
+
     let rowStyle = this.state.isCurrentlyCompleted
       ? styles.completedRow
       : styles.uncompletedRow;

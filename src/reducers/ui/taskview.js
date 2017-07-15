@@ -52,7 +52,7 @@ export default function taskviewReducer(state = initialState, action) {
       return updateObject(state, toggledCategory);
     case TOGGLE_SHOW_COMPLETED_TASKS:
       return updateObject(state, {
-        showCompletedTasks: !state.showCompletedTasks
+        showCompletedTasks: action.showCompletedTasks
       });
     default:
       return state;

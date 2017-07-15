@@ -63,6 +63,8 @@ export const syncTasks = () => {
 
     let user = getState().entities.user;
 
+    console.log("sync tasks user: " + user);
+
     // only sync if the user can access the network
     if (user && UserController.canAccessNetwork(user.profile)) {
       // if no successful sync has been recorded, sync entire last month
@@ -70,8 +72,10 @@ export const syncTasks = () => {
         getState().entities.task.lastSuccessfulSyncDateTimeUtc ||
         DateUtils.lastMonth(); // TODO - refine approach
 
+      console.log("last successful sync: " + lastSuccessfulSyncDateTimeUtc);
+
       // sync all new updates
-      return TaskController.syncTasks(lastSuccessfulSyncDateTimeUtc)
+      return TaskController.syncTasks(lastSuccessfulSyncDateTimeUtc, user)
         .then(response => {
           // After the Sync, let the reducer handle what Tasks to
           // update/create/delete. Here are are simply passing all

@@ -116,9 +116,10 @@ export const stopTaskViewRefresh = () => {
   };
 };
 
-export const toggleShowCompletedTasks = () => {
+export const toggleShowCompletedTasks = showCompletedTasks => {
   return {
-    type: TOGGLE_SHOW_COMPLETED_TASKS
+    type: TOGGLE_SHOW_COMPLETED_TASKS,
+    showCompletedTasks: showCompletedTasks
   };
 };
 
