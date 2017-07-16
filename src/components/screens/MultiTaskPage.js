@@ -461,7 +461,7 @@ class MultiTaskPage extends Component {
           <View style={[AppStyles.paddingMinimal]}>
             <Text
               style={[
-                AppStyles.baseText,
+                AppStyles.baseTextLight,
                 AppStyles.linkText,
                 AppStyles.centered
               ]}

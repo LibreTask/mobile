@@ -84,7 +84,7 @@ class Menu extends Component {
           }}
         >
           <View style={[styles.menuItem]}>
-            <Text style={[AppStyles.baseText, styles.menuItemText]}>
+            <Text style={[AppStyles.baseTextLight, styles.menuItemText]}>
               {"Tasks"}
             </Text>
           </View>
@@ -111,7 +111,7 @@ class Menu extends Component {
           onPress={() => this._navigateToProfileIfLoggedIn(this.props)}
         >
           <View style={[styles.menuItem]}>
-            <Text style={[AppStyles.baseText, styles.menuItemText]}>
+            <Text style={[AppStyles.baseTextLight, styles.menuItemText]}>
               {"Profile"}
             </Text>
           </View>
@@ -127,7 +127,7 @@ class Menu extends Component {
       <View key={"menu-item-about"} style={[aboutStyle]}>
         <TouchableOpacity onPress={() => navigate("About", About, this.props)}>
           <View style={[styles.menuItem]}>
-            <Text style={[AppStyles.baseText, styles.menuItemText]}>
+            <Text style={[AppStyles.baseTextLight, styles.menuItemText]}>
               {"About"}
             </Text>
           </View>
@@ -164,7 +164,7 @@ class Menu extends Component {
             }}
           >
             <View style={[styles.menuItem]}>
-              <Text style={[AppStyles.baseText, styles.menuItemText]}>
+              <Text style={[AppStyles.baseTextLight, styles.menuItemText]}>
                 {"Logout"}
               </Text>
             </View>
@@ -232,13 +232,13 @@ const styles = StyleSheet.create({
   menuContainer: {
     left: 0,
     right: 0,
-    backgroundColor: "black"
+    backgroundColor: "#cecece"
   },
   menu: {
     left: 0,
     right: 0,
     height: AppConfig.windowHeight,
-    backgroundColor: "black",
+    backgroundColor: "#cecece",
     padding: 10
   },
   menuItem: {

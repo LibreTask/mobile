@@ -72,10 +72,6 @@ class Settings extends Component {
         {this._constructNavbar()}
 
         <View style={[AppStyles.padding]}>
-          <Text style={[AppStyles.paddingVertical, AppStyles.baseTextLarge]}>
-            Settings
-          </Text>
-
           <CheckBox
             labelStyle={AppStyles.baseTextLight}
             label={"Show completed tasks"}
