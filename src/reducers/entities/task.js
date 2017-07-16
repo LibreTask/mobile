@@ -292,7 +292,7 @@ function startTaskCleanup(state, action) {
   });
 }
 
-function stopTaskSync(state, action) {
+function stopTaskCleanup(state, action) {
   clearInterval(state.intervalId); // TODO - is this the best place to do it?
 
   return updateObject(state, {

@@ -178,6 +178,7 @@ class CreateTask extends Component {
       <View style={[AppStyles.paddingVertical]}>
         <Text style={[AppStyles.baseText]}>Notes</Text>
         <TextInput
+          multiline={true}
           style={[AppStyles.baseTextLight]}
           onChangeText={updatedNotes => {
             this.setState({ taskNotes: updatedNotes });

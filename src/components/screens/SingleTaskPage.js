@@ -363,6 +363,7 @@ class SingleTaskPage extends Component {
           <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>Notes</Text>
             <TextInput
+              multiline={true}
               style={[AppStyles.baseTextLight]}
               onChangeText={updatedNotes => {
                 let task = this.state.task;
