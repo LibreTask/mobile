@@ -50,6 +50,10 @@ class Signup extends Component {
     };
   }
 
+  componentWillMount = () => {
+    this.props.updateHighlight(SideMenuActions.PROFILE_LINK);
+  };
+
   _signup = async () => {
     if (this.state.isSigningUp) {
       // TODO - warn user
@@ -231,7 +235,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   createOrUpdateProfile: UserActions.createOrUpdateProfile,
-  toggleSideMenu: SideMenuActions.toggleSideMenu
+  toggleSideMenu: SideMenuActions.toggleSideMenu,
+  updateHighlight: SideMenuActions.updateHighlight
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Signup);

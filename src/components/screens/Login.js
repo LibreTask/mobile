@@ -49,6 +49,10 @@ class Login extends Component {
     };
   }
 
+  componentWillMount = () => {
+    this.props.updateHighlight(SideMenuActions.PROFILE_LINK);
+  };
+
   _login = async () => {
     if (this.state.isLoggingIn) {
       // TODO - warn user
@@ -219,7 +223,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   createOrUpdateProfile: UserActions.createOrUpdateProfile,
-  toggleSideMenu: SideMenuActions.toggleSideMenu
+  toggleSideMenu: SideMenuActions.toggleSideMenu,
+  updateHighlight: SideMenuActions.updateHighlight
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
