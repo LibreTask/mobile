@@ -102,10 +102,8 @@ class AppContainer extends Component {
   };
 
   componentDidMount = async () => {
-    StatusBar.setHidden(false, "slide"); // Slide in on load
+    StatusBar.setHidden(false, "slide");
     StatusBar.setBackgroundColor(AppConfig.primaryColor, true);
-
-    //await this._loadInitialState();
 
     this._startTaskSync();
     this._startProfileSync();
@@ -125,6 +123,11 @@ class AppContainer extends Component {
     this.props.stopTaskCleanup();
   }
 
+  componentWillUpdate(nextProps, nextState) {
+    // hide StatusBar when the sidemenu is opened
+    StatusBar.setHidden(nextProps.sideMenuIsOpen, "fade");
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     if (!_.isEqual(this.props, nextProps)) {
       return true;
@@ -132,31 +135,6 @@ class AppContainer extends Component {
 
     return false;
   }
-
-  // TODO - move this logic to file like index.js
-  _loadInitialState = async () => {
-    let tasks = {};
-    let profile = {};
-
-    try {
-      tasks = await TaskStorage.getAllTasks();
-    } catch (err) {
-      /* ignore */
-    }
-
-    try {
-      profile = await ProfileStorage.getMyProfile();
-    } catch (err) {
-      /* ignore */
-    }
-
-    this.props.createOrUpdateTasks(tasks);
-
-    // TODO - what else should we validate?
-    if (profile) {
-      this.props.createOrUpdateProfile(profile);
-    }
-  };
 
   _onSideMenuPress = (title, component, extraProps) => {
     this.props.closeSideMenu();
@@ -189,6 +167,10 @@ class AppContainer extends Component {
   };
 
   render() {
+    let navigatorStyle = this.props.sideMenuIsOpen
+      ? [AppStyles.container, { opacity: 0.3 }]
+      : [AppStyles.container];
+
     return (
       <SideMenu
         ref="rootSidebarMenu"
@@ -201,7 +183,7 @@ class AppContainer extends Component {
       >
         <Navigator
           ref="rootNavigator"
-          style={[AppStyles.container]}
+          style={navigatorStyle}
           renderScene={this._renderScene}
           configureScene={function(route, routeStack) {
             if (route.transition == "FloatFromBottom")

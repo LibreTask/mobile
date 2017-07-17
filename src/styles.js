@@ -114,8 +114,6 @@ module.exports = StyleSheet.create({
   },
   navbarContainer: {
     backgroundColor: AppConfig.primaryColor,
-    paddingTop: 5,
-    paddingBottom: 5,
     borderBottomWidth: 1,
     borderBottomColor: "black",
     borderStyle: "solid"

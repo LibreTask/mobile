@@ -232,13 +232,13 @@ const styles = StyleSheet.create({
   menuContainer: {
     left: 0,
     right: 0,
-    backgroundColor: "#cecece"
+    backgroundColor: "black"
   },
   menu: {
     left: 0,
     right: 0,
     height: AppConfig.windowHeight,
-    backgroundColor: "#cecece",
+    backgroundColor: "black",
     padding: 10
   },
   menuItem: {
@@ -250,24 +250,10 @@ const styles = StyleSheet.create({
   },
   menuItemText: {
     marginTop: 20,
-    color: AppConfig.primaryColor
+    color: "white"
   },
   menuSubItem: {
     paddingBottom: 15
-  },
-  menuSubItemText: {
-    fontSize: 18,
-    paddingLeft: 20,
-    fontWeight: "500",
-    marginTop: 15,
-    color: "white"
-  },
-  menuSubItemLinkText: {
-    fontSize: 18,
-    paddingLeft: 20,
-    fontWeight: "500",
-    marginTop: 15,
-    color: AppConfig.linkColor
   },
   userGreetingText: {
     color: "white"
