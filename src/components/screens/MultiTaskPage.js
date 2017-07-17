@@ -66,6 +66,10 @@ class MultiTaskPage extends Component {
     };
   }
 
+  componentWillMount = () => {
+    this.props.updateHighlight(SideMenuActions.TASKS_LINK);
+  };
+
   shouldComponentUpdate = (nextProps, nextState) => {
     if (!_.isEqual(this.props, nextProps)) {
       return true;
@@ -551,6 +555,7 @@ const mapDispatchToProps = {
   createOrUpdateTask: TaskActions.createOrUpdateTask,
   addPendingTaskUpdate: TaskActions.addPendingTaskUpdate,
   toggleSideMenu: SideMenuActions.toggleSideMenu,
+  updateHighlight: SideMenuActions.updateHighlight,
   toggleTaskView: TaskViewActions.toggleCategory,
   refreshTaskView: TaskViewActions.refreshTaskView
 };

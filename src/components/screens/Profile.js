@@ -51,6 +51,10 @@ class Profile extends Component {
     };
   }
 
+  componentWillMount = () => {
+    this.props.updateHighlight(SideMenuActions.PROFILE_LINK);
+  };
+
   _onDelete = () => {
     Alert.alert("", "Are you sure you want to delete your account?", [
       {
@@ -306,6 +310,7 @@ const mapDispatchToProps = {
   createOrUpdateProfile: UserActions.createOrUpdateProfile,
   deleteProfile: UserActions.deleteProfile,
   toggleSideMenu: SideMenuActions.toggleSideMenu,
+  updateHighlight: SideMenuActions.updateHighlight,
   deleteAllTasks: TaskActions.deleteAllTasks
 };
 

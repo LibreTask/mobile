@@ -27,6 +27,10 @@ import AppConstants from "../../constants";
 class About extends Component {
   static componentName = "About";
 
+  componentWillMount = () => {
+    this.props.updateHighlight(SideMenuActions.ABOUT_LINK);
+  };
+
   _constructNavbar = () => {
     let title = "About";
     let leftNavBarButton = (
@@ -134,7 +138,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  toggleSideMenu: SideMenuActions.toggleSideMenu
+  toggleSideMenu: SideMenuActions.toggleSideMenu,
+  updateHighlight: SideMenuActions.updateHighlight
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(About);

@@ -6,16 +6,24 @@
 import {
   SIDEMENU_TOGGLE,
   SIDEMENU_OPEN,
-  SIDEMENU_CLOSE
+  SIDEMENU_CLOSE,
+  UPDATE_HIGHLIGHT,
+  TASKS_LINK
 } from "../../actions/ui/sidemenu";
+import { updateObject } from "../reducer-utils";
 
 const initialState = {
   isOpen: false,
-  disableGestures: false
+  disableGestures: false,
+  currentHighlightedLink: TASKS_LINK
 };
 
 export default function sideMenuReducer(state = initialState, action) {
   switch (action.type) {
+    case UPDATE_HIGHLIGHT:
+      return updateObject(state, {
+        currentHighlightedLink: action.currentHighlightedLink
+      });
     case SIDEMENU_TOGGLE:
       return {
         ...state,

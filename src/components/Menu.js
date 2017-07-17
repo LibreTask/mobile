@@ -35,6 +35,18 @@ class Menu extends Component {
     navigate: PropTypes.func.isRequired
   };
 
+  _getMenuItemStyle = link => {
+    return link === this.props.currentHighlightedLink
+      ? styles.menuItemHighlighted
+      : styles.menuItem;
+  };
+
+  _getMenuItemTextStyle = link => {
+    return link === this.props.currentHighlightedLink
+      ? styles.menuItemTextHighlighted
+      : styles.menuItemText;
+  };
+
   _navigateToProfileIfLoggedIn = props => {
     let { navigate } = this.props;
 
@@ -77,14 +89,19 @@ class Menu extends Component {
     let menuItems = [];
 
     menuItems.push(
-      <View key={`menu-item-all-tasks`} style={[styles.menuItemContainer]}>
+      <View key={`menu-item-all-tasks`}>
         <TouchableOpacity
           onPress={() => {
             navigate("All Tasks", MultiTaskPage);
           }}
         >
-          <View style={[styles.menuItem]}>
-            <Text style={[AppStyles.baseTextLight, styles.menuItemText]}>
+          <View style={this._getMenuItemStyle(SideMenuActions.TASKS_LINK)}>
+            <Text
+              style={[
+                AppStyles.baseTextLight,
+                this._getMenuItemTextStyle(SideMenuActions.TASKS_LINK)
+              ]}
+            >
               {"Tasks"}
             </Text>
           </View>
@@ -106,12 +123,17 @@ class Menu extends Component {
     */
 
     menuItems.push(
-      <View key={"menu-item-profile"} style={[styles.menuItemContainer]}>
+      <View key={"menu-item-profile"}>
         <TouchableOpacity
           onPress={() => this._navigateToProfileIfLoggedIn(this.props)}
         >
-          <View style={[styles.menuItem]}>
-            <Text style={[AppStyles.baseTextLight, styles.menuItemText]}>
+          <View style={this._getMenuItemStyle(SideMenuActions.PROFILE_LINK)}>
+            <Text
+              style={[
+                AppStyles.baseTextLight,
+                this._getMenuItemTextStyle(SideMenuActions.PROFILE_LINK)
+              ]}
+            >
               {"Profile"}
             </Text>
           </View>
@@ -119,15 +141,16 @@ class Menu extends Component {
       </View>
     );
 
-    // The last element should not have a bar underneath it; this is purely a
-    // design consideration. Only display 'About' with a bar if user logged in.
-    let aboutStyle = this.props.isLoggedIn ? styles.menuItemContainer : {};
-
     menuItems.push(
-      <View key={"menu-item-about"} style={[aboutStyle]}>
+      <View key={"menu-item-about"}>
         <TouchableOpacity onPress={() => navigate("About", About, this.props)}>
-          <View style={[styles.menuItem]}>
-            <Text style={[AppStyles.baseTextLight, styles.menuItemText]}>
+          <View style={this._getMenuItemStyle(SideMenuActions.ABOUT_LINK)}>
+            <Text
+              style={[
+                AppStyles.baseTextLight,
+                this._getMenuItemTextStyle(SideMenuActions.ABOUT_LINK)
+              ]}
+            >
               {"About"}
             </Text>
           </View>
@@ -239,21 +262,26 @@ const styles = StyleSheet.create({
     right: 0,
     height: AppConfig.windowHeight,
     backgroundColor: "black",
-    padding: 10
+    paddingTop: 60 // padding at top so menuItems are closer to middle of screen
   },
   menuItem: {
-    paddingBottom: 20
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 16,
+    paddingBottom: 16
   },
-  menuItemContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: AppConfig.borderColor
+  menuItemHighlighted: {
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 16,
+    paddingBottom: 16,
+    backgroundColor: AppConfig.selectedSidebarLinkColor
   },
   menuItemText: {
-    marginTop: 20,
     color: "white"
   },
-  menuSubItem: {
-    paddingBottom: 15
+  menuItemTextHighlighted: {
+    color: "black"
   },
   userGreetingText: {
     color: "white"
@@ -266,6 +294,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
+  currentHighlightedLink: state.ui.sideMenu.currentHighlightedLink,
   sideMenuIsOpen: state.ui.sideMenu.isOpen,
   isLoggedIn: state.entities.user.isLoggedIn,
   profile: state.entities.user.profile

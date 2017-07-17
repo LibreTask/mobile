@@ -26,3 +26,15 @@ export const closeSideMenu = () => {
     type: SIDEMENU_CLOSE
   };
 };
+
+export const UPDATE_HIGHLIGHT = "UPDATE_HIGHLIGHT";
+export const TASKS_LINK = "TASKS_LINK";
+export const PROFILE_LINK = "PROFILE_LINK";
+export const ABOUT_LINK = "ABOUT_LINK";
+
+export const updateHighlight = currentHighlightedLink => {
+  return {
+    type: UPDATE_HIGHLIGHT,
+    currentHighlightedLink: currentHighlightedLink
+  };
+};
