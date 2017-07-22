@@ -56,7 +56,7 @@ class TaskRow extends Component {
             }}
           />
 
-          <Text style={[AppStyles.baseTextLight]}>
+          <Text style={[AppStyles.baseTextLight, styles.text]}>
             {title}
           </Text>
         </View>
@@ -72,6 +72,11 @@ const styles = StyleSheet.create({
     //  borderBottomColor: AppConfig.borderColor,
     //  borderBottomWidth: 1,
     flexDirection: "row",
+    flex: 1
+  },
+  text: {
+    flexDirection: "row",
+    flexWrap: "wrap",
     flex: 1
   },
   completedRow: {
