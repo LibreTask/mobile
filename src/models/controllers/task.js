@@ -147,7 +147,6 @@ export const fetchTask = (taskId, userId, password) => {
 
 export const syncTasks = async (lastSuccessfulSyncDateTimeUtc, user) => {
   console.log("state...");
-  //console.dir(state);
   console.log("user: " + user);
   console.log("is logged in: " + user.isLoggedIn);
 
@@ -182,7 +181,6 @@ export const syncTasks = async (lastSuccessfulSyncDateTimeUtc, user) => {
       // TODO - log / inspect object / persist if necessary
 
       console.log("abc response...");
-      //console.dir(response);
 
       /*
 
@@ -196,6 +194,5 @@ export const syncTasks = async (lastSuccessfulSyncDateTimeUtc, user) => {
     })
     .catch(err => {
       console.log("task err...");
-      //console.dir(err);
     });
 };

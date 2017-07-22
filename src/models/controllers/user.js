@@ -125,7 +125,6 @@ export const syncUser = async () => {
   const state = await getState();
 
   console.log("FROM CONTROLLER sync user state...");
-  //console.dir(state);
 
   if (!state.user || !state.user.isLoggedIn) {
     return;
@@ -147,6 +146,5 @@ export const syncUser = async () => {
     .catch(err => {
       // TODO
       console.log("user err...");
-      //console.dir(err);
     });
 };

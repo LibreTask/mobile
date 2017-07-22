@@ -59,7 +59,6 @@ export const SYNC_TASKS = "SYNC_TASKS";
 export const syncTasks = () => {
   return function(dispatch, getState) {
     console.log("sync task state...");
-    //////console.dir(getState());
 
     let user = getState().entities.user;
 
@@ -91,7 +90,6 @@ export const syncTasks = () => {
         })
         .catch(error => {
           console.log("sync error: " + error);
-          ////console.dir(error);
         });
     }
   };
@@ -117,7 +115,6 @@ export const stopQueuedTaskSubmission = () => {
 export const submitQueuedTasks = () => {
   return function(dispatch, getState) {
     console.log("queued task submit state...");
-    ////console.dir(getState());
 
     const profile = getState().entities.user.profile;
 
@@ -128,7 +125,6 @@ export const submitQueuedTasks = () => {
       const password = profile.password;
 
       console.log("pending create...");
-      ////console.dir(pendingTaskActions.create);
 
       for (let taskId in pendingTaskActions.create) {
         let task = pendingTaskActions.create[taskId];
@@ -156,12 +152,10 @@ export const submitQueuedTasks = () => {
           })
           .catch(error => {
             console.log("create task queue error....");
-            ////console.dir(error);
           });
       }
 
       console.log("pending update...");
-      ////console.dir(pendingTaskActions.update);
 
       for (let taskId in pendingTaskActions.update) {
         let task = pendingTaskActions.update[taskId];
@@ -177,19 +171,16 @@ export const submitQueuedTasks = () => {
           })
           .catch(error => {
             console.log("update task queue error....");
-            ////console.dir(error);
           });
       }
 
       console.log("pending delete...");
-      ////console.dir(pendingTaskActions.delete);
 
       for (let taskId in pendingTaskActions.delete) {
         let task = pendingTaskActions.delete[taskId];
 
         console.log("delete task form queue...");
         console.log("task...");
-        console.dir(task);
         console.log("userid: " + userId);
         console.log("password: " + password);
 
@@ -204,7 +195,6 @@ export const submitQueuedTasks = () => {
           })
           .catch(error => {
             console.log("delete task queue error....");
-            ////console.dir(error);
           });
       }
 

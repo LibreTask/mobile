@@ -45,7 +45,6 @@ export const SYNC_USER = "SYNC_USER";
 export const syncUser = () => {
   return function(dispatch, getState) {
     console.log(" FROM ACTION sync user state...");
-    //console.dir(getState());
 
     let user = getState().entities.user;
 
@@ -68,7 +67,6 @@ export const syncUser = () => {
         .catch(error => {
           console.log("sync profile error....");
           console.log("profile err: " + error);
-          //console.dir(error);
         });
     }
   };

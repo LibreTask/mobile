@@ -365,10 +365,8 @@ function syncTasks(state, action) {
   const existingTasks = state.tasks;
 
   console.log("ALL synced tasks...");
-  console.dir(syncedTasks);
 
   console.log("existing tasks...");
-  console.dir(existingTasks);
 
   let tasksToCreateOrUpdate = [];
 
@@ -407,7 +405,6 @@ function syncTasks(state, action) {
   }
 
   console.log("tasks to create or update...");
-  console.dir(tasksToCreateOrUpdate);
 
   return addTasks(state, {
     tasks: tasksToCreateOrUpdate,
@@ -427,10 +424,8 @@ function syncedTaskDoesNotConflictWithQueuedTask(state, syncedTask) {
   let pendingTaskActions = state.pendingTaskActions;
 
   console.log("pending task actions...");
-  console.dir(pendingTaskActions);
 
   console.log("synced task...");
-  console.dir(syncedTask);
 
   if (pendingTaskActions.create && syncedTask.id in pendingTaskActions.create) {
     // This should never happen. It would indicate either a bug (most likely)

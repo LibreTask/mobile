@@ -48,3 +48,8 @@ MYAPP_RELEASE_KEY_PASSWORD=123456
 ## Building iOS
 
 TODO...
+
+
+## Production logging
+
+* Android: `adb logcat | grep ReactNativeJS`
