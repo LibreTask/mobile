@@ -124,8 +124,6 @@ async function getState() {
 export const syncUser = async () => {
   const state = await getState();
 
-  console.log("FROM CONTROLLER sync user state...");
-
   if (!state.user || !state.user.isLoggedIn) {
     return;
   }

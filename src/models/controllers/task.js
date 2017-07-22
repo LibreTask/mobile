@@ -146,10 +146,6 @@ export const fetchTask = (taskId, userId, password) => {
 };
 
 export const syncTasks = async (lastSuccessfulSyncDateTimeUtc, user) => {
-  console.log("state...");
-  console.log("user: " + user);
-  console.log("is logged in: " + user.isLoggedIn);
-
   if (!user || !user.isLoggedIn) {
     return;
   }
@@ -174,22 +170,8 @@ export const syncTasks = async (lastSuccessfulSyncDateTimeUtc, user) => {
     }
   };
 
-  console.log("SYNC TASKS ENDPOINT: " + endpoint);
-
   return invoke(request)
     .then(response => {
-      // TODO - log / inspect object / persist if necessary
-
-      console.log("abc response...");
-
-      /*
-
-    if (response.tasks && response.length > 0) {
-      TaskStorage.createOrUpdateTasks(response.state.entities.tasks)
-    }
-
-    */
-
       return response;
     })
     .catch(err => {
