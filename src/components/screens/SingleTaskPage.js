@@ -58,7 +58,7 @@ class SingleTaskPage extends Component {
       updateSuccess: "",
       isUpdating: false,
 
-      task: this._getTask(),
+      task: props.tasks[this.props.taskId],
 
       nameValidationError: "",
       notesValidationError: "",
@@ -66,8 +66,66 @@ class SingleTaskPage extends Component {
     };
   }
 
-  _getTask = () => {
-    return this.props.tasks[this.props.taskId];
+  componentWillReceiveProps = nextProps => {
+    // Update the task, in case the sync has pulled in a more recent version.
+    this.setState({
+      task: this._getTask(this.state.task, nextProps)
+    });
+  };
+
+  /*
+    SingleTaskPage keeps a local reference to a task, so that the user can
+    edit it (as well as discard edits) without polluting global state. Global
+    state is only modified when the user confirms their changes.
+
+    This function fetches the task from global state, so that a local reference
+    can be made.
+
+    However, when the task is synced while the user is editing it, we might
+    need to update our local, now out-of-date, reference. We have made the
+    conscious decision to ONLY, ONLY update the task's ID for two reasons.
+
+    1. We do not want the EditTask page to unexpectedly change or discard
+       the user's edits without their consent.
+    2. An edge case exists such that, if the local reference to ID is not
+       updated, the task cannot possibly be updated.
+
+       See the following scenario:
+
+          - The task is created ONLY on the client and gets assigned a
+            temporary ID. This is possible when no network connectivity exists.
+          - The task is queued to be submitted to the server.
+          - The user navigates to the SingleTaskPage, while the task is still
+            queued, which causes the local reference to have the temporary ID.
+          - The task is finally submitted to the server and gets its temporary,
+            client-assigned ID replaced by a permanent, server-assigned ID. In
+            this scenario we absolutely MUST update our local reference with the
+            server-assigned ID. Otherwise, the server will not recognize the
+            old, client-assigned ID.
+
+    NOTE: This function can likely be refined.
+  */
+  _getTask = (currentTask, props) => {
+    let id = this.props.taskId;
+
+    let updatedTask = props.tasks[id];
+
+    if (!updatedTask) {
+      for (let taskId in props.tasks) {
+        if (props.tasks[taskId].clientAssignedTaskId === id) {
+          updatedTask = props.tasks[taskId];
+        }
+      }
+    }
+
+    // We only want to update taskId. If we cannot do so (i.e., updatedTask is
+    // undefined), or if the taskId does not require updated, then we simply
+    // return the current task.
+    if (!updatedTask || currentTask.id === updatedTask.id) {
+      return currentTask;
+    } else {
+      return Object.assign(currentTask, { id: updatedTask.id });
+    }
   };
 
   _onDelete = () => {
@@ -84,7 +142,17 @@ class SingleTaskPage extends Component {
           let task = this.state.task;
           task.isDeleted = true;
 
-          if (UserController.canAccessNetwork(this.props.profile)) {
+          if (
+            task.id in this.props.pendingTaskCreates ||
+            task.id in this.props.pendingTaskUpdates
+          ) {
+            /*
+              If the task is in the pendingQueue, we update the queue rather
+              than attempt to submit the update to the server. A separate
+              process will handle submitting the queued tasks.
+            */
+            this._deleteTaskLocallyAndRedirect(task, true);
+          } else if (UserController.canAccessNetwork(this.props.profile)) {
             TaskController.deleteTask(
               task.id,
               this.props.profile.id,
@@ -175,7 +243,19 @@ class SingleTaskPage extends Component {
       nameValidationError: ""
     });
 
-    if (UserController.canAccessNetwork(profile)) {
+    let taskId = this.state.task.id;
+
+    if (
+      taskId in this.props.pendingTaskCreates ||
+      taskId in this.props.pendingTaskUpdates
+    ) {
+      /*
+        If the task is in the pendingQueue, we update the queue rather than
+        attempt to submit the update to the server. A separate process will
+        handle submitting the queued tasks.
+      */
+      this._updateTaskLocally(this.state.task, true);
+    } else if (UserController.canAccessNetwork(profile)) {
       TaskController.updateTask(this.state.task, profile.id, profile.password)
         .then(response => {
           // use the task in the reponse; it is the most up-to-date
@@ -407,7 +487,9 @@ class SingleTaskPage extends Component {
 const mapStateToProps = state => ({
   isLoggedIn: state.entities.user.isLoggedIn,
   profile: state.entities.user.profile,
-  tasks: state.entities.task.tasks
+  tasks: state.entities.task.tasks,
+  pendingTaskCreates: state.entities.task.pendingTaskActions.create || {},
+  pendingTaskUpdates: state.entities.task.pendingTaskActions.update || {}
 });
 
 const mapDispatchToProps = {

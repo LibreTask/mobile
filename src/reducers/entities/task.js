@@ -189,6 +189,12 @@ function removePendingTaskCreate(state, action) {
   */
   let task = Object.assign({}, state.tasks[clientAssignedTaskId]);
   task.id = serverAssignedTaskId;
+
+  /*
+    Keep a reference to the clientAssignedTaskId in case a local reference
+    exists. TODO - refine this approach.
+  */
+  task.clientAssignedTaskId = clientAssignedTaskId;
   delete state.tasks[clientAssignedTaskId]; // delete existing task
   state.tasks[serverAssignedTaskId] = task; // replace with new ID
 
@@ -305,6 +311,11 @@ function deleteAllTasks(state, action) {
   return updateObject(state, {
     tasks: {
       /* all tasks are deleted */
+    },
+    pendingTaskActions: {
+      update: {},
+      delete: {},
+      create: {}
     }
   });
 }
