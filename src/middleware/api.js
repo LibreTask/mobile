@@ -6,7 +6,7 @@
 import RetryableError from "./errors/RetryableError";
 import ErrorCodes from "./errors/ErrorCodes";
 
-const API_ROOT = "http://174.138.64.49/api/v1/";
+const API_ROOT = "https://algernon.io/api/v1/";
 // TEST ENV - "http://192.168.1.111:3001/api/v1/";
 // PROD ENV - "http://174.138.64.49/api/v1/";
 // (production does not need port due to NGINX proxy)
@@ -74,6 +74,8 @@ function _invoke(endpoint, method, headers, body) {
     body: body
   })
     .then(response => {
+      console.log("response: " + response);
+
       if (response.status >= 500) {
         throw new RetryableError();
       }
@@ -88,6 +90,8 @@ function _invoke(endpoint, method, headers, body) {
     })
     .catch(error => {
       // TODO - refine retry logic
+
+      console.log("error: " + error);
 
       if (error instanceof Error) {
         throw error;
