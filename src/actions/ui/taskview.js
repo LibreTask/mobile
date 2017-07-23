@@ -7,8 +7,6 @@ export const COLLAPSE_CATEGORY = "COLLAPSE_CATEGORY";
 export const SHOW_CATEGORY = "SHOW_CATEGORY";
 export const TOGGLE_CATEGORY = "TOGGLE_CATEGORY";
 
-export const TOGGLE_SHOW_COMPLETED_TASKS = "TOGGLE_SHOW_COMPLETED_TASKS";
-
 export const REFRESH_TASK_VIEW = "REFRESH_TASK_VIEW";
 export const STOP_REFRESH_TASK_VIEW = "END_REFRESH_TASK_VIEW";
 
@@ -29,9 +27,13 @@ import TaskUtils from "../../utils/task-utils";
 */
 export const refreshTaskViewCollapseStatus = () => {
   return function(dispatch, getState) {
+    let user = getState().user;
+    let showCompletedTasks =
+      user && user.profile && user.profile.showCompletedTasks;
+
     const displayedTasks = _displayedTasks(
       getState().entities.task.tasks,
-      getState().ui.taskview.showCompletedTasks
+      showCompletedTasks
     );
     const taskCategories = getState().ui.taskview || {};
 
@@ -113,13 +115,6 @@ export const refreshTaskView = shouldRefresh => {
 export const stopTaskViewRefresh = () => {
   return {
     type: STOP_REFRESH_TASK_VIEW
-  };
-};
-
-export const toggleShowCompletedTasks = showCompletedTasks => {
-  return {
-    type: TOGGLE_SHOW_COMPLETED_TASKS,
-    showCompletedTasks: showCompletedTasks
   };
 };
 

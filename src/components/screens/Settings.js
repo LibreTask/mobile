@@ -15,7 +15,10 @@ import {
 import { connect } from "react-redux";
 
 import * as SideMenuActions from "../../actions/ui/sidemenu";
-import * as TaskViewActions from "../../actions/ui/taskview";
+
+import * as UserActions from "../../actions/entities/user";
+import * as UserController from "../../models/controllers/user";
+import * as ProfileStorage from "../../models/storage/profile-storage";
 
 import CheckBox from "react-native-checkbox";
 
@@ -34,9 +37,27 @@ class Settings extends Component {
     super(props);
 
     this.state = {
-      /* todo */
+      showCompletedTasks: props.profile.showCompletedTasks || false
     };
   }
+
+  _updateProfileLocally = (profile, shouldQueueUpdate) => {
+    if (shouldQueueUpdate) {
+      // mark update time, before queueing
+      profile.updatedAtDateTimeUtc = new Date();
+
+      // profile is queued only when network could not be reached
+      this.props.addPendingProfileUpdate(profile);
+      ProfileStorage.queueProfileUpdate(profile);
+    }
+
+    this.props.createOrUpdateProfile(profile);
+    ProfileStorage.createOrUpdateProfile(profile);
+
+    this.setState({
+      showCompletedTasks: profile.showCompletedTasks
+    });
+  };
 
   _constructNavbar = () => {
     let title = "Settings";
@@ -75,10 +96,32 @@ class Settings extends Component {
           <CheckBox
             labelStyle={AppStyles.baseTextLight}
             label={"Show completed tasks"}
-            checked={this.props.showCompletedTasks}
+            checked={this.state.showCompletedTasks}
             onChange={checked => {
-              let updatedStatus = !this.props.showCompletedTasks;
-              this.props.toggleShowCompletedTasks(updatedStatus);
+              let updatedProfile = this.props.profile;
+              updatedProfile.showCompletedTasks = !updatedProfile.showCompletedTasks;
+
+              if (UserController.canAccessNetwork(updatedProfile)) {
+                UserController.updateProfile(updatedProfile)
+                  .then(response => {
+                    let profile = response.profile;
+
+                    // TODO - handle PW in more secure way
+                    profile.password = this.props.profile.password;
+
+                    this._updateProfileLocally(profile);
+                  })
+                  .catch(error => {
+                    let shouldQueueUpdate = true;
+                    this._updateProfileLocally(
+                      updatedProfile,
+                      shouldQueueUpdate
+                    );
+                  });
+              } else {
+                let shouldQueueUpdate = true;
+                this._updateProfileLocally(updatedProfile, shouldQueueUpdate);
+              }
             }}
           />
         </View>
@@ -88,12 +131,13 @@ class Settings extends Component {
 }
 
 const mapStateToProps = state => ({
-  showCompletedTasks: state.ui.taskview.showCompletedTasks
+  profile: state.entities.user.profile
 });
 
 const mapDispatchToProps = {
   toggleSideMenu: SideMenuActions.toggleSideMenu,
-  toggleShowCompletedTasks: TaskViewActions.toggleShowCompletedTasks
+  createOrUpdateProfile: UserActions.createOrUpdateProfile,
+  addPendingProfileUpdate: UserActions.addPendingProfileUpdate
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);

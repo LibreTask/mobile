@@ -5,6 +5,22 @@
 
 import { AsyncStorage } from "react-native";
 
+export function queueProfileUpdate(profile) {
+  // TODO - use encrypted storage for confidential information
+
+  return AsyncStorage.setItem("queue/profile", JSON.stringify(profile));
+}
+
+export function deletedQueuedProfile() {
+  return AsyncStorage.removeItem("queue/profile");
+}
+
+export async function getQueuedProfile() {
+  let profile = await AsyncStorage.getItem("queue/profile");
+
+  return JSON.parse(profile);
+}
+
 export function createOrUpdateProfile(profile) {
   // TODO - use encrypted storage for confidential information
 

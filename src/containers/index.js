@@ -60,6 +60,7 @@ export default class AppContainer extends Component {
     let queuedTaskUpdates = {};
     let queuedTaskDeletes = {};
     let profile = {};
+    let queuedProfile = {};
     let isLoggedIn = false;
 
     try {
@@ -93,6 +94,12 @@ export default class AppContainer extends Component {
     }
 
     try {
+      queuedProfile = await ProfileStorage.getQueuedProfile();
+    } catch (err) {
+      /* ignore */
+    }
+
+    try {
       isLoggedIn = await ProfileStorage.isLoggedIn();
     } catch (err) {
       /* ignore */
@@ -115,8 +122,10 @@ export default class AppContainer extends Component {
         },
         user: {
           profile: profile,
+          queuedProfile: queuedProfile,
           isLoggedIn: isLoggedIn,
           isSyncing: false,
+          showCompletedTasks: true,
           lastSuccessfulSyncDateTimeUtc: undefined,
           intervalId: undefined // used to cancel sync
         }
@@ -131,9 +140,7 @@ export default class AppContainer extends Component {
 
       return (
         <View>
-          <Text>
-            Loading...
-          </Text>
+          <Text>Loading...</Text>
         </View>
       );
     } else {

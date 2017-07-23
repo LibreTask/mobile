@@ -1,6 +1,6 @@
 /*
  * @link https://www.algernon.io/
- * @license https://github.com/AlgernonLabs/desktop/blob/master/LICENSE.md
+ * @license https://github.com/AlgernonLabs/mobile/blob/master/LICENSE.md
  */
 
 import { combineReducers } from "redux";
@@ -267,7 +267,7 @@ function startQueuedTaskSubmit(state, action) {
 }
 
 function stopQueuedTaskSubmission(state, action) {
-  clearInterval(state.intervalId); // TODO - is this the best place to do it?
+  //clearInterval(state.intervalId); // TODO - is this the best place to do it?
 
   return updateObject(state, {
     isSubmittingQueuedTasks: false,
@@ -283,7 +283,7 @@ function startTaskSync(state, action) {
 }
 
 function endTaskSync(state, action) {
-  clearInterval(state.intervalId); // TODO - is this the best place to do it?
+  //clearInterval(state.intervalId); // TODO - is this the best place to do it?
 
   return updateObject(state, {
     isSyncing: false,
@@ -299,7 +299,7 @@ function startTaskCleanup(state, action) {
 }
 
 function stopTaskCleanup(state, action) {
-  clearInterval(state.intervalId); // TODO - is this the best place to do it?
+  //clearInterval(state.intervalId); // TODO - is this the best place to do it?
 
   return updateObject(state, {
     isCleaningUpTasks: false,
@@ -364,10 +364,6 @@ function syncTasks(state, action) {
   const syncedTasks = action.tasks;
   const existingTasks = state.tasks;
 
-  console.log("ALL synced tasks...");
-
-  console.log("existing tasks...");
-
   let tasksToCreateOrUpdate = [];
 
   for (let syncedTask of syncedTasks) {
@@ -404,8 +400,6 @@ function syncTasks(state, action) {
     }
   }
 
-  console.log("tasks to create or update...");
-
   return addTasks(state, {
     tasks: tasksToCreateOrUpdate,
     lastSuccessfulSyncDateTimeUtc: action.lastSuccessfulSyncDateTimeUtc
@@ -422,10 +416,6 @@ function syncTasks(state, action) {
 */
 function syncedTaskDoesNotConflictWithQueuedTask(state, syncedTask) {
   let pendingTaskActions = state.pendingTaskActions;
-
-  console.log("pending task actions...");
-
-  console.log("synced task...");
 
   if (pendingTaskActions.create && syncedTask.id in pendingTaskActions.create) {
     // This should never happen. It would indicate either a bug (most likely)

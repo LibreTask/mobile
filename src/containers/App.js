@@ -84,6 +84,17 @@ class AppContainer extends Component {
     }
   };
 
+  _startSubmissionOfQueuedProfileUpdates = () => {
+    if (!this.props.isSubmittingQueuedProfileUpdates) {
+      let intervalId = setInterval(() => {
+        this.props.submitQueuedProfileUpdate();
+      }, AppConstants.QUEUED_PROFILE_SUBMISSION_INTERVAL_MILLIS);
+
+      // register intervalId so we can cancel later
+      this.props.startQueuedProfileSubmission(intervalId);
+    }
+  };
+
   _startUIRefreshCheck = () => {
     setInterval(() => {
       /*
@@ -110,6 +121,7 @@ class AppContainer extends Component {
     this._startUIRefreshCheck();
     this._startSubmissionOfQueuedTasks();
     this._startTaskCleanup();
+    this._startSubmissionOfQueuedProfileUpdates();
 
     // refresh task view at startup
     this.props.refreshTaskViewCollapseStatus();
@@ -121,6 +133,7 @@ class AppContainer extends Component {
     this.props.endUserSync();
     this.props.stopTaskViewRefresh();
     this.props.stopTaskCleanup();
+    this.props.stopQueuedProfileSubmission();
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -210,7 +223,6 @@ const mapStateToProps = state => ({
   isSubmittingQueuedTasks: state.entities.task.isSubmittingQueuedTasks,
   isCleaningUpTasks: state.entities.task.isCleaningUpTasks,
   isSyncingUser: state.entities.user.isSyncing,
-  showCompletedTasks: state.ui.taskview.showCompletedTasks,
   lastTaskViewRefreshDate: state.ui.taskview.lastTaskViewRefreshDate
 });
 
@@ -221,6 +233,12 @@ const mapDispatchToProps = {
   createOrUpdateProfile: UserActions.createOrUpdateProfile,
   deleteProfile: UserActions.deleteProfile,
   deleteAllTasks: TaskActions.deleteAllTasks,
+  startQueuedProfileSubmission: UserActions.startQueuedProfileSubmission,
+  stopQueuedProfileSubmission: UserActions.stopQueuedProfileSubmission,
+  isSubmittingQueuedProfileUpdates:
+    UserActions.isSubmittingQueuedProfileUpdates,
+  submitQueuedProfileUpdate: UserActions.submitQueuedProfileUpdate,
+  syncUser: UserActions.syncUser,
   startUserSync: UserActions.startUserSync,
   endUserSync: UserActions.endUserSync,
   syncUser: UserActions.syncUser,

@@ -12,14 +12,12 @@ import {
   FUTURE_TASKS,
   OVERDUE_TASKS,
   TASKS_WITH_NO_DATE,
-  TOGGLE_SHOW_COMPLETED_TASKS,
   REFRESH_TASK_VIEW,
   STOP_REFRESH_TASK_VIEW
 } from "../../actions/ui/taskview";
 import { updateObject } from "../reducer-utils";
 
 const initialState = {
-  showCompletedTasks: true, // default to true
   shouldRefreshTaskView: false,
   lastTaskViewRefreshDate: undefined
 };
@@ -50,10 +48,6 @@ export default function taskviewReducer(state = initialState, action) {
         isCollapsed: !state[action.category].isCollapsed
       };
       return updateObject(state, toggledCategory);
-    case TOGGLE_SHOW_COMPLETED_TASKS:
-      return updateObject(state, {
-        showCompletedTasks: action.showCompletedTasks
-      });
     default:
       return state;
   }

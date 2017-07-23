@@ -97,8 +97,11 @@ class MultiTaskPage extends Component {
   };
 
   componentWillReceiveProps = nextProps => {
+    let profile = nextProps.profile;
+    let showCompletedTasks = profile && profile.showCompletedTasks;
+
     // must pass in all props that are used to refresh the screen
-    this._refreshEntireList(nextProps.tasks, nextProps.showCompletedTasks);
+    this._refreshEntireList(nextProps.tasks, showCompletedTasks);
   };
 
   // TODO - reevaluate this solution;
@@ -355,11 +358,11 @@ class MultiTaskPage extends Component {
             this.props.toggleTaskView(TaskViewActions.OVERDUE_TASKS);
           }
 
+          let profile = this.props.profile;
+          let showCompletedTasks = profile && profile.showCompletedTasks;
+
           // TODO - should we delay here?
-          this._refreshEntireList(
-            this.props.tasks,
-            this.props.showCompletedTasks
-          );
+          this._refreshEntireList(this.props.tasks, showCompletedTasks);
         }}
       >
         <View style={[AppStyles.row]}>
@@ -545,7 +548,6 @@ const mapStateToProps = (state, ownProps) => {
     profile: state.entities.user.profile,
     tasks: state.entities.task.tasks,
     taskCategories: state.ui.taskview,
-    showCompletedTasks: state.ui.taskview.showCompletedTasks,
     shouldRefreshTaskView: state.ui.taskview.shouldRefreshTaskView
   };
 };
