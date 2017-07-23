@@ -216,8 +216,8 @@ class SingleTaskPage extends Component {
     let nameValidationError = "";
     let notesValidationError = "";
 
-    if (!Validator.isLength(updatedTaskName, { min: 2, max: 100 })) {
-      nameValidationError = "Name must be between 2 and 100 characters";
+    if (!Validator.isLength(updatedTaskName, { min: 1, max: 250 })) {
+      nameValidationError = "Name must be between 1 and 250 characters";
     }
 
     if (!Validator.isLength(updatedTaskNotes, { min: 0, max: 5000 })) {

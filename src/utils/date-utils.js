@@ -9,9 +9,9 @@ const DateUtils = {
     date.setDate(date.getDate() - 1);
     return date;
   },
-  lastMonth: function() {
+  twoWeeksAgo: function() {
     let date = new Date();
-    date.setMonth(date.getMonth() - 1);
+    date.setDate(date.getDate() - 14);
     return date;
   },
   fiveMinutesAgo: function() {

@@ -16,26 +16,14 @@ class TaskRow extends Component {
     onPress: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
     taskId: PropTypes.string.isRequired,
-    isInitiallyCompleted: PropTypes.bool.isRequired,
+    isComplete: PropTypes.bool.isRequired,
     onCheckBoxClicked: PropTypes.func.isRequired
   };
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isCurrentlyCompleted: this.props.isInitiallyCompleted
-    };
-  }
-
   render = () => {
-    let { title, onPress } = this.props;
+    let { title, isComplete, onPress } = this.props;
 
-    console.log("isCurrentlyCompleted: " + this.state.isCurrentlyCompleted);
-
-    let rowStyle = this.state.isCurrentlyCompleted
-      ? styles.completedRow
-      : styles.uncompletedRow;
+    let rowStyle = isComplete ? styles.completedRow : styles.uncompletedRow;
 
     return (
       <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
@@ -44,7 +32,7 @@ class TaskRow extends Component {
             label={""}
             containerStyle={styles.container}
             checkboxStyle={styles.checkboxContainer}
-            checked={this.state.isCurrentlyCompleted}
+            checked={isComplete}
             onChange={checked => {
               let updatedCheckedValue = !checked;
 

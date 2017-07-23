@@ -49,7 +49,7 @@ module.exports = StyleSheet.create({
     color: AppConfig.successColor,
     fontSize: AppConfig.baseFontSize,
     fontWeight: "400",
-    fontSize: AppConfig.baseFontSize * 0.8
+    fontSize: AppConfig.baseFontSize
   },
   linkText: {
     color: AppConfig.linkColor

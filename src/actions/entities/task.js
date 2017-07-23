@@ -69,7 +69,7 @@ export const syncTasks = () => {
       // if no successful sync has been recorded, sync entire last month
       let lastSuccessfulSyncDateTimeUtc =
         getState().entities.task.lastSuccessfulSyncDateTimeUtc ||
-        DateUtils.lastMonth(); // TODO - refine approach
+        DateUtils.twoWeeksAgo(); // TODO - refine approach
 
       console.log("last successful sync: " + lastSuccessfulSyncDateTimeUtc);
 

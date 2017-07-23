@@ -263,7 +263,7 @@ class MultiTaskPage extends Component {
       return (
         <TaskRow
           title={task.name}
-          isInitiallyCompleted={task.isCompleted || false}
+          isComplete={task.isCompleted || false}
           taskId={task.id}
           onCheckBoxClicked={async isCompleted => {
             task.isCompleted = isCompleted;
