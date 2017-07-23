@@ -13,7 +13,6 @@ import {
   Picker,
   Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -407,10 +406,26 @@ class SingleTaskPage extends Component {
 
     let dateString;
     let dateStringStyle = [AppStyles.baseTextLight];
+    let clearDateButton;
     if (this.state.task.dueDateTimeUtc) {
       // TODO - refine how we format date (and move to utils)
 
       dateString = dateFormat(this.state.task.dueDateTimeUtc, "mmmm d yyyy");
+      clearDateButton = (
+        <TouchableOpacity
+          style={[AppStyles.paddingVertical]}
+          onPress={() => {
+            let updatedTask = this.state.task;
+            updatedTask.dueDateTimeUtc = undefined;
+
+            this.setState({
+              task: updatedTask
+            });
+          }}
+        >
+          <Text style={[AppStyles.baseLinkText]}>Clear date</Text>
+        </TouchableOpacity>
+      );
     } else {
       dateString = "Select a due date";
       dateStringStyle.push(AppStyles.linkText);
@@ -469,6 +484,7 @@ class SingleTaskPage extends Component {
               }}
               value={dateString}
             />
+            {clearDateButton}
           </View>
 
           <Text style={[AppStyles.successText]}>
