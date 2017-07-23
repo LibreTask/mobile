@@ -60,7 +60,7 @@ export default class AppContainer extends Component {
     let queuedTaskUpdates = {};
     let queuedTaskDeletes = {};
     let profile = {};
-    let queuedProfile = {};
+    let queuedProfile = undefined;
     let isLoggedIn = false;
 
     try {
