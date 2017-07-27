@@ -287,7 +287,7 @@ class MultiTaskPage extends Component {
                   this._updateTaskLocally(response.task);
                 })
                 .catch(error => {
-                  if (error.name === "NoConnection") {
+                  if (error.name === "RetryableError") {
                     this._updateTaskLocally(task, true);
                   } else {
                     // TODO

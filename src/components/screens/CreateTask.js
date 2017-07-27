@@ -131,7 +131,7 @@ class CreateTask extends Component {
               this.props.navigator.pop();
             })
             .catch(error => {
-              if (error.name === "NoConnection") {
+              if (error.name === "RetryableError") {
                 this._createTaskLocallyAndRedirect(
                   taskName,
                   taskNotes,

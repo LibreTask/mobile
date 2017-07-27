@@ -91,14 +91,17 @@ function _invoke(endpoint, method, headers, body) {
     .catch(error => {
       // TODO - refine retry logic
 
-      console.log("error: " + error);
-
-      if (error instanceof Error) {
-        throw error;
+      if (_isTimeoutError(error)) {
+        throw new RetryableError();
       } else {
         throw new Error(humanReadableError(error));
       }
     });
+}
+
+function _isTimeoutError(err) {
+  // TODO - fix this brittle check
+  return err && err.message === "Network request failed";
 }
 
 function _retryWait(retryAttemptNumber) {
