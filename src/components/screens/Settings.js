@@ -37,7 +37,7 @@ class Settings extends Component {
     super(props);
 
     this.state = {
-      showCompletedTasks: props.profile.showCompletedTasks || false
+      showCompletedTasks: props.profile && props.profile.showCompletedTasks
     };
   }
 
