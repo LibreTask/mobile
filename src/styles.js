@@ -39,6 +39,12 @@ module.exports = StyleSheet.create({
     color: AppConfig.textColor,
     fontSize: AppConfig.baseFontSize * 1.25
   },
+  baseTextLargeLight: {
+    fontFamily: AppConfig.baseFont,
+    fontWeight: "400",
+    color: AppConfig.textColor,
+    fontSize: AppConfig.baseFontSize * 1.25
+  },
   errorText: {
     color: AppConfig.errorColor,
     fontSize: AppConfig.baseFontSize,
@@ -117,5 +123,17 @@ module.exports = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "black",
     borderStyle: "solid"
-  }
+  },
+  progressSpinner: {
+    alignItems: "center",
+    justifyContent: "center",
+
+    //position: "absolute",
+    //top: "20%",
+    //left: 0,
+    //right: 0,
+    zIndex: 100000000, // spinners should have precedence
+    margin: "auto"
+  },
+  loadingOpacity: 0.6
 });

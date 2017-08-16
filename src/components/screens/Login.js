@@ -5,6 +5,7 @@
 
 import React, { Component, PropTypes } from "react";
 import {
+  ActivityIndicator,
   Button,
   Linking,
   StyleSheet,
@@ -145,6 +146,14 @@ class Login extends Component {
   };
 
   render = () => {
+    /*
+    <ActivityIndicator
+      style={[AppStyles.progressSpinner]}
+      color="blue"
+      size="large"
+    />
+    */
+
     return (
       <ScrollView
         automaticallyAdjustContentInsets={false}

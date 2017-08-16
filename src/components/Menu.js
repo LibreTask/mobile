@@ -98,7 +98,7 @@ class Menu extends Component {
           <View style={this._getMenuItemStyle(SideMenuActions.TASKS_LINK)}>
             <Text
               style={[
-                AppStyles.baseTextLight,
+                AppStyles.baseTextLargeLight,
                 this._getMenuItemTextStyle(SideMenuActions.TASKS_LINK)
               ]}
             >
@@ -130,7 +130,7 @@ class Menu extends Component {
           <View style={this._getMenuItemStyle(SideMenuActions.PROFILE_LINK)}>
             <Text
               style={[
-                AppStyles.baseTextLight,
+                AppStyles.baseTextLargeLight,
                 this._getMenuItemTextStyle(SideMenuActions.PROFILE_LINK)
               ]}
             >
@@ -147,7 +147,7 @@ class Menu extends Component {
           <View style={this._getMenuItemStyle(SideMenuActions.ABOUT_LINK)}>
             <Text
               style={[
-                AppStyles.baseTextLight,
+                AppStyles.baseTextLargeLight,
                 this._getMenuItemTextStyle(SideMenuActions.ABOUT_LINK)
               ]}
             >
@@ -187,7 +187,7 @@ class Menu extends Component {
             }}
           >
             <View style={[styles.menuItem]}>
-              <Text style={[AppStyles.baseTextLight, styles.menuItemText]}>
+              <Text style={[AppStyles.baseTextLargeLight, styles.menuItemText]}>
                 {"Logout"}
               </Text>
             </View>
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: AppConfig.windowHeight,
-    backgroundColor: "black",
+    backgroundColor: AppConfig.sidebarBackgroundColor,
     paddingTop: 60 // padding at top so menuItems are closer to middle of screen
   },
   menuItem: {
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     backgroundColor: AppConfig.selectedSidebarLinkColor
   },
   menuItemText: {
-    color: "white"
+    color: "black"
   },
   menuItemTextHighlighted: {
     color: "black"

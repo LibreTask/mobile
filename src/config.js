@@ -18,7 +18,8 @@ export default {
   successColor: "#3A9237",
   linkColor: "#19198C",
   borderColor: "#bababa",
-  selectedSidebarLinkColor: "#ddddf1",
+  selectedSidebarLinkColor: "#85a8c9",
+  sidebarBackgroundColor: "#eaeaf6",
   windowHeight: window.height,
   windowWidth: window.width
 };
