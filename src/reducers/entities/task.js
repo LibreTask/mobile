@@ -68,7 +68,7 @@ function addPendingTaskUpdate(state, action) {
 
     updatedPendingTaskActions = {
       create: queuedCreates,
-      updated: state.pendingTaskActions.update,
+      update: state.pendingTaskActions.update,
       delete: state.pendingTaskActions.delete
     };
   } else {
