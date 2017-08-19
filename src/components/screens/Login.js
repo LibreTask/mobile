@@ -56,7 +56,6 @@ class Login extends Component {
 
   _login = async () => {
     if (this.state.isLoggingIn) {
-      // TODO - warn user
       return;
     }
 
@@ -146,13 +145,21 @@ class Login extends Component {
   };
 
   render = () => {
-    /*
-    <ActivityIndicator
-      style={[AppStyles.progressSpinner]}
-      color="blue"
-      size="large"
-    />
-    */
+    let spinner = <View />;
+    let windowOpacity = 1;
+
+    if (this.state.isLoggingIn) {
+      spinner = (
+        <ActivityIndicator
+          style={[AppStyles.progressSpinner]}
+          color="blue"
+          size="large"
+        />
+      );
+      windowOpacity = AppConfig.loadingOpacity;
+    }
+
+    console.log("window opacity: " + windowOpacity);
 
     return (
       <ScrollView
@@ -163,7 +170,9 @@ class Login extends Component {
       >
         {this._constructNavbar()}
 
-        <View style={[AppStyles.padding]}>
+        {spinner}
+
+        <View style={[AppStyles.padding, { opacity: windowOpacity }]}>
           <View style={[AppStyles.paddingVertical]}>
             <Text style={[AppStyles.baseText]}>Email</Text>
             <TextInput

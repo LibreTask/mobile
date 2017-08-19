@@ -43,7 +43,7 @@ class Profile extends Component {
     super(props);
 
     this.state = {
-      isUpdating: false,
+      isUpdatingProfile: false,
       updateError: "",
       updateSuccess: "",
       emailValidationError: "",
@@ -56,6 +56,10 @@ class Profile extends Component {
   };
 
   _onDelete = () => {
+    if (this.state.isUpdatingProfile) {
+      return;
+    }
+
     Alert.alert("", "Are you sure you want to delete your account?", [
       {
         text: "Close",
@@ -96,6 +100,10 @@ class Profile extends Component {
   };
 
   _onSubmitEdit = async () => {
+    if (this.state.isUpdatingProfile) {
+      return;
+    }
+
     let updatedEmail = this.state.myProfile.email || "";
 
     let emailValidationError = "";
@@ -115,7 +123,7 @@ class Profile extends Component {
     }
 
     this.setState({
-      isUpdating: true,
+      isUpdatingProfile: true,
       updateSuccess: "",
       updateError: "",
       emailValidationError: ""
@@ -140,7 +148,7 @@ class Profile extends Component {
       })
       .catch(error => {
         this.setState({
-          isUpdating: false,
+          isUpdatingProfile: false,
           updateError: error.message,
           updateSuccess: ""
         });

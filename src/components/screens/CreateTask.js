@@ -62,7 +62,6 @@ class CreateTask extends Component {
 
   _createTask = async () => {
     if (this.state.isCreatingTask) {
-      // TODO - warn
       return;
     }
 

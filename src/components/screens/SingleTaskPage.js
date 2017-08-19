@@ -55,7 +55,7 @@ class SingleTaskPage extends Component {
     this.state = {
       updateError: "",
       updateSuccess: "",
-      isUpdating: false,
+      isUpdatingTask: false,
 
       /*
         Clone object so that edits do not modify original task.
@@ -132,6 +132,13 @@ class SingleTaskPage extends Component {
   };
 
   _onDelete = () => {
+    // TODO -
+    /*
+    if (this.state.isUpdatingTask) {
+      return;
+    }
+    */
+
     Alert.alert("", "Are you sure you want to delete this task?", [
       {
         text: "Close",
@@ -211,6 +218,10 @@ class SingleTaskPage extends Component {
   };
 
   _onSubmitEdit = async () => {
+    if (this.state.isUpdatingTask) {
+      return;
+    }
+
     let profile = this.props.profile;
 
     let updatedTaskName = this.state.task.name || "";
@@ -239,7 +250,7 @@ class SingleTaskPage extends Component {
     }
 
     this.setState({
-      isUpdating: true,
+      isUpdatingTask: true,
       updateSuccess: "",
       updateError: "",
       notesValidationError: "",
@@ -269,7 +280,7 @@ class SingleTaskPage extends Component {
             this._updateTaskLocally(this.state.task, true);
           } else {
             this.setState({
-              isUpdating: false,
+              isUpdatingTask: false,
               updateError: error.message,
               updateSuccess: ""
             });

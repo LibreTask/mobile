@@ -53,22 +53,21 @@ class Menu extends Component {
     if (this.props.isLoggedIn) {
       navigate("Profile", Profile, props); // user is logged in; go to profile
     } else {
-      // TODO - clean up the assumption that navigate will be available
-      // TODO - move this dialog to its own file
       Alert.alert(
-        `Welcome to ${AppConstants.APP_NAME}!`,
-        "You must login or signup before accessing your profile.",
+        "Login",
+        "You must be logged in before you can complete this action.",
         [
-          {
-            text: "Close",
-            onPress: () => {
-              /* do nothing */
-            }
-          },
           {
             text: "Signup",
             onPress: () => {
               navigate("Signup", Signup, props);
+            }
+          },
+          {
+            text: "Close",
+            onPress: () => {
+              // close the sidemenu
+              this.props.toggleSideMenu();
             }
           },
           {
@@ -166,7 +165,7 @@ class Menu extends Component {
             onPress={() => {
               Alert.alert("", "Are you sure you want to logout?", [
                 {
-                  text: "Close",
+                  text: "Cancel",
                   onPress: () => {
                     /* do nothing */
                   }

@@ -384,7 +384,7 @@ class MultiTaskPage extends Component {
   };
 
   _constructNavbar = () => {
-    let title = "All Tasks";
+    let title = "Tasks";
 
     let leftNavBarButton = (
       <NavbarButton

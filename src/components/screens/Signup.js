@@ -5,6 +5,7 @@
 
 import React, { Component, PropTypes } from "react";
 import {
+  ActivityIndicator,
   Button,
   StyleSheet,
   View,
@@ -39,7 +40,7 @@ class Signup extends Component {
     super(props);
 
     this.state = {
-      isSigningUp: "",
+      isSigningUp: false,
       signupError: "",
       email: "",
       password: "",
@@ -56,7 +57,6 @@ class Signup extends Component {
 
   _signup = async () => {
     if (this.state.isSigningUp) {
-      // TODO - warn user
       return;
     }
 
@@ -157,7 +157,98 @@ class Signup extends Component {
     );
   };
 
+  _activityIndactor = () => {
+    return (
+      <ActivityIndicator
+        style={[AppStyles.progressSpinner]}
+        color="blue"
+        size="large"
+      />
+    );
+  };
+
+  _viewContent = windowOpacity => {
+    return (
+      <View style={[AppStyles.padding, { opacity: windowOpacity }]}>
+        <View style={[AppStyles.paddingVertical]}>
+          <Text style={[AppStyles.baseText]}>Email</Text>
+          <TextInput
+            keyboardType="email-address"
+            style={[AppStyles.baseTextLight]}
+            onChangeText={updatedEmail => {
+              this.setState({ email: updatedEmail });
+            }}
+            value={this.state.email}
+          />
+
+          <Text style={[AppStyles.errorText]}>
+            {this.state.emailValidationError}
+          </Text>
+        </View>
+
+        <View style={[AppStyles.paddingVertical]}>
+          <Text style={[AppStyles.baseText]}>Password</Text>
+          <TextInput
+            secureTextEntry={true}
+            style={[AppStyles.baseTextLight]}
+            onChangeText={updatedPassword => {
+              this.setState({ password: updatedPassword });
+            }}
+            value={this.state.password}
+          />
+
+          <Text style={[AppStyles.errorText]}>
+            {this.state.passwordValidationError}
+          </Text>
+        </View>
+
+        <View style={[AppStyles.paddingVertical]}>
+          <Text style={[AppStyles.baseText]}>Confirm Password</Text>
+          <TextInput
+            secureTextEntry={true}
+            style={[AppStyles.baseTextLight]}
+            onChangeText={updatedConfirmPassword => {
+              this.setState({ confirmPassword: updatedConfirmPassword });
+            }}
+            value={this.state.confirmPassword}
+          />
+
+          <Text style={[AppStyles.errorText]}>
+            {this.state.confirmPasswordValidationError}
+          </Text>
+        </View>
+
+        <View style={[AppStyles.button]}>
+          <Button title={"Signup"} onPress={this._signup} />
+        </View>
+
+        <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
+          {this.state.signupError}
+        </Text>
+      </View>
+    );
+  };
+
   render = () => {
+    let content;
+
+    if (this.state.isSigningUp) {
+      let windowOpacity = AppConfig.loadingOpacity;
+      content = (
+        <View>
+          {this._activityIndactor()}
+          {this._viewContent(windowOpacity)}
+        </View>
+      );
+    } else {
+      let windowOpacity = 1;
+      content = (
+        <View>
+          {this._viewContent(windowOpacity)}
+        </View>
+      );
+    }
+
     return (
       <ScrollView
         automaticallyAdjustContentInsets={false}
@@ -166,64 +257,7 @@ class Signup extends Component {
         contentContainerStyle={[AppStyles.containerStretched]}
       >
         {this._constructNavbar()}
-
-        <View style={[AppStyles.padding]}>
-          <View style={[AppStyles.paddingVertical]}>
-            <Text style={[AppStyles.baseText]}>Email</Text>
-            <TextInput
-              keyboardType="email-address"
-              style={[AppStyles.baseTextLight]}
-              onChangeText={updatedEmail => {
-                this.setState({ email: updatedEmail });
-              }}
-              value={this.state.email}
-            />
-
-            <Text style={[AppStyles.errorText]}>
-              {this.state.emailValidationError}
-            </Text>
-          </View>
-
-          <View style={[AppStyles.paddingVertical]}>
-            <Text style={[AppStyles.baseText]}>Password</Text>
-            <TextInput
-              secureTextEntry={true}
-              style={[AppStyles.baseTextLight]}
-              onChangeText={updatedPassword => {
-                this.setState({ password: updatedPassword });
-              }}
-              value={this.state.password}
-            />
-
-            <Text style={[AppStyles.errorText]}>
-              {this.state.passwordValidationError}
-            </Text>
-          </View>
-
-          <View style={[AppStyles.paddingVertical]}>
-            <Text style={[AppStyles.baseText]}>Confirm Password</Text>
-            <TextInput
-              secureTextEntry={true}
-              style={[AppStyles.baseTextLight]}
-              onChangeText={updatedConfirmPassword => {
-                this.setState({ confirmPassword: updatedConfirmPassword });
-              }}
-              value={this.state.confirmPassword}
-            />
-
-            <Text style={[AppStyles.errorText]}>
-              {this.state.confirmPasswordValidationError}
-            </Text>
-          </View>
-
-          <View style={[AppStyles.button]}>
-            <Button title={"Signup"} onPress={this._signup} />
-          </View>
-
-          <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
-            {this.state.signupError}
-          </Text>
-        </View>
+        {content}
       </ScrollView>
     );
   };

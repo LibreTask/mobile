@@ -127,11 +127,11 @@ module.exports = StyleSheet.create({
   progressSpinner: {
     alignItems: "center",
     justifyContent: "center",
-
-    //position: "absolute",
-    //top: "20%",
-    //left: 0,
-    //right: 0,
+    position: "absolute",
+    transform: [{ scale: 2 }],
+    top: "30%",
+    left: 0,
+    right: 0,
     zIndex: 100000000, // spinners should have precedence
     margin: "auto"
   }
