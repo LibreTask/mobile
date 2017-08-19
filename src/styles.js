@@ -134,6 +134,5 @@ module.exports = StyleSheet.create({
     //right: 0,
     zIndex: 100000000, // spinners should have precedence
     margin: "auto"
-  },
-  loadingOpacity: 0.6
+  }
 });

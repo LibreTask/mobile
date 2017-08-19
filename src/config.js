@@ -12,6 +12,7 @@ export default {
   appName: AppConstants.APP_NAME,
   baseFont: "Roboto",
   baseFontSize: 18,
+  loadingOpacity: 0.6,
   primaryColor: "#3436a5",
   textColor: "#4c4c4c",
   errorColor: "#e71e13",
