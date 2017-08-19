@@ -124,7 +124,7 @@ class Profile extends Component {
     UserController.updateProfile(this.state.myProfile)
       .then(response => {
         // TODO - handle password better
-        response.password = this.props.user.password;
+        response.profile.password = this.props.user.profile.password;
 
         ProfileStorage.createOrUpdateProfile(response.profile);
         this.props.createOrUpdateProfile(response.profile);
