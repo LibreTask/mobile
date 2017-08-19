@@ -57,7 +57,11 @@ class SingleTaskPage extends Component {
       updateSuccess: "",
       isUpdating: false,
 
-      task: props.tasks[this.props.taskId],
+      /*
+        Clone object so that edits do not modify original task.
+        Any edits will be made permanent when the user saves.
+      */
+      task: Object.assign({}, props.tasks[this.props.taskId]),
 
       nameValidationError: "",
       notesValidationError: "",
