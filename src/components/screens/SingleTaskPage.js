@@ -230,6 +230,8 @@ class SingleTaskPage extends Component {
   };
 
   _onSubmitEdit = async () => {
+    console.log("isupdating task: " + this.state.isUpdatingTask);
+
     if (this.state.isUpdatingTask) {
       return;
     }
@@ -261,52 +263,56 @@ class SingleTaskPage extends Component {
       return; // validation failed; cannot update task
     }
 
-    /*
-      Update task locally, before checking network access. This is
-      because we will perform a local update regardless, and doing
-      so immediately is a much better user experience.
-    */
-    this._updateTaskLocally(task);
-
-    this.setState({
-      isUpdatingTask: true,
-      taskSuccess: "",
-      taskError: "",
-      notesValidationError: "",
-      nameValidationError: ""
-    });
-
-    let taskId = this.state.task.id;
-
-    if (
-      taskId in this.props.pendingTaskCreates ||
-      taskId in this.props.pendingTaskUpdates
-    ) {
-      /*
-        If the task is in the pendingQueue, we update the queue rather than
-        attempt to submit the update to the server. A separate process will
-        handle submitting the queued tasks.
+    this.setState(
+      {
+        isUpdatingTask: true,
+        taskSuccess: "",
+        taskError: "",
+        notesValidationError: "",
+        nameValidationError: ""
+      },
+      () => {
+        /*
+        Update task locally, before checking network access. This is
+        because we will perform a local update regardless, and doing
+        so immediately is a much better user experience.
       */
-      this._queueTaskUpdate(this.state.task);
-    } else if (UserController.canAccessNetwork(profile)) {
-      TaskController.updateTask(
-        this.state.task,
-        profile.id,
-        profile.password
-      ).catch(error => {
-        if (error.name === "RetryableError") {
+        let displayMessage = true;
+        this._updateTaskLocally(this.state.task, displayMessage);
+
+        let taskId = this.state.task.id;
+
+        if (
+          taskId in this.props.pendingTaskCreates ||
+          taskId in this.props.pendingTaskUpdates
+        ) {
+          /*
+          If the task is in the pendingQueue, we update the queue rather than
+          attempt to submit the update to the server. A separate process will
+          handle submitting the queued tasks.
+        */
           this._queueTaskUpdate(this.state.task);
-        } else {
-          this.setState({
-            isUpdatingTask: false,
-            taskError: error.message,
-            taskSuccess: ""
+        } else if (UserController.canAccessNetwork(profile)) {
+          TaskController.updateTask(
+            this.state.task,
+            profile.id,
+            profile.password
+          ).catch(error => {
+            if (error.name === "RetryableError") {
+              this._queueTaskUpdate(this.state.task);
+            } else {
+              this.setState({
+                isUpdatingTask: false,
+                taskError: error.message,
+                taskSuccess: ""
+              });
+            }
           });
+        } else {
+          this._queueTaskUpdate(this.state.task);
         }
-      });
-    } else {
-      this._queueTaskUpdate(this.state.task);
-    }
+      }
+    );
   };
 
   _queueTaskUpdate = task => {
@@ -328,15 +334,20 @@ class SingleTaskPage extends Component {
 
     this.props.refreshTaskViewCollapseStatus();
 
+    console.log("display message: " + displayMessage);
+
+    this.setState({ isUpdatingTask: false });
+
     if (displayMessage) {
       this.setState({
         taskSuccess: "Update successful!",
-        isUpdated: false
+        isUpdatingTask: false
       });
 
       setTimeout(() => {
         this.setState({ taskSuccess: "" });
       }, 2000); // remove message after 2 seconds
+    } else {
     }
   };
 
@@ -436,6 +447,37 @@ class SingleTaskPage extends Component {
   };
 
   _viewContent = windowOpacity => {
+    // TODO - refine this approach
+
+    let dateString;
+    let dateStringStyle = [AppStyles.baseTextLight];
+    let clearDateButton;
+    if (this.state.task.dueDateTimeUtc) {
+      // TODO - refine how we format date (and move to utils)
+
+      dateString = dateFormat(this.state.task.dueDateTimeUtc, "mmmm d yyyy");
+      clearDateButton = (
+        <TouchableOpacity
+          style={[AppStyles.paddingVertical]}
+          onPress={() => {
+            let updatedTask = this.state.task;
+            updatedTask.dueDateTimeUtc = undefined;
+
+            this.setState({
+              task: updatedTask
+            });
+          }}
+        >
+          <Text style={[AppStyles.baseLinkText]}>Clear date</Text>
+        </TouchableOpacity>
+      );
+    } else {
+      dateString = "Select a due date";
+      dateStringStyle.push(AppStyles.linkText);
+    }
+
+    console.log("message: " + this.state.taskSuccess);
+
     return (
       <View style={[AppStyles.padding, { opacity: windowOpacity }]}>
         <View style={[AppStyles.paddingVertical]}>
@@ -511,35 +553,6 @@ class SingleTaskPage extends Component {
     // TODO - move this to more suitable area
     if (this.state.displayingDateDialog) {
       this._renderDatePicker();
-    }
-
-    // TODO - refine this approach
-
-    let dateString;
-    let dateStringStyle = [AppStyles.baseTextLight];
-    let clearDateButton;
-    if (this.state.task.dueDateTimeUtc) {
-      // TODO - refine how we format date (and move to utils)
-
-      dateString = dateFormat(this.state.task.dueDateTimeUtc, "mmmm d yyyy");
-      clearDateButton = (
-        <TouchableOpacity
-          style={[AppStyles.paddingVertical]}
-          onPress={() => {
-            let updatedTask = this.state.task;
-            updatedTask.dueDateTimeUtc = undefined;
-
-            this.setState({
-              task: updatedTask
-            });
-          }}
-        >
-          <Text style={[AppStyles.baseLinkText]}>Clear date</Text>
-        </TouchableOpacity>
-      );
-    } else {
-      dateString = "Select a due date";
-      dateStringStyle.push(AppStyles.linkText);
     }
 
     let content;

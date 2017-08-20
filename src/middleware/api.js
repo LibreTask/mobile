@@ -101,7 +101,10 @@ function _invoke(endpoint, method, headers, body) {
 
 function _isTimeoutError(err) {
   // TODO - fix this brittle check
-  return err && err.message === "Network request failed";
+  return (
+    err &&
+    (err.message === "Network request failed" || err instanceof RetryableError)
+  );
 }
 
 function _retryWait(retryAttemptNumber) {

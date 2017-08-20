@@ -109,7 +109,7 @@ class Settings extends Component {
                 because we will perform a local update regardless, and doing
                 so immediately is a much better user experience.
               */
-              this._updateProfileLocally(updateProfile);
+              this._updateProfileLocally(updatedProfile);
 
               if (UserController.canAccessNetwork(updatedProfile)) {
                 UserController.updateProfile(updatedProfile).catch(error => {
