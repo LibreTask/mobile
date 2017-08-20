@@ -5,6 +5,7 @@
 
 import React, { Component, PropTypes } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Button,
   DatePickerAndroid,
@@ -53,10 +54,10 @@ class SingleTaskPage extends Component {
     super(props);
 
     this.state = {
-      updateError: "",
-      updateSuccess: "",
+      taskError: "",
+      taskSuccess: "",
       isUpdatingTask: false,
-
+      isDeletingTask: false,
       /*
         Clone object so that edits do not modify original task.
         Any edits will be made permanent when the user saves.
@@ -134,7 +135,7 @@ class SingleTaskPage extends Component {
   _onDelete = () => {
     // TODO -
     /*
-    if (this.state.isUpdatingTask) {
+    if (this.state.isDeletingTask) {
       return;
     }
     */
@@ -163,22 +164,33 @@ class SingleTaskPage extends Component {
             */
             this._deleteTaskLocallyAndRedirect(task, true);
           } else if (UserController.canAccessNetwork(this.props.profile)) {
-            TaskController.deleteTask(
-              task.id,
-              this.props.profile.id,
-              this.props.profile.password
-            )
-              .then(response => {
-                // use the task in the reponse; it is the most up-to-date
-                this._deleteTaskLocallyAndRedirect(response.task);
-              })
-              .catch(error => {
-                if (error.name === "RetryableError") {
-                  this._deleteTaskLocallyAndRedirect(task, true);
-                } else {
-                  // TODO
-                }
-              });
+            this.setState(
+              {
+                isDeletingTask: true,
+                taskSuccess: "",
+                taskError: "",
+                notesValidationError: "",
+                nameValidationError: ""
+              },
+              () => {
+                TaskController.deleteTask(
+                  task.id,
+                  this.props.profile.id,
+                  this.props.profile.password
+                )
+                  .then(response => {
+                    // use the task in the reponse; it is the most up-to-date
+                    this._deleteTaskLocallyAndRedirect(response.task);
+                  })
+                  .catch(error => {
+                    if (error.name === "RetryableError") {
+                      this._deleteTaskLocallyAndRedirect(task, true);
+                    } else {
+                      // TODO
+                    }
+                  });
+              }
+            );
           } else {
             this._deleteTaskLocallyAndRedirect(task, true);
           }
@@ -240,8 +252,8 @@ class SingleTaskPage extends Component {
 
     if (nameValidationError || notesValidationError) {
       this.setState({
-        updateError: "",
-        updateSuccess: "",
+        taskError: "",
+        taskSuccess: "",
         nameValidationError: nameValidationError,
         notesValidationError: notesValidationError
       });
@@ -249,10 +261,17 @@ class SingleTaskPage extends Component {
       return; // validation failed; cannot update task
     }
 
+    /*
+      Update task locally, before checking network access. This is
+      because we will perform a local update regardless, and doing
+      so immediately is a much better user experience.
+    */
+    this._updateTaskLocally(task);
+
     this.setState({
       isUpdatingTask: true,
-      updateSuccess: "",
-      updateError: "",
+      taskSuccess: "",
+      taskError: "",
       notesValidationError: "",
       nameValidationError: ""
     });
@@ -268,52 +287,57 @@ class SingleTaskPage extends Component {
         attempt to submit the update to the server. A separate process will
         handle submitting the queued tasks.
       */
-      this._updateTaskLocally(this.state.task, true);
+      this._queueTaskUpdate(this.state.task);
     } else if (UserController.canAccessNetwork(profile)) {
-      TaskController.updateTask(this.state.task, profile.id, profile.password)
-        .then(response => {
-          // use the task in the reponse; it is the most up-to-date
-          this._updateTaskLocally(response.task);
-        })
-        .catch(error => {
-          if (error.name === "RetryableError") {
-            this._updateTaskLocally(this.state.task, true);
-          } else {
-            this.setState({
-              isUpdatingTask: false,
-              updateError: error.message,
-              updateSuccess: ""
-            });
-          }
-        });
+      TaskController.updateTask(
+        this.state.task,
+        profile.id,
+        profile.password
+      ).catch(error => {
+        if (error.name === "RetryableError") {
+          this._queueTaskUpdate(this.state.task);
+        } else {
+          this.setState({
+            isUpdatingTask: false,
+            taskError: error.message,
+            taskSuccess: ""
+          });
+        }
+      });
     } else {
-      this._updateTaskLocally(this.state.task, true);
+      this._queueTaskUpdate(this.state.task);
     }
   };
 
-  _updateTaskLocally = (task, queueTaskUpdate) => {
-    if (queueTaskUpdate) {
-      // mark update time, before queueing
-      task.updatedAtDateTimeUtc = new Date();
+  _queueTaskUpdate = task => {
+    // mark update time, before queueing
+    task.updatedAtDateTimeUtc = new Date();
 
-      // task is queued only when network could not be reached
-      this.props.addPendingTaskUpdate(task);
-    }
-
-    TaskStorage.createOrUpdateTask(task);
+    // task is queued only when network could not be reached
+    this.props.addPendingTaskUpdate(task);
     TaskQueue.queueTaskUpdate(task);
+
+    // re-update the local task reference, after modifying updatedAtDateTimeUtc
+    let displayMessage = false;
+    this._updateTaskLocally(task, displayMessage);
+  };
+
+  _updateTaskLocally = (task, displayMessage = true) => {
+    TaskStorage.createOrUpdateTask(task);
     this.props.createOrUpdateTask(task);
 
     this.props.refreshTaskViewCollapseStatus();
 
-    this.setState({
-      updateSuccess: "Update successful!",
-      isUpdated: false
-    });
+    if (displayMessage) {
+      this.setState({
+        taskSuccess: "Update successful!",
+        isUpdated: false
+      });
 
-    setTimeout(() => {
-      this.setState({ updateSuccess: "" });
-    }, 2000); // remove message after 2 seconds
+      setTimeout(() => {
+        this.setState({ taskSuccess: "" });
+      }, 2000); // remove message after 2 seconds
+    }
   };
 
   _renderDatePicker = () => {
@@ -411,6 +435,78 @@ class SingleTaskPage extends Component {
     );
   };
 
+  _viewContent = windowOpacity => {
+    return (
+      <View style={[AppStyles.padding, { opacity: windowOpacity }]}>
+        <View style={[AppStyles.paddingVertical]}>
+          <Text style={[AppStyles.baseText]}>Name</Text>
+          <TextInput
+            style={[AppStyles.baseTextLight]}
+            onChangeText={updatedName => {
+              let task = this.state.task;
+              task.name = updatedName;
+              this.setState({ task: task });
+            }}
+            value={this.state.task.name}
+          />
+          <Text style={[AppStyles.errorText]}>
+            {this.state.nameValidationError}
+          </Text>
+        </View>
+
+        <View style={[AppStyles.paddingVertical]}>
+          <Text style={[AppStyles.baseText]}>Notes</Text>
+          <TextInput
+            multiline={true}
+            style={[AppStyles.baseTextLight]}
+            onChangeText={updatedNotes => {
+              let task = this.state.task;
+              task.notes = updatedNotes;
+              this.setState({ task: task });
+            }}
+            value={this.state.task.notes}
+          />
+
+          <Text style={[AppStyles.errorText]}>
+            {this.state.notesValidationError}
+          </Text>
+        </View>
+
+        <View style={[AppStyles.paddingVertical]}>
+          <Text style={[AppStyles.baseText]}>Due Date</Text>
+          <TextInput
+            style={[AppStyles.baseTextLight, dateStringStyle]}
+            onFocus={() => {
+              this.setState({
+                displayingDateDialog: true
+              });
+            }}
+            value={dateString}
+          />
+          {clearDateButton}
+        </View>
+
+        <Text style={[AppStyles.successText]}>
+          {this.state.taskSuccess}
+        </Text>
+
+        <Text style={[AppStyles.errorText]}>
+          {this.state.taskError}
+        </Text>
+      </View>
+    );
+  };
+
+  _activityIndactor = () => {
+    return (
+      <ActivityIndicator
+        style={[AppStyles.progressSpinner]}
+        color="blue"
+        size="large"
+      />
+    );
+  };
+
   render = () => {
     // TODO - move this to more suitable area
     if (this.state.displayingDateDialog) {
@@ -446,70 +542,32 @@ class SingleTaskPage extends Component {
       dateStringStyle.push(AppStyles.linkText);
     }
 
+    let content;
+
+    if (this.state.isLoggingIn) {
+      let windowOpacity = AppConfig.loadingOpacity;
+      content = (
+        <View>
+          {this._activityIndactor()}
+          {this._viewContent(windowOpacity)}
+        </View>
+      );
+    } else {
+      let windowOpacity = 1;
+      content = (
+        <View>
+          {this._viewContent(windowOpacity)}
+        </View>
+      );
+    }
+
     return (
       <ScrollView
         automaticallyAdjustContentInsets={false}
         style={[AppStyles.container]}
       >
         {this._constructNavbar()}
-
-        <View style={[AppStyles.padding]}>
-          <View style={[AppStyles.paddingVertical]}>
-            <Text style={[AppStyles.baseText]}>Name</Text>
-            <TextInput
-              style={[AppStyles.baseTextLight]}
-              onChangeText={updatedName => {
-                let task = this.state.task;
-                task.name = updatedName;
-                this.setState({ task: task });
-              }}
-              value={this.state.task.name}
-            />
-            <Text style={[AppStyles.errorText]}>
-              {this.state.nameValidationError}
-            </Text>
-          </View>
-
-          <View style={[AppStyles.paddingVertical]}>
-            <Text style={[AppStyles.baseText]}>Notes</Text>
-            <TextInput
-              multiline={true}
-              style={[AppStyles.baseTextLight]}
-              onChangeText={updatedNotes => {
-                let task = this.state.task;
-                task.notes = updatedNotes;
-                this.setState({ task: task });
-              }}
-              value={this.state.task.notes}
-            />
-
-            <Text style={[AppStyles.errorText]}>
-              {this.state.notesValidationError}
-            </Text>
-          </View>
-
-          <View style={[AppStyles.paddingVertical]}>
-            <Text style={[AppStyles.baseText]}>Due Date</Text>
-            <TextInput
-              style={[AppStyles.baseTextLight, dateStringStyle]}
-              onFocus={() => {
-                this.setState({
-                  displayingDateDialog: true
-                });
-              }}
-              value={dateString}
-            />
-            {clearDateButton}
-          </View>
-
-          <Text style={[AppStyles.successText]}>
-            {this.state.updateSuccess}
-          </Text>
-
-          <Text style={[AppStyles.errorText]}>
-            {this.state.updateError}
-          </Text>
-        </View>
+        {content}
       </ScrollView>
     );
   };
