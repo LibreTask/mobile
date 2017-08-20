@@ -144,22 +144,92 @@ class Login extends Component {
     );
   };
 
+  _activityIndactor = () => {
+    return (
+      <ActivityIndicator
+        style={[AppStyles.progressSpinner]}
+        color="blue"
+        size="large"
+      />
+    );
+  };
+
+  _viewContent = windowOpacity => {
+    return (
+      <View style={[AppStyles.padding, { opacity: windowOpacity }]}>
+        <View style={[AppStyles.paddingVertical]}>
+          <Text style={[AppStyles.baseText]}>Email</Text>
+          <TextInput
+            keyboardType="email-address"
+            style={[AppStyles.baseTextLight]}
+            onChangeText={updatedEmail => {
+              this.setState({ email: updatedEmail });
+            }}
+            value={this.state.email}
+          />
+
+          <Text style={[AppStyles.errorText]}>
+            {this.state.emailValidationError}
+          </Text>
+        </View>
+
+        <View style={[AppStyles.paddingVertical]}>
+          <Text style={[AppStyles.baseText]}>Password</Text>
+          <TextInput
+            secureTextEntry={true}
+            style={[AppStyles.baseTextLight]}
+            onChangeText={updatedPassword => {
+              this.setState({ password: updatedPassword });
+            }}
+            value={this.state.password}
+          />
+
+          <Text style={[AppStyles.errorText]}>
+            {this.state.passwordValidationError}
+          </Text>
+        </View>
+
+        <View style={[AppStyles.button, AppStyles.paddingVertical]}>
+          <Button title={"Login"} onPress={this._login} />
+        </View>
+
+        <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
+          {this.state.loginError}
+        </Text>
+
+        <TouchableOpacity
+          style={[AppStyles.paddingVertical]}
+          onPress={() => {
+            Linking.openURL(AppConstants.PASSWORD_RESET_LINK);
+          }}
+        >
+          <Text style={[AppStyles.baseLinkText, styles.resetPasswordLink]}>
+            Forgot password?
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   render = () => {
-    let spinner = <View />;
-    let windowOpacity = 1;
+    let content;
 
     if (this.state.isLoggingIn) {
-      spinner = (
-        <ActivityIndicator
-          style={[AppStyles.progressSpinner]}
-          color="blue"
-          size="large"
-        />
+      let windowOpacity = AppConfig.loadingOpacity;
+      content = (
+        <View>
+          {this._activityIndactor()}
+          {this._viewContent(windowOpacity)}
+        </View>
       );
-      windowOpacity = AppConfig.loadingOpacity;
+    } else {
+      let windowOpacity = 1;
+      content = (
+        <View>
+          {this._viewContent(windowOpacity)}
+        </View>
+      );
     }
-
-    console.log("window opacity: " + windowOpacity);
 
     return (
       <ScrollView
@@ -169,61 +239,7 @@ class Login extends Component {
         contentContainerStyle={[AppStyles.containerStretched]}
       >
         {this._constructNavbar()}
-
-        {spinner}
-
-        <View style={[AppStyles.padding, { opacity: windowOpacity }]}>
-          <View style={[AppStyles.paddingVertical]}>
-            <Text style={[AppStyles.baseText]}>Email</Text>
-            <TextInput
-              keyboardType="email-address"
-              style={[AppStyles.baseTextLight]}
-              onChangeText={updatedEmail => {
-                this.setState({ email: updatedEmail });
-              }}
-              value={this.state.email}
-            />
-
-            <Text style={[AppStyles.errorText]}>
-              {this.state.emailValidationError}
-            </Text>
-          </View>
-
-          <View style={[AppStyles.paddingVertical]}>
-            <Text style={[AppStyles.baseText]}>Password</Text>
-            <TextInput
-              secureTextEntry={true}
-              style={[AppStyles.baseTextLight]}
-              onChangeText={updatedPassword => {
-                this.setState({ password: updatedPassword });
-              }}
-              value={this.state.password}
-            />
-
-            <Text style={[AppStyles.errorText]}>
-              {this.state.passwordValidationError}
-            </Text>
-          </View>
-
-          <View style={[AppStyles.button, AppStyles.paddingVertical]}>
-            <Button title={"Login"} onPress={this._login} />
-          </View>
-
-          <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
-            {this.state.loginError}
-          </Text>
-
-          <TouchableOpacity
-            style={[AppStyles.paddingVertical]}
-            onPress={() => {
-              Linking.openURL(AppConstants.PASSWORD_RESET_LINK);
-            }}
-          >
-            <Text style={[AppStyles.baseLinkText, styles.resetPasswordLink]}>
-              Forgot password?
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {content}
       </ScrollView>
     );
   };

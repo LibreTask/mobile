@@ -5,6 +5,7 @@
 
 import React, { Component, PropTypes } from "react";
 import {
+  ActivityIndicator,
   Button,
   DatePickerAndroid,
   Keyboard,
@@ -317,10 +318,74 @@ class CreateTask extends Component {
     );
   };
 
+  _activityIndactor = () => {
+    return (
+      <ActivityIndicator
+        style={[AppStyles.progressSpinner]}
+        color="blue"
+        size="large"
+      />
+    );
+  };
+
+  _viewContent = windowOpacity => {
+    return (
+      <View style={[AppStyles.padding, { opacity: windowOpacity }]}>
+        <View style={[AppStyles.paddingVertical]}>
+          <Text style={[AppStyles.baseText]}>Name</Text>
+          <TextInput
+            style={[AppStyles.baseTextLight]}
+            onChangeText={updatedName => {
+              this.setState({ taskName: updatedName });
+            }}
+            value={this.state.taskName}
+          />
+
+          <Text style={[AppStyles.errorText]}>
+            {this.state.nameValidationError}
+          </Text>
+        </View>
+
+        {this._constructNotesTextEdit()}
+        {this._constructDatePicker()}
+
+        <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
+          {this.state.creationError}
+        </Text>
+
+        <View style={[AppStyles.row]}>
+          <View style={[AppStyles.button]}>
+            <Button title={"Create Task"} onPress={this._createTask} />
+          </View>
+        </View>
+
+        {this._constructAttributeIcons()}
+      </View>
+    );
+  };
+
   render = () => {
     // TODO - move this to more suitable area
     if (this.state.displayingDateDialog) {
       this._renderDatePicker();
+    }
+
+    let content;
+    if (this.state.isCreatingTask) {
+      let windowOpacity = AppConfig.loadingOpacity;
+      content = (
+        <View>
+          {this._activityIndactor()}
+          {this._viewContent(windowOpacity)}
+        </View>
+      );
+    } else {
+      let windowOpacity = 1;
+      content = (
+        <View>
+          {this._viewContent(windowOpacity)}
+        </View>
+      );
     }
 
     return (
@@ -331,38 +396,7 @@ class CreateTask extends Component {
         contentContainerStyle={[AppStyles.containerStretched]}
       >
         {this._constructNavbar()}
-
-        <View style={[AppStyles.padding]}>
-          <View style={[AppStyles.paddingVertical]}>
-            <Text style={[AppStyles.baseText]}>Name</Text>
-            <TextInput
-              style={[AppStyles.baseTextLight]}
-              onChangeText={updatedName => {
-                this.setState({ taskName: updatedName });
-              }}
-              value={this.state.taskName}
-            />
-
-            <Text style={[AppStyles.errorText]}>
-              {this.state.nameValidationError}
-            </Text>
-          </View>
-
-          {this._constructNotesTextEdit()}
-          {this._constructDatePicker()}
-
-          <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
-            {this.state.creationError}
-          </Text>
-
-          <View style={[AppStyles.row]}>
-            <View style={[AppStyles.button]}>
-              <Button title={"Create Task"} onPress={this._createTask} />
-            </View>
-          </View>
-
-          {this._constructAttributeIcons()}
-        </View>
+        {content}
       </ScrollView>
     );
   };
