@@ -5,6 +5,7 @@
 
 import React, { Component, PropTypes } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Button,
   Linking,
@@ -70,33 +71,38 @@ class Profile extends Component {
       {
         text: "Yes",
         onPress: async () => {
-          UserController.deleteProfile(this.state.myProfile)
-            .then(response => {
-              this._deleteProfileLocallyAndRedirect();
-            })
-            .catch(error => {
-              if (error.name === "RetryableError") {
-                this._deleteProfileLocallyAndRedirect();
-              } else {
-                // TODO
-              }
-            });
+          this.setState(
+            {
+              isUpdatingProfile: true,
+              updateError: "",
+              updateSuccess: "",
+              emailValidationError: ""
+            },
+            () => {
+              UserController.deleteProfile(this.state.myProfile)
+                .then(response => {
+                  this.props.deleteProfile();
+                  this.props.deleteAllTasks();
+                  ProfileStorage.logout();
+
+                  // profile deletion ui update
+                  this.props.navigator.replace({
+                    title: "Main",
+                    component: MultiTaskPage,
+                    index: 0
+                  });
+                })
+                .catch(error => {
+                  this.setState({
+                    updateError: error.message,
+                    isUpdatingProfile: false
+                  });
+                });
+            }
+          );
         }
       }
     ]);
-  };
-
-  _deleteProfileLocallyAndRedirect = () => {
-    this.props.deleteProfile();
-    this.props.deleteAllTasks();
-    ProfileStorage.logout();
-
-    // profile deletion ui update
-    this.props.navigator.replace({
-      title: "Main",
-      component: MultiTaskPage,
-      index: 0
-    });
   };
 
   _onSubmitEdit = async () => {
@@ -139,7 +145,8 @@ class Profile extends Component {
 
         this.setState({
           updateSuccess: "Update successful!",
-          isUpdated: false
+          isUpdated: false,
+          isUpdatingProfile: false
         });
 
         setTimeout(() => {
@@ -247,63 +254,98 @@ class Profile extends Component {
     }
   };
 
+  _activityIndactor = () => {
+    return (
+      <ActivityIndicator
+        style={[AppStyles.progressSpinner]}
+        color="blue"
+        size="large"
+      />
+    );
+  };
+
+  _viewContent = windowOpacity => {
+    return (
+      <View style={[AppStyles.padding, { opacity: windowOpacity }]}>
+        <View style={[AppStyles.paddingVertical]}>
+          <Text style={[AppStyles.baseText]}>Email</Text>
+          <TextInput
+            style={[AppStyles.baseTextLight]}
+            onChangeText={updatedEmail => {
+              let profile = this.state.myProfile;
+              profile.email = updatedEmail;
+              this.setState({ myProfile: profile });
+            }}
+            value={this.state.myProfile.email}
+          />
+          <Text style={[AppStyles.errorText]}>
+            {this.state.emailValidationError}
+          </Text>
+        </View>
+
+        {this._expirationDateDisplay()}
+
+        <View style={[AppStyles.row]}>
+          <View style={[AppStyles.button]}>
+            <Button
+              title="Save"
+              onPress={() => {
+                this._onSubmitEdit();
+              }}
+            />
+          </View>
+        </View>
+        <View style={[AppStyles.row]}>
+          <View style={[AppStyles.button]}>
+            <Button
+              title="Delete"
+              onPress={() => {
+                this._onDelete();
+              }}
+            />
+          </View>
+        </View>
+
+        {this._getAccountStatusButton()}
+
+        <Text style={[AppStyles.successText]}>
+          {this.state.updateSuccess}
+        </Text>
+
+        <Text style={[AppStyles.errorText]}>
+          {this.state.updateError}
+        </Text>
+      </View>
+    );
+  };
+
   render = () => {
+    let content;
+
+    if (this.state.isUpdatingProfile) {
+      let windowOpacity = AppConfig.loadingOpacity;
+      content = (
+        <View>
+          {this._activityIndactor()}
+          {this._viewContent(windowOpacity)}
+        </View>
+      );
+    } else {
+      let windowOpacity = 1;
+      content = (
+        <View>
+          {this._viewContent(windowOpacity)}
+        </View>
+      );
+    }
+
     return (
       <ScrollView
         automaticallyAdjustContentInsets={false}
         style={[AppStyles.container]}
       >
         {this._constructNavbar()}
-
-        <View style={[AppStyles.padding]}>
-          <Text style={[AppStyles.successText]}>
-            {this.state.updateSuccess}
-          </Text>
-
-          <Text style={[AppStyles.errorText]}>
-            {this.state.updateError}
-          </Text>
-
-          <View style={[AppStyles.paddingVertical]}>
-            <Text style={[AppStyles.baseText]}>Email</Text>
-            <TextInput
-              style={[AppStyles.baseTextLight]}
-              onChangeText={updatedEmail => {
-                let profile = this.state.myProfile;
-                profile.email = updatedEmail;
-                this.setState({ myProfile: profile });
-              }}
-              value={this.state.myProfile.email}
-            />
-            <Text style={[AppStyles.errorText]}>
-              {this.state.emailValidationError}
-            </Text>
-          </View>
-
-          {this._expirationDateDisplay()}
-
-          <View style={[AppStyles.row]}>
-            <View style={[AppStyles.button]}>
-              <Button
-                title="Save"
-                onPress={() => {
-                  this._onSubmitEdit();
-                }}
-              />
-            </View>
-          </View>
-          <View style={[AppStyles.row]}>
-            <View style={[AppStyles.button]}>
-              <Button
-                title="Delete"
-                onPress={() => {
-                  this._onDelete();
-                }}
-              />
-            </View>
-          </View>
-          {this._getAccountStatusButton()}
-        </View>
+        {content}
       </ScrollView>
     );
   };
