@@ -238,7 +238,7 @@ class CreateTask extends Component {
     }
 
     let dateString = this.state.taskDueDateTimeUtc
-      ? dateFormat(this.state.taskDueDateTimeUtc, "mmmm d yyyy")
+      ? dateFormat(this.state.taskDueDateTimeUtc, "dddd, mmmm dS, yyyy")
       : "";
 
     return (
