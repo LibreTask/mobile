@@ -66,7 +66,9 @@ class SingleTaskPage extends Component {
 
       nameValidationError: "",
       notesValidationError: "",
-      displayingDateDialog: false
+      displayingDateDialog: false,
+      notesHeight: 0,
+      nameHeight: 0
     };
   }
 
@@ -486,7 +488,15 @@ class SingleTaskPage extends Component {
         <View style={[AppStyles.paddingVertical]}>
           <Text style={[AppStyles.baseText]}>Name</Text>
           <TextInput
-            style={[AppStyles.baseTextLight]}
+            style={[
+              AppStyles.baseTextLight,
+              { height: Math.max(35, this.state.nameHeight) }
+            ]}
+            onContentSizeChange={event => {
+              this.setState({
+                nameHeight: event.nativeEvent.contentSize.height
+              });
+            }}
             onChangeText={updatedName => {
               let task = this.state.task;
               task.name = updatedName;
@@ -503,7 +513,15 @@ class SingleTaskPage extends Component {
           <Text style={[AppStyles.baseText]}>Notes</Text>
           <TextInput
             multiline={true}
-            style={[AppStyles.baseTextLight]}
+            style={[
+              AppStyles.baseTextLight,
+              { height: Math.max(35, this.state.notesHeight) }
+            ]}
+            onContentSizeChange={event => {
+              this.setState({
+                notesHeight: event.nativeEvent.contentSize.height
+              });
+            }}
             onChangeText={updatedNotes => {
               let task = this.state.task;
               task.notes = updatedNotes;

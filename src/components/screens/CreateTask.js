@@ -57,7 +57,9 @@ class CreateTask extends Component {
       notesValidationError: "",
       notesIconSelected: false,
       calendarIconSelected: false,
-      displayingDateDialog: false
+      displayingDateDialog: false,
+      notesHeight: 0,
+      nameHeight: 0
     };
   }
 
@@ -181,7 +183,15 @@ class CreateTask extends Component {
         <Text style={[AppStyles.baseText]}>Notes</Text>
         <TextInput
           multiline={true}
-          style={[AppStyles.baseTextLight]}
+          style={[
+            AppStyles.baseTextLight,
+            { height: Math.max(35, this.state.notesHeight) }
+          ]}
+          onContentSizeChange={event => {
+            this.setState({
+              notesHeight: event.nativeEvent.contentSize.height
+            });
+          }}
           onChangeText={updatedNotes => {
             this.setState({ taskNotes: updatedNotes });
           }}
@@ -336,6 +346,15 @@ class CreateTask extends Component {
         <View style={[AppStyles.paddingVertical]}>
           <Text style={[AppStyles.baseText]}>Name</Text>
           <TextInput
+            style={[
+              AppStyles.baseTextLight,
+              { height: Math.max(35, this.state.nameHeight) }
+            ]}
+            onContentSizeChange={event => {
+              this.setState({
+                nameHeight: event.nativeEvent.contentSize.height
+              });
+            }}
             style={[AppStyles.baseTextLight]}
             onChangeText={updatedName => {
               this.setState({ taskName: updatedName });
