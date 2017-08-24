@@ -5,8 +5,8 @@
 
 import React, { Component } from "react";
 import { NetInfo, Text, View, TouchableOpacity, StatusBar } from "react-native";
-import { StackNavigator } from "react-navigation";
 import { connect } from "react-redux";
+import { Navigator } from "react-native-deprecated-custom-components";
 import SideMenu from "react-native-side-menu";
 
 import * as _ from "lodash";
@@ -188,7 +188,7 @@ class AppContainer extends Component {
         isOpen={this.props.sideMenuIsOpen}
         onChange={this._onSideMenuChange}
       >
-        <StackNavigator
+        <Navigator
           ref="rootNavigator"
           style={navigatorStyle}
           renderScene={this._renderScene}

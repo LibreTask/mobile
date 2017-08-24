@@ -488,6 +488,7 @@ class SingleTaskPage extends Component {
         <View style={[AppStyles.paddingVertical]}>
           <Text style={[AppStyles.baseText]}>Name</Text>
           <TextInput
+            multiline={true}
             style={[
               AppStyles.baseTextLight,
               { height: Math.max(35, this.state.nameHeight) }

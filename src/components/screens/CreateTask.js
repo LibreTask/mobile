@@ -255,6 +255,7 @@ class CreateTask extends Component {
       <View style={[AppStyles.paddingVertical]}>
         <Text style={[AppStyles.baseText]}>Due Date</Text>
         <TextInput
+          multiline={true}
           style={[AppStyles.baseTextLight]}
           onFocus={() => {
             this.setState({
