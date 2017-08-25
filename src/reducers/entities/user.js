@@ -35,7 +35,7 @@ function endUserSync(state, action) {
 
 function deleteProfile(state, action) {
   return updateObject(state, {
-    profile: undefined,
+    profile: {},
     isLoggedIn: false
   }); // on delete profile, wipe everything
 }
@@ -102,7 +102,7 @@ function stopQueuedProfileSubmission(state, action) {
 }
 
 const initialState = {
-  profile: undefined,
+  profile: {},
   queuedProfile: undefined,
   isLoggedIn: false,
   isSubmittingQueuedProfileUpdates: false,

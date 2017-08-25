@@ -113,6 +113,9 @@ class Signup extends Component {
             // TODO - handle PW in more secure way
             profile.password = password;
 
+            // preserve any of the offline-configured profile preferences
+            profile.showCompletedTasks = this.props.profile.showCompletedTasks;
+
             ProfileStorage.createOrUpdateProfile(profile);
             this.props.createOrUpdateProfile(profile);
 
@@ -264,7 +267,7 @@ class Signup extends Component {
 }
 
 const mapStateToProps = state => ({
-  /* TODO */
+  profile: state.entities.user.profile
 });
 
 const mapDispatchToProps = {

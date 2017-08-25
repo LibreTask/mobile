@@ -42,7 +42,7 @@ class Settings extends Component {
   }
 
   _updateProfileLocally = profile => {
-    this.props.createOrUpdateProfile(profile);
+    this.props.createOrUpdateProfile(profile, this.props.isLoggedIn);
     ProfileStorage.createOrUpdateProfile(profile);
 
     this.setState({
@@ -127,7 +127,8 @@ class Settings extends Component {
 }
 
 const mapStateToProps = state => ({
-  profile: state.entities.user.profile
+  profile: state.entities.user.profile,
+  isLoggedIn: state.entities.user.isLoggedIn
 });
 
 const mapDispatchToProps = {
