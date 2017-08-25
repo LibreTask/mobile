@@ -58,10 +58,15 @@ class MultiTaskPage extends Component {
       rowHasChanged: (row1, row2) => true
     });
 
-    let tasks = this._filterTasksToDisplay(this.props.tasks);
+    let showCompletedTasks = this.props.profile.showCompletedTasks;
+    let tasks = this._filterTasksToDisplay(
+      this.props.tasks,
+      showCompletedTasks
+    );
 
     this.state = {
       isRefreshing: false,
+      showCompletedTasks: showCompletedTasks,
       dataSource: dataSource.cloneWithRows(tasks)
     };
   }
@@ -70,16 +75,21 @@ class MultiTaskPage extends Component {
     this.props.updateHighlight(SideMenuActions.TASKS_LINK);
   };
 
-  shouldComponentUpdate = (nextProps, nextState) => {
-    if (!_.isEqual(this.props, nextProps)) {
-      return true;
-    }
+  componentDidUpdate = () => {
+    let currentShowCompletedTasks = this.state.showCompletedTasks;
+    let newShowCompletedTasks = this.props.profile.showCompletedTasks;
 
-    if (!_.isEqual(this.state, nextState)) {
-      return true;
+    if (currentShowCompletedTasks !== newShowCompletedTasks) {
+      this.setState(
+        {
+          showCompletedTasks: newShowCompletedTasks
+        },
+        () => {
+          // must pass in all props that are used to refresh the screen
+          this._refreshEntireList(this.props.tasks);
+        }
+      );
     }
-
-    return false;
   };
 
   _filterTasksToDisplay = (tasks, showCompletedTasks) => {
@@ -97,16 +107,26 @@ class MultiTaskPage extends Component {
   };
 
   componentWillReceiveProps = nextProps => {
-    let profile = nextProps.profile;
-    let showCompletedTasks = profile && profile.showCompletedTasks;
+    let currentShowCompletedTasks = this.state.showCompletedTasks;
+    let newShowCompletedTasks = nextProps.profile.showCompletedTasks;
 
-    // must pass in all props that are used to refresh the screen
-    this._refreshEntireList(nextProps.tasks, showCompletedTasks);
+    if (currentShowCompletedTasks !== newShowCompletedTasks) {
+      this.setState(
+        {
+          showCompletedTasks: nextProps.profile.showCompletedTasks
+        },
+        () => {
+          // must pass in all props that are used to refresh the screen
+          this._refreshEntireList(nextProps.tasks);
+        }
+      );
+    }
   };
 
   // TODO - reevaluate this solution;
   // it probably is a horrible misuse of React Native
-  _refreshEntireList = (tasks, showCompletedTasks) => {
+  _refreshEntireList = tasks => {
+    let showCompletedTasks = this.state.showCompletedTasks;
     let filteredTasks = this._filterTasksToDisplay(tasks, showCompletedTasks);
     this.setState({
       dataSource: new ListView.DataSource({
@@ -363,11 +383,8 @@ class MultiTaskPage extends Component {
             this.props.toggleTaskView(TaskViewActions.OVERDUE_TASKS);
           }
 
-          let profile = this.props.profile;
-          let showCompletedTasks = profile && profile.showCompletedTasks;
-
           // TODO - should we delay here?
-          this._refreshEntireList(this.props.tasks, showCompletedTasks);
+          this._refreshEntireList(this.props.tasks);
         }}
       >
         <View style={[AppStyles.row]}>
@@ -547,15 +564,13 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = (state, ownProps) => {
-  return {
-    isLoggedIn: state.entities.user.isLoggedIn,
-    profile: state.entities.user.profile,
-    tasks: state.entities.task.tasks,
-    taskCategories: state.ui.taskview,
-    shouldRefreshTaskView: state.ui.taskview.shouldRefreshTaskView
-  };
-};
+const mapStateToProps = (state, ownProps) => ({
+  isLoggedIn: state.entities.user.isLoggedIn,
+  profile: state.entities.user.profile,
+  tasks: state.entities.task.tasks,
+  taskCategories: state.ui.taskview,
+  shouldRefreshTaskView: state.ui.taskview.shouldRefreshTaskView
+});
 
 const mapDispatchToProps = {
   syncTasks: TaskActions.syncTasks,
