@@ -172,7 +172,7 @@ class Profile extends Component {
             <Button
               title="Downgrade"
               onPress={() => {
-                Linking.openURL(AppConstants.ACCOUNT_UPGRADE_LINK);
+                Linking.openURL(AppConstants.ACCOUNT_DOWNGRADE_LINK);
               }}
             />
           </View>
