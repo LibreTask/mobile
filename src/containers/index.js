@@ -11,6 +11,7 @@ import { Text, View } from "react-native";
 
 import configureStore from "../store/configureStore";
 import App from "./App";
+import Splash from "../components/screens/Splash";
 
 import * as TaskStorage from "../models/storage/task-storage";
 import * as TaskQueue from "../models/storage/task-queue";
@@ -45,7 +46,7 @@ export default class AppContainer extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.getInitialState().then(initialState => {
       this.setState({
         initialState: initialState,
@@ -138,11 +139,7 @@ export default class AppContainer extends Component {
     if (this.state.isLoading) {
       // TODO - improve here
 
-      return (
-        <View>
-          <Text>Loading...</Text>
-        </View>
-      );
+      return <Splash />;
     } else {
       let initialState = this.state.initialState;
 
