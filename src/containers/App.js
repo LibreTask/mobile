@@ -14,9 +14,6 @@ import * as _ from "lodash";
 import * as SideMenuActions from "../actions/ui/sidemenu";
 import * as UserController from "../models/controllers/user";
 
-import * as ProfileStorage from "../models/storage/profile-storage";
-import * as TaskStorage from "../models/storage/task-storage";
-
 import * as TaskViewActions from "../actions/ui/taskview";
 
 import * as UserActions from "../actions/entities/user";

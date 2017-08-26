@@ -20,7 +20,6 @@ import { connect } from "react-redux";
 import * as SideMenuActions from "../../actions/ui/sidemenu";
 import * as UserActions from "../../actions/entities/user";
 import * as UserController from "../../models/controllers/user";
-import * as ProfileStorage from "../../models/storage/profile-storage";
 import * as TaskActions from "../../actions/entities/task";
 
 import NavigationBar from "react-native-navbar";
@@ -83,7 +82,6 @@ class Profile extends Component {
                 .then(response => {
                   this.props.deleteProfile();
                   this.props.deleteAllTasks();
-                  ProfileStorage.logout();
 
                   // profile deletion ui update
                   this.props.navigator.replace({
@@ -140,7 +138,6 @@ class Profile extends Component {
         // TODO - handle password better
         response.profile.password = this.props.user.profile.password;
 
-        ProfileStorage.createOrUpdateProfile(response.profile);
         this.props.createOrUpdateProfile(response.profile);
 
         this.setState({

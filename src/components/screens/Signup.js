@@ -18,7 +18,6 @@ import { connect } from "react-redux";
 
 import * as SideMenuActions from "../../actions/ui/sidemenu";
 import * as UserController from "../../models/controllers/user";
-import * as ProfileStorage from "../../models/storage/profile-storage";
 import * as UserActions from "../../actions/entities/user";
 
 import NavigationBar from "react-native-navbar";
@@ -116,7 +115,6 @@ class Signup extends Component {
             // preserve any of the offline-configured profile preferences
             profile.showCompletedTasks = this.props.profile.showCompletedTasks;
 
-            ProfileStorage.createOrUpdateProfile(profile);
             this.props.createOrUpdateProfile(profile);
 
             this.props.navigator.replace({

@@ -14,8 +14,6 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 
-import * as ProfileStorage from "../models/storage/profile-storage";
-
 import * as SideMenuActions from "../actions/ui/sidemenu";
 import * as UserActions from "../actions/entities/user";
 import * as TaskActions from "../actions/entities/task";
@@ -176,7 +174,6 @@ class Menu extends Component {
                     // remove profile and all entities
                     this.props.deleteProfile();
                     this.props.deleteAllTasks();
-                    ProfileStorage.logout();
 
                     // logout requires ui update
                     navigate("All Tasks", MultiTaskPage);

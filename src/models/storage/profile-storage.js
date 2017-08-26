@@ -37,10 +37,6 @@ export async function getMyProfile() {
   return JSON.parse(profile);
 }
 
-export function logout() {
-  AsyncStorage.clear(); // for security, remove everything on logout
-}
-
 export async function isLoggedIn() {
   // TODO - refine this approach
 

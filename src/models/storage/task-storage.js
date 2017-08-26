@@ -53,5 +53,6 @@ export function deleteTaskByTaskId(taskId) {
 }
 
 export function cleanTaskStorage() {
-  // TODO -
+  // TODO - refine deletion
+  AsyncStorage.clear();
 }

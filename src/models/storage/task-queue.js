@@ -77,4 +77,7 @@ export function dequeueTaskByTaskId(taskId) {
   // TODO - we should instead update the "deletion status"
 }
 
-export function cleanTaskQueue() {}
+export function cleanTaskQueue() {
+  // TODO - refine deletion
+  AsyncStorage.clear();
+}

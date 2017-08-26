@@ -6,9 +6,6 @@
 import * as TaskController from "../../models/controllers/task";
 import * as UserController from "../../models/controllers/user";
 
-import * as TaskQueue from "../../models/storage/task-queue";
-import * as TaskStorage from "../../models/storage/task-storage";
-
 import DateUtils from "../../utils/date-utils";
 
 export const CREATE_OR_UPDATE_TASK = "CREATE_OR_UPDATE_TASK";
@@ -138,11 +135,7 @@ export const submitQueuedTasks = () => {
 
             This code handles the case when a queued task has its temporary id
             replaced with the permanent, server-assigned id.
-          */
-
-            // delete both versions of task that have outdated id
-            TaskQueue.dequeueTaskByTaskId(task.id);
-            TaskStorage.deleteTaskByTaskId(task.id);
+           */
 
             dispatch({
               type: REMOVE_PENDING_TASK_CREATE,
@@ -162,8 +155,6 @@ export const submitQueuedTasks = () => {
 
         TaskController.updateTaskFromQueue(task, userId, password)
           .then(response => {
-            TaskQueue.dequeueTaskByTaskId(task.id);
-
             dispatch({
               type: REMOVE_PENDING_TASK_UPDATE,
               taskId: task.id
@@ -186,8 +177,6 @@ export const submitQueuedTasks = () => {
 
         TaskController.deleteTaskFromQueue(task, userId, password)
           .then(response => {
-            TaskQueue.dequeueTaskByTaskId(task.id);
-
             dispatch({
               type: REMOVE_PENDING_TASK_DELETE,
               taskId: task.id
@@ -248,8 +237,6 @@ export const cleanupTasks = () => {
       let task = tasks[taskId];
 
       if (cleanupTask(task)) {
-        TaskStorage.deleteTaskByTaskId(task.id);
-
         dispatch({
           type: DELETE_TASK,
           taskId: task.id
@@ -262,8 +249,6 @@ export const cleanupTasks = () => {
       let task = pendingTaskActions.update[taskId];
 
       if (cleanupTask(task)) {
-        TaskQueue.dequeueTaskByTaskId(task.id);
-
         dispatch({
           type: REMOVE_PENDING_TASK_UPDATE,
           taskId: task.id
@@ -276,8 +261,6 @@ export const cleanupTasks = () => {
       let task = pendingTaskActions.create[taskId];
 
       if (cleanupTask(task)) {
-        TaskQueue.dequeueTaskByTaskId(task.id);
-
         dispatch({
           type: REMOVE_PENDING_TASK_CREATE,
           taskId: task.id
@@ -290,8 +273,6 @@ export const cleanupTasks = () => {
       let task = pendingTaskActions.delete[taskId];
 
       if (cleanupTask(task)) {
-        TaskQueue.dequeueTaskByTaskId(task.id);
-
         dispatch({
           type: REMOVE_PENDING_TASK_DELETE,
           taskId: task.id

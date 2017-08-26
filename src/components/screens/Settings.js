@@ -18,7 +18,6 @@ import * as SideMenuActions from "../../actions/ui/sidemenu";
 
 import * as UserActions from "../../actions/entities/user";
 import * as UserController from "../../models/controllers/user";
-import * as ProfileStorage from "../../models/storage/profile-storage";
 
 import CheckBox from "react-native-checkbox";
 
@@ -43,7 +42,6 @@ class Settings extends Component {
 
   _updateProfileLocally = profile => {
     this.props.createOrUpdateProfile(profile, this.props.isLoggedIn);
-    ProfileStorage.createOrUpdateProfile(profile);
 
     this.setState({
       showCompletedTasks: profile.showCompletedTasks
@@ -56,7 +54,6 @@ class Settings extends Component {
 
     // profile is queued only when network could not be reached
     this.props.addPendingProfileUpdate(profile);
-    ProfileStorage.queueProfileUpdate(profile);
 
     // re-update the local profile ref, after modifying updatedAtDateTimeUtc
     this._updateProfileLocally(profile);

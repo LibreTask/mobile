@@ -24,6 +24,9 @@ import {
 } from "../../actions/entities/task";
 import { updateObject } from "../reducer-utils";
 
+import * as TaskStorage from "../../models/storage/task-storage";
+import * as TaskQueue from "../../models/storage/task-queue";
+
 import * as _ from "lodash";
 
 function removeTask(tasks, taskId) {
@@ -42,6 +45,8 @@ function addPendingTaskCreate(state, action) {
     state.pendingTaskActions.create,
     newTaskEntry
   );
+
+  TaskQueue.queueTaskCreate(action.task);
 
   return updateObject(state, {
     pendingTaskActions: {
@@ -66,6 +71,8 @@ function addPendingTaskUpdate(state, action) {
       newTaskEntry
     );
 
+    TaskQueue.queueTaskCreate(action.task);
+
     updatedPendingTaskActions = {
       create: queuedCreates,
       update: state.pendingTaskActions.update,
@@ -85,6 +92,8 @@ function addPendingTaskUpdate(state, action) {
       state.pendingTaskActions.update,
       newTaskEntry
     );
+
+    TaskQueue.queueTaskUpdate(action.task);
 
     updatedPendingTaskActions = {
       update: queuedUpdates,
@@ -114,6 +123,8 @@ function addPendingTaskDelete(state, action) {
       taskMap[task.id] = task;
     }
 
+    TaskQueue.dequeueTaskByTaskId(action.task.id);
+
     updatedPendingTaskActions = {
       create: taskMap,
       update: state.pendingTaskActions.update,
@@ -134,6 +145,8 @@ function addPendingTaskDelete(state, action) {
       state.pendingTaskActions.delete,
       newTaskEntry
     );
+
+    TaskQueue.queueTaskDelete(action.task);
 
     updatedPendingTaskActions = {
       delete: queuedDeletes,
@@ -202,12 +215,18 @@ function removePendingTaskCreate(state, action) {
   if (clientAssignedTaskId in pendingUpdates) {
     delete pendingUpdates[clientAssignedTaskId]; // delete existing task
     pendingUpdates[serverAssignedTaskId] = task; // replace with new ID
+
+    TaskQueue.dequeueTaskByTaskId(clientAssignedTaskId);
+    TaskQueue.queueTaskUpdate(task);
   }
 
   let pendingDeletes = state.pendingTaskActions.delete || {};
   if (clientAssignedTaskId in pendingDeletes) {
     delete pendingDeletes[clientAssignedTaskId]; // delete existing task
     pendingDeletes[serverAssignedTaskId] = task; // replace with new ID
+
+    TaskQueue.dequeueTaskByTaskId(clientAssignedTaskId);
+    TaskQueue.queueTaskDelete(task);
   }
 
   return updateObject(state, {
@@ -230,6 +249,8 @@ function removePendingTaskUpdate(state, action) {
     taskMap[task.id] = task;
   }
 
+  TaskQueue.dequeueTaskByTaskId(action.taskId);
+
   return updateObject(state, {
     pendingTaskActions: {
       update: taskMap,
@@ -249,6 +270,8 @@ function removePendingTaskDelete(state, action) {
   for (let task of remainingTasks) {
     taskMap[task.id] = task;
   }
+
+  TaskQueue.dequeueTaskByTaskId(action.taskId);
 
   return updateObject(state, {
     pendingTaskActions: {
@@ -308,6 +331,9 @@ function stopTaskCleanup(state, action) {
 }
 
 function deleteAllTasks(state, action) {
+  TaskQueue.cleanTaskQueue();
+  TaskStorage.cleanTaskStorage();
+
   return updateObject(state, {
     tasks: {
       /* all tasks are deleted */
@@ -328,6 +354,8 @@ function deleteTask(state, action) {
     taskMap[task.id] = task;
   }
 
+  TaskStorage.deleteTaskByTaskId(action.taskId);
+
   return updateObject(state, { tasks: taskMap });
 }
 
@@ -336,6 +364,8 @@ function addTasks(state, action) {
   for (let task of action.tasks) {
     normalizedTasks[task.id] = task;
   }
+
+  TaskStorage.createOrUpdateTasks(action.tasks);
 
   return updateObject(state, {
     tasks: updateObject(state.tasks, normalizedTasks)
@@ -349,6 +379,8 @@ function addTask(state, action) {
 function addNormalizedTask(state, normalizedTask) {
   let updatedTaskEntry = {};
   updatedTaskEntry[normalizedTask.id] = normalizedTask;
+
+  TaskStorage.createOrUpdateTask(normalizedTask);
 
   return updateObject(state, {
     tasks: updateObject(state.tasks, updatedTaskEntry)

@@ -45,7 +45,6 @@ export const endUserSync = () => {
 };
 
 import * as UserController from "../../models/controllers/user";
-import * as ProfileStorage from "../../models/storage/profile-storage";
 
 export const SYNC_USER = "SYNC_USER";
 
@@ -133,8 +132,6 @@ export const submitQueuedProfileUpdate = () => {
 
         UserController.updateProfile(queuedProfile)
           .then(response => {
-            ProfileStorage.deletedQueuedProfile();
-
             dispatch({
               type: REMOVE_PENDING_PROFILE_UPDATE
             });
