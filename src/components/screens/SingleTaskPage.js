@@ -459,7 +459,7 @@ class SingleTaskPage extends Component {
 
       dateString = dateFormat(
         this.state.task.dueDateTimeUtc,
-        "dddd, mmmm dS, yyyy"
+        "dddd, mmm dS, yyyy"
       );
       clearDateButton = (
         <TouchableOpacity
