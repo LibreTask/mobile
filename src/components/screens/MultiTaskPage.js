@@ -267,8 +267,11 @@ class MultiTaskPage extends Component {
           isComplete={task.isCompleted || false}
           taskId={task.id}
           onCheckBoxClicked={async isCompleted => {
+            let completionDateTimeUtc = new Date().getTime();
+
             task.isCompleted = isCompleted;
-            task.completionDateTimeUtc = new Date().getTime();
+            task.completionDateTimeUtc = completionDateTimeUtc;
+            task.updatedAtDateTimeUtc = completionDateTimeUtc;
 
             if (!task.isCompleted && task.completionDateTimeUtc) {
               // if the task is "unchecked", delete the completion time
@@ -325,14 +328,8 @@ class MultiTaskPage extends Component {
   };
 
   _queueTaskUpdate = task => {
-    // mark update time, before queueing
-    task.updatedAtDateTimeUtc = new Date();
-
     // task is queued only when network could not be reached
     this.props.addPendingTaskUpdate(task);
-
-    // re-update the local task reference, after modifying updatedAtDateTimeUtc
-    this._updateTaskLocally(task);
   };
 
   _renderHeader = header => {

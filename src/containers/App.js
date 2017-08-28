@@ -4,7 +4,14 @@
  */
 
 import React, { Component } from "react";
-import { NetInfo, Text, View, TouchableOpacity, StatusBar } from "react-native";
+import {
+  BackAndroid,
+  NetInfo,
+  Text,
+  View,
+  TouchableOpacity,
+  StatusBar
+} from "react-native";
 import { connect } from "react-redux";
 import { Navigator } from "react-native-deprecated-custom-components";
 import SideMenu from "react-native-side-menu";
@@ -106,6 +113,22 @@ class AppContainer extends Component {
   componentDidMount = async () => {
     StatusBar.setHidden(false, "slide");
     StatusBar.setBackgroundColor(AppConfig.primaryColor, true);
+
+    let navigator = this.refs.rootNavigator;
+
+    BackAndroid.addEventListener("hardwareBackPress", () => {
+      if (navigator && navigator.getCurrentRoutes().length > 1) {
+        navigator.pop();
+        return true;
+      }
+
+      if (this.props.sideMenuIsOpen) {
+        this.props.closeSideMenu();
+        return true;
+      }
+
+      return false;
+    });
 
     this._startTaskSync();
     this._startProfileSync();
