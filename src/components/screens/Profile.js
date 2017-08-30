@@ -55,6 +55,11 @@ class Profile extends Component {
     this.props.updateHighlight(SideMenuActions.PROFILE_LINK);
   };
 
+  componentWillReceiveProps = nextProps => {
+    // another device could have updated profile attributes
+    this.setState({ nextProps: nextProps.user.profile });
+  };
+
   _onDelete = () => {
     if (this.state.isUpdatingProfile) {
       return;

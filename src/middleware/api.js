@@ -94,7 +94,11 @@ function _invoke(endpoint, method, headers, body) {
       if (_isTimeoutError(error)) {
         throw new RetryableError();
       } else {
-        throw new Error(humanReadableError(error));
+        if (error instanceof Error) {
+          throw error;
+        }
+
+        throw new Error(error);
       }
     });
 }

@@ -100,7 +100,8 @@ class Login extends Component {
             profile.password = password;
 
             // preserve any of the offline-configured profile preferences
-            profile.showCompletedTasks = this.props.profile.showCompletedTasks;
+            profile.showCompletedTasks =
+              this.props.profile && this.props.profile.showCompletedTasks;
 
             this.props.createOrUpdateProfile(profile);
 
