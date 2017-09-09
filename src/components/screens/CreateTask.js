@@ -228,7 +228,7 @@ class CreateTask extends Component {
       );
       if (action !== DatePickerAndroid.dismissedAction) {
         var date = new Date(year, month, day);
-        date = DateUtils.oneSecondBeforeMidnight(date);
+        date = DateUtils.oneSecondBeforeMidnight(date).getTime();
         newState["taskDueDateTimeUtc"] = date;
       }
       this.setState(newState);

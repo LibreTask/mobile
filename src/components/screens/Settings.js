@@ -49,14 +49,8 @@ class Settings extends Component {
   };
 
   _queueProfileUpdate = profile => {
-    // mark update time, before queueing
-    profile.updatedAtDateTimeUtc = new Date();
-
     // profile is queued only when network could not be reached
     this.props.addPendingProfileUpdate(profile);
-
-    // re-update the local profile ref, after modifying updatedAtDateTimeUtc
-    this._updateProfileLocally(profile);
   };
 
   _constructNavbar = () => {
@@ -100,6 +94,7 @@ class Settings extends Component {
             onChange={checked => {
               let updatedProfile = this.props.profile;
               updatedProfile.showCompletedTasks = !updatedProfile.showCompletedTasks;
+              updatedProfile.updatedAtDateTimeUtc = new Date().getTime();
 
               /*
                 Update profile locally, before checking network access. This is

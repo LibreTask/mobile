@@ -367,7 +367,7 @@ class SingleTaskPage extends Component {
         updatedTask.dueDateTimeUtc = new Date(year, month, day);
         updatedTask.dueDateTimeUtc = DateUtils.oneSecondBeforeMidnight(
           updatedTask.dueDateTimeUtc
-        );
+        ).getTime();
       }
 
       this.setState({

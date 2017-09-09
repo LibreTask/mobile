@@ -56,8 +56,14 @@ class Profile extends Component {
   };
 
   componentWillReceiveProps = nextProps => {
+    /* TODO -
+    should we keep a copy in memory and ONLY update it with a refresh button?
+
+    we want to avoid having the page update by itself, overriding any user
+    actions in progress.
+    */
     // another device could have updated profile attributes
-    this.setState({ nextProps: nextProps.user.profile });
+    //this.setState({ nextProps: nextProps.user.profile });
   };
 
   _onDelete = () => {
