@@ -36,7 +36,17 @@ function endUserSync(state, action) {
 }
 
 function deleteProfile(state, action) {
-  ProfileStorage.deleteProfile();
+  try {
+    ProfileStorage.deleteProfile();
+  } catch (err) {
+    /*
+    If an error occurs when writing to disk, ignore it. Disk storage is a
+    non-critical feature, unlike the rest of the code here. We never want to
+    throw an error from a reducer.
+
+    TODO - reevaluate
+  */
+  }
 
   return updateObject(state, {
     profile: {},
@@ -45,7 +55,17 @@ function deleteProfile(state, action) {
 }
 
 function addProfile(state, action) {
-  ProfileStorage.createOrUpdateProfile(action.profile);
+  try {
+    ProfileStorage.createOrUpdateProfile(action.profile);
+  } catch (err) {
+    /*
+    If an error occurs when writing to disk, ignore it. Disk storage is a
+    non-critical feature, unlike the rest of the code here. We never want to
+    throw an error from a reducer.
+
+    TODO - reevaluate
+  */
+  }
 
   return updateObject(state, {
     profile: action.profile,
@@ -54,9 +74,9 @@ function addProfile(state, action) {
 }
 
 /*
-  Always update lastSuccessfulSyncDateTimeUtc, because it is assumed that
-  this reducer is ONLY invoked after a successful sync.
-*/
+   Always update lastSuccessfulSyncDateTimeUtc, because it is assumed that
+   this reducer is ONLY invoked after a successful sync.
+ */
 function syncUser(state, action) {
   let queuedProfile = state.queuedProfile;
   let syncedProfile = action.profile;
@@ -76,7 +96,17 @@ function syncUser(state, action) {
   } else {
     // if an update to profile is available, update, otherwise, ignore
     if (action.profile) {
-      ProfileStorage.createOrUpdateProfile(action.profile);
+      try {
+        ProfileStorage.createOrUpdateProfile(action.profile);
+      } catch (err) {
+        /*
+    If an error occurs when writing to disk, ignore it. Disk storage is a
+    non-critical feature, unlike the rest of the code here. We never want to
+    throw an error from a reducer.
+
+    TODO - reevaluate
+  */
+      }
 
       return updateObject(updatedState, { profile: action.profile });
     } else {
@@ -86,7 +116,17 @@ function syncUser(state, action) {
 }
 
 function addPendingProfileUpdate(state, action) {
-  ProfileStorage.queueProfileUpdate(action.queuedProfile);
+  try {
+    ProfileStorage.queueProfileUpdate(action.queuedProfile);
+  } catch (err) {
+    /*
+    If an error occurs when writing to disk, ignore it. Disk storage is a
+    non-critical feature, unlike the rest of the code here. We never want to
+    throw an error from a reducer.
+
+    TODO - reevaluate
+  */
+  }
 
   return updateObject(state, {
     queuedProfile: action.queuedProfile
@@ -94,7 +134,17 @@ function addPendingProfileUpdate(state, action) {
 }
 
 function removePendingProfileUpdate(state, action) {
-  ProfileStorage.deletedQueuedProfile();
+  try {
+    ProfileStorage.deletedQueuedProfile();
+  } catch (err) {
+    /*
+    If an error occurs when writing to disk, ignore it. Disk storage is a
+    non-critical feature, unlike the rest of the code here. We never want to
+    throw an error from a reducer.
+
+    TODO - reevaluate
+  */
+  }
 
   return updateObject(state, {
     queuedProfile: undefined
@@ -129,56 +179,48 @@ const initialState = {
 function userReducer(state = initialState, action) {
   switch (action.type) {
     /*
-      TODO - doc
-    */
+       TODO - doc
+     */
     case START_USER_SYNC:
       return startUserSync(state, action);
-
     /*
-      TODO - doc
-    */
+       TODO - doc
+     */
     case END_USER_SYNC:
       return endUserSync(state, action);
-
     /*
-     TODO - doc
-    */
+      TODO - doc
+     */
     case SYNC_USER:
       return syncUser(state, action);
-
     /*
-      TODO - doc
-    */
+       TODO - doc
+     */
     case CREATE_OR_UPDATE_PROFILE:
       return addProfile(state, action);
-
     /*
-      TODO - doc
-    */
+       TODO - doc
+     */
     case DELETE_PROFILE:
       return deleteProfile(state, action);
-
     /*
-      TODO - doc
-    */
+       TODO - doc
+     */
     case ADD_PENDING_PROFILE_UPDATE:
       return addPendingProfileUpdate(state, action);
-
     /*
-      TODO - doc
-    */
+       TODO - doc
+     */
     case REMOVE_PENDING_PROFILE_UPDATE:
       return removePendingProfileUpdate(state, action);
-
     /*
-      TODO - doc
-    */
+       TODO - doc
+     */
     case START_QUEUED_PROFILE_SUBMIT:
       return startQueuedProfileSubmission(state, action);
-
     /*
-      TODO - doc
-    */
+       TODO - doc
+     */
     case STOP_QUEUED_PROFILE_SUBMIT:
       return stopQueuedProfileSubmission(state, action);
 

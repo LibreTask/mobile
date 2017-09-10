@@ -37,6 +37,8 @@ import MultiTaskPage from "../components/screens/MultiTaskPage";
 class AppContainer extends Component {
   _startTaskSync = () => {
     if (!this.props.isSyncingTasks) {
+      this.props.syncTasks(); // call once at start, then begin to poll
+
       let intervalId = setInterval(() => {
         this.props.syncTasks();
 
@@ -51,6 +53,8 @@ class AppContainer extends Component {
 
   _startProfileSync = () => {
     if (!this.props.isSyncingUser) {
+      this.props.syncUser(); // call once at start, then begin to poll
+
       let intervalId = setInterval(() => {
         this.props.syncUser();
       }, AppConstants.SYNC_INTERVAL_MILLIS);
@@ -62,6 +66,8 @@ class AppContainer extends Component {
 
   _startSubmissionOfQueuedTasks = () => {
     if (!this.props.isSubmittingQueuedTasks) {
+      this.props.submitQueuedTasks(); // call once at start, then begin to poll
+
       let intervalId = setInterval(() => {
         this.props.submitQueuedTasks();
       }, AppConstants.QUEUED_TASK_SUBMISSION_INTERVAL_MILLIS);
@@ -73,6 +79,8 @@ class AppContainer extends Component {
 
   _startTaskCleanup = () => {
     if (!this.props.isCleaningUpTasks) {
+      this.props.cleanupTasks(); // call once at start, then begin to poll
+
       let intervalId = setInterval(() => {
         this.props.cleanupTasks();
       }, AppConstants.TASK_CLEANUP_INTERVAL_MILLIS);
@@ -84,6 +92,9 @@ class AppContainer extends Component {
 
   _startSubmissionOfQueuedProfileUpdates = () => {
     if (!this.props.isSubmittingQueuedProfileUpdates) {
+      // call once at start, then begin to poll
+      this.props.submitQueuedProfileUpdate();
+
       let intervalId = setInterval(() => {
         this.props.submitQueuedProfileUpdate();
       }, AppConstants.QUEUED_PROFILE_SUBMISSION_INTERVAL_MILLIS);
@@ -94,6 +105,8 @@ class AppContainer extends Component {
   };
 
   _startUIRefreshCheck = () => {
+    this.props.refreshTaskView(true); // call once at start, then begin to poll
+
     setInterval(() => {
       /*
         This is intended to update the TaskView once per day, at midnight

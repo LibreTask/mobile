@@ -33,10 +33,10 @@ const styles = StyleSheet.create({
     fontFamily: AppConfig.baseFont,
     fontWeight: "500",
     fontSize: AppConfig.baseFontSize * 2,
-    color: "black"
+    color: AppConfig.primaryColor
   },
   splashView: {
-    backgroundColor: AppConfig.primaryColor
+    backgroundColor: "white"
   }
 });
 
