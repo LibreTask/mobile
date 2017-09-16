@@ -87,6 +87,7 @@ class About extends Component {
             </Text>
           </TouchableOpacity>
 
+          {/* NOTE: we are open-sourcing until after beta
           <View style={[AppStyles.divider]} />
 
           <TouchableOpacity
@@ -99,6 +100,8 @@ class About extends Component {
               Source Code
             </Text>
           </TouchableOpacity>
+
+          */}
 
           <View style={[AppStyles.divider]} />
 

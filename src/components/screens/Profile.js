@@ -291,7 +291,12 @@ class Profile extends Component {
           </Text>
         </View>
 
+        {/*
+
+          NOTE - hiding expiration during beta
         {this._expirationDateDisplay()}
+
+        */}
 
         <View style={[AppStyles.row]}>
           <View style={[AppStyles.button]}>
@@ -314,7 +319,12 @@ class Profile extends Component {
           </View>
         </View>
 
+        {/*
+
+        NOTE - hiding status button during beta
+
         {this._getAccountStatusButton()}
+        */}
 
         <Text style={[AppStyles.successText]}>
           {this.state.updateSuccess}
