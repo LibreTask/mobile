@@ -130,8 +130,6 @@ class CreateTask extends Component {
               this.props.navigator.pop();
             })
             .catch(error => {
-              console.log("error: " + error);
-
               if (error.name === "RetryableError") {
                 this._createTaskLocallyAndRedirect(
                   taskName,

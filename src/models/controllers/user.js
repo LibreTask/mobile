@@ -143,6 +143,5 @@ export const syncUser = async () => {
     })
     .catch(err => {
       // TODO
-      console.log("user err...");
     });
 };

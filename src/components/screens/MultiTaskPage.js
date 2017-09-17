@@ -253,9 +253,7 @@ class MultiTaskPage extends Component {
   _renderRow = row => {
     try {
       return row.isHeader ? this._renderHeader(row) : this._renderTask(row);
-    } catch (err) {
-      console.log("err rendering row: " + err);
-    }
+    } catch (err) {}
   };
 
   _renderTask = task => {

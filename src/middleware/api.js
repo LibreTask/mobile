@@ -74,8 +74,6 @@ function _invoke(endpoint, method, headers, body) {
     body: body
   })
     .then(response => {
-      console.log("response: " + response);
-
       if (response.status >= 500) {
         throw new RetryableError();
       }
@@ -114,8 +112,6 @@ function _isTimeoutError(err) {
 function _retryWait(retryAttemptNumber) {
   // TODO - refine this value
   let retryDurationMillis = 1000 * 1.5 * retryAttemptNumber;
-
-  console.log("retrying for: " + retryDurationMillis);
 
   return new Promise(resolve => setTimeout(resolve, retryDurationMillis));
 }

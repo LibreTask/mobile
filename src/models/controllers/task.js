@@ -174,7 +174,5 @@ export const syncTasks = async (lastSuccessfulSyncDateTimeUtc, user) => {
     .then(response => {
       return response;
     })
-    .catch(err => {
-      console.log("task err...");
-    });
+    .catch(err => {});
 };

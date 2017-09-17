@@ -226,8 +226,6 @@ class SingleTaskPage extends Component {
   };
 
   _onSubmitEdit = async () => {
-    console.log("isupdating task: " + this.state.isUpdatingTask);
-
     if (this.state.isUpdatingTask) {
       return;
     }
@@ -464,8 +462,6 @@ class SingleTaskPage extends Component {
       dateString = "Select a due date";
       dateStringStyle.push(AppStyles.linkText);
     }
-
-    console.log("message: " + this.state.taskSuccess);
 
     return (
       <View style={[AppStyles.padding, { opacity: windowOpacity }]}>
