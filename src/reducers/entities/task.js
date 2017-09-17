@@ -154,7 +154,7 @@ function addPendingTaskDelete(state, action) {
     }
 
     try {
-      TaskQueue.dequeueTaskByTaskId(action.task.id);
+      TaskQueue.dequeueTaskByTaskId(taskId);
     } catch (err) {
       /*
     If an error occurs when writing to disk, ignore it. Disk storage is a
@@ -218,6 +218,8 @@ function removePendingTaskCreate(state, action) {
     state.pendingTaskActions.create,
     action.taskId
   );
+
+  TaskQueue.dequeueTaskByTaskId(action.taskId);
 
   // TODO - we must also update update / delete now that we have
   // the REAL task ID
