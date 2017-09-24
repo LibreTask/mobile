@@ -289,21 +289,21 @@ class SingleTaskPage extends Component {
         */
           this._queueTaskUpdate(task);
         } else if (UserController.canAccessNetwork(profile)) {
-          TaskController.updateTask(
-            task,
-            profile.id,
-            profile.password
-          ).catch(error => {
-            if (error.name === "RetryableError") {
-              this._queueTaskUpdate(task);
-            } else {
-              this.setState({
-                isUpdatingTask: false,
-                taskError: error.message,
-                taskSuccess: ""
-              });
-            }
-          });
+          TaskController.updateTask(task, profile.id, profile.password)
+            .then(response => {
+              this.setState({ isUpdatingTask: false });
+            })
+            .catch(error => {
+              if (error.name === "RetryableError") {
+                this._queueTaskUpdate(task);
+              } else {
+                this.setState({
+                  isUpdatingTask: false,
+                  taskError: error.message,
+                  taskSuccess: ""
+                });
+              }
+            });
         } else {
           this._queueTaskUpdate(task);
         }
