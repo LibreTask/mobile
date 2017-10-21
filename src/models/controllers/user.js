@@ -82,7 +82,7 @@ export const deleteProfile = profile => {
 
 export const fetchProfile = (userId, password) => {
   const request = {
-    endpoint: `user/get-profile-by-id/id=${userId}`,
+    endpoint: `user/get-profile-by-id`,
     method: "GET",
     headers: {
       Accept: "application/json",
