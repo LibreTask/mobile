@@ -21,7 +21,7 @@ const DELETE = "DELETE";
 const CREATE = "CREATE";
 
 export async function getQueuedTaskByTaskId(taskId) {
-  return await AsyncStorage.getItem(`queue/task${taskId}`);
+  return await AsyncStorage.getItem(`queue/task/${taskId}`);
 }
 
 export async function getHashOfTasksByOperation(operation) {

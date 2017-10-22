@@ -219,20 +219,10 @@ function removePendingTaskCreate(state, action) {
     action.taskId
   );
 
-  TaskQueue.dequeueTaskByTaskId(action.taskId);
-
-  // TODO - we must also update update / delete now that we have
-  // the REAL task ID
-
-  let taskMap = {};
+  let remainingTasksQueuedForCreation = {};
   for (let task of remainingTasks) {
-    taskMap[task.id] = task;
+    remainingTasksQueuedForCreation[task.id] = task;
   }
-
-  let clientAssignedTaskId = action.taskId;
-  let serverAssignedTaskId = action.serverAssignedTaskId;
-
-  // TODO - refine the approach of replacing the existing task
 
   /*
      Each task has a unique ID. This identifier is usually assigned by the
@@ -252,6 +242,15 @@ function removePendingTaskCreate(state, action) {
      3. state.pendingTaskActions.delete
          --- unlikely but possible the task is also queued for deletion
    */
+
+  // TODO - we must also update update / delete now that we have
+  // the REAL task ID
+
+  let clientAssignedTaskId = action.taskId;
+  let serverAssignedTaskId = action.serverAssignedTaskId;
+
+  // TODO - refine the approach of replacing the existing task
+
   let task = Object.assign({}, state.tasks[clientAssignedTaskId]);
   task.id = serverAssignedTaskId;
 
@@ -262,6 +261,16 @@ function removePendingTaskCreate(state, action) {
   task.clientAssignedTaskId = clientAssignedTaskId;
   delete state.tasks[clientAssignedTaskId]; // delete existing task
   state.tasks[serverAssignedTaskId] = task; // replace with new ID
+
+  TaskQueue.dequeueTaskByTaskId(action.taskId); // delete task from queue
+
+  /*
+    Delete the previously-queued task and reinsert the newly server-created
+    task. We do this because we need the server-assigned ID stored locally,
+    not the client-assigned ID.
+  */
+  TaskStorage.deleteTaskByTaskId(action.taskId);
+  TaskStorage.createOrUpdateTask(task);
 
   let pendingUpdates = state.pendingTaskActions.update || {};
   if (clientAssignedTaskId in pendingUpdates) {
@@ -303,7 +312,7 @@ function removePendingTaskCreate(state, action) {
 
   return updateObject(state, {
     pendingTaskActions: {
-      create: taskMap,
+      create: remainingTasksQueuedForCreation,
       update: pendingUpdates,
       delete: pendingDeletes
     }
