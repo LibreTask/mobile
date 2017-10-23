@@ -1,6 +1,6 @@
 /*
- * @link https://www.helloendora.com/
- * @license https://github.com/ProjectEndora/endora/blob/master/LICENSE.md
+ * @link https://www.algernon.io/
+ * @license https://github.com/AlgernonLabs/mobile/blob/master/LICENSE.md
  */
 
 import React from "react";
