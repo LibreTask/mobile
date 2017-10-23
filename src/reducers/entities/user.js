@@ -40,16 +40,18 @@ function deleteProfile(state, action) {
     ProfileStorage.deleteProfile();
   } catch (err) {
     /*
-    If an error occurs when writing to disk, ignore it. Disk storage is a
-    non-critical feature, unlike the rest of the code here. We never want to
-    throw an error from a reducer.
+     If an error occurs when writing to disk, ignore it. Disk storage is a
+     non-critical feature, unlike the rest of the code here. We never want to
+     throw an error from a reducer.
 
-    TODO - reevaluate
-  */
+     TODO - reevaluate
+   */
   }
 
   return updateObject(state, {
-    profile: {},
+    profile: {
+      showCompletedTasks: true // default to true
+    },
     isLoggedIn: false
   }); // on delete profile, wipe everything
 }
@@ -59,12 +61,12 @@ function addProfile(state, action) {
     ProfileStorage.createOrUpdateProfile(action.profile);
   } catch (err) {
     /*
-    If an error occurs when writing to disk, ignore it. Disk storage is a
-    non-critical feature, unlike the rest of the code here. We never want to
-    throw an error from a reducer.
+     If an error occurs when writing to disk, ignore it. Disk storage is a
+     non-critical feature, unlike the rest of the code here. We never want to
+     throw an error from a reducer.
 
-    TODO - reevaluate
-  */
+     TODO - reevaluate
+   */
   }
 
   return updateObject(state, {
@@ -74,9 +76,9 @@ function addProfile(state, action) {
 }
 
 /*
-   Always update lastSuccessfulSyncDateTimeUtc, because it is assumed that
-   this reducer is ONLY invoked after a successful sync.
- */
+    Always update lastSuccessfulSyncDateTimeUtc, because it is assumed that
+    this reducer is ONLY invoked after a successful sync.
+  */
 function syncUser(state, action) {
   let queuedProfile = state.queuedProfile;
   let syncedProfile = action.profile;
@@ -100,12 +102,12 @@ function syncUser(state, action) {
         ProfileStorage.createOrUpdateProfile(action.profile);
       } catch (err) {
         /*
-    If an error occurs when writing to disk, ignore it. Disk storage is a
-    non-critical feature, unlike the rest of the code here. We never want to
-    throw an error from a reducer.
+     If an error occurs when writing to disk, ignore it. Disk storage is a
+     non-critical feature, unlike the rest of the code here. We never want to
+     throw an error from a reducer.
 
-    TODO - reevaluate
-  */
+     TODO - reevaluate
+   */
       }
 
       return updateObject(updatedState, { profile: action.profile });
@@ -120,12 +122,12 @@ function addPendingProfileUpdate(state, action) {
     ProfileStorage.queueProfileUpdate(action.queuedProfile);
   } catch (err) {
     /*
-    If an error occurs when writing to disk, ignore it. Disk storage is a
-    non-critical feature, unlike the rest of the code here. We never want to
-    throw an error from a reducer.
+     If an error occurs when writing to disk, ignore it. Disk storage is a
+     non-critical feature, unlike the rest of the code here. We never want to
+     throw an error from a reducer.
 
-    TODO - reevaluate
-  */
+     TODO - reevaluate
+   */
   }
 
   return updateObject(state, {
@@ -138,12 +140,12 @@ function removePendingProfileUpdate(state, action) {
     ProfileStorage.deletedQueuedProfile();
   } catch (err) {
     /*
-    If an error occurs when writing to disk, ignore it. Disk storage is a
-    non-critical feature, unlike the rest of the code here. We never want to
-    throw an error from a reducer.
+     If an error occurs when writing to disk, ignore it. Disk storage is a
+     non-critical feature, unlike the rest of the code here. We never want to
+     throw an error from a reducer.
 
-    TODO - reevaluate
-  */
+     TODO - reevaluate
+   */
   }
 
   return updateObject(state, {
@@ -166,7 +168,9 @@ function stopQueuedProfileSubmission(state, action) {
 }
 
 const initialState = {
-  profile: {},
+  profile: {
+    showCompletedTasks: true
+  },
   queuedProfile: undefined,
   isLoggedIn: false,
   isSubmittingQueuedProfileUpdates: false,
@@ -179,48 +183,48 @@ const initialState = {
 function userReducer(state = initialState, action) {
   switch (action.type) {
     /*
-       TODO - doc
-     */
+        TODO - doc
+      */
     case START_USER_SYNC:
       return startUserSync(state, action);
     /*
-       TODO - doc
-     */
+        TODO - doc
+      */
     case END_USER_SYNC:
       return endUserSync(state, action);
     /*
-      TODO - doc
-     */
+       TODO - doc
+      */
     case SYNC_USER:
       return syncUser(state, action);
     /*
-       TODO - doc
-     */
+        TODO - doc
+      */
     case CREATE_OR_UPDATE_PROFILE:
       return addProfile(state, action);
     /*
-       TODO - doc
-     */
+        TODO - doc
+      */
     case DELETE_PROFILE:
       return deleteProfile(state, action);
     /*
-       TODO - doc
-     */
+        TODO - doc
+      */
     case ADD_PENDING_PROFILE_UPDATE:
       return addPendingProfileUpdate(state, action);
     /*
-       TODO - doc
-     */
+        TODO - doc
+      */
     case REMOVE_PENDING_PROFILE_UPDATE:
       return removePendingProfileUpdate(state, action);
     /*
-       TODO - doc
-     */
+        TODO - doc
+      */
     case START_QUEUED_PROFILE_SUBMIT:
       return startQueuedProfileSubmission(state, action);
     /*
-       TODO - doc
-     */
+        TODO - doc
+      */
     case STOP_QUEUED_PROFILE_SUBMIT:
       return stopQueuedProfileSubmission(state, action);
 
