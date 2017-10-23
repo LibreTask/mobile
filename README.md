@@ -1,7 +1,10 @@
-## Running Code
+## Running Android Code
 1. Set ANDROID_PATH environment variable
     * If necessary, source ~/.bashrc
 2. Run `react-native run-android`
+
+## Running iOS Code
+1. Open XCode, and build (you can determine whether to build production or development version)
 
 ## Troubleshooting
 1. `adb reverse tcp:8081 tcp:8081`
