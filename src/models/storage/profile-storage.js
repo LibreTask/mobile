@@ -32,7 +32,9 @@ export function deleteProfile() {
 }
 
 export async function getMyProfile() {
-  let profile = await AsyncStorage.getItem("profile");
+  let profile = (await AsyncStorage.getItem("profile")) || {
+    showCompletedTasks: true
+  };
 
   return JSON.parse(profile);
 }
