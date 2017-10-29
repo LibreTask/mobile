@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Button,
   DatePickerAndroid,
+  DatePickerIOS,
   Keyboard,
   Platform,
   ScrollView,
@@ -57,7 +58,8 @@ class CreateTask extends Component {
       calendarIconSelected: false,
       displayingDateDialog: false,
       notesHeight: 0,
-      nameHeight: 0
+      nameHeight: 0,
+      mostRecentIOSDate: undefined // TODO - refine this approach
     };
   }
 
@@ -199,66 +201,146 @@ class CreateTask extends Component {
   };
 
   _renderDatePicker = () => {
+    let datePicker;
     if (Platform.OS === "ios") {
-      this._renderIOSDatePicker();
+      datePicker = this._renderIOSDatePicker();
     } else {
-      this._renderAndroidDatePicker();
+      datePicker = this._renderAndroidDatePicker();
     }
 
     Keyboard.dismiss();
+    return datePicker;
   };
 
   _renderIOSDatePicker = () => {
-    // TODO
+    var date = this.state.taskDueDateTimeUtc
+      ? new Date(this.state.taskDueDateTimeUtc)
+      : new Date();
+
+    return (
+      <View>
+        <Text style={[AppStyles.baseText]}>Due Date</Text>
+        <View>
+          <DatePickerIOS
+            date={date}
+            mode="date"
+            onDateChange={date => {
+              this.setState({
+                mostRecentIOSDate: date
+              });
+            }}
+          />
+        </View>
+        <View style={styles.iosDateSelectorRow}>
+          <TouchableOpacity
+            style={[AppStyles.paddingVertical]}
+            onPress={() => {
+              this.setState({
+                displayingDateDialog: false
+              });
+            }}
+          >
+            <Text style={[AppStyles.baseLinkTextLarge]}>Close</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[AppStyles.paddingVertical]}
+            onPress={() => {
+              this._onDateUpdate(this.state.mostRecentIOSDate || new Date());
+              this.setState({
+                displayingDateDialog: false
+              });
+            }}
+          >
+            <Text style={[AppStyles.baseLinkTextLarge, styles.iosDateSave]}>
+              Save
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
   };
 
   _renderAndroidDatePicker = async () => {
     try {
       var options = this.state.taskDueDateTimeUtc
-        ? { date: this.state.taskDueDateTimeUtc }
+        ? { date: new Date(this.state.taskDueDateTimeUtc) }
         : {};
 
-      var newState = {
-        displayingDateDialog: false // stop displaying in all scenarios
-      };
       const { action, year, month, day } = await DatePickerAndroid.open(
         options
       );
+
       if (action !== DatePickerAndroid.dismissedAction) {
-        var date = new Date(year, month, day);
-        date = DateUtils.oneSecondBeforeMidnight(date).getTime();
-        newState["taskDueDateTimeUtc"] = date;
+        this._onDateUpdate(new Date(year, month, day));
       }
-      this.setState(newState);
+
+      this.setState({
+        displayingDateDialog: false
+      });
+
+      return <View />; // android datepicker doesn't return a JSX object
     } catch ({ code, message }) {
-      console.warn(`Error in example '${stateKey}': `, message);
+      /* TODO */
     }
   };
 
-  _constructDatePicker = () => {
-    if (!this.state.calendarIconSelected) {
+  _onDateUpdate = updatedDate => {
+    this.setState({
+      taskDueDateTimeUtc: DateUtils.oneSecondBeforeMidnight(
+        updatedDate
+      ).getTime()
+    });
+  };
+
+  _dateSelectionView = () => {
+    if (this.state.displayingDateDialog) {
+      return this._renderDatePicker();
+    } else if (this.state.calendarIconSelected) {
+      let dateString;
+      let dateStringStyle = [AppStyles.baseTextLight];
+      let clearDateButton;
+      if (this.state.taskDueDateTimeUtc) {
+        // TODO - refine how we format date (and move to utils)
+
+        dateString = dateFormat(
+          this.state.taskDueDateTimeUtc,
+          "ddd, mmm dS, yyyy"
+        );
+        clearDateButton = (
+          <TouchableOpacity
+            style={[AppStyles.paddingVertical]}
+            onPress={() => {
+              this.setState({
+                taskDueDateTimeUtc: undefined
+              });
+            }}
+          >
+            <Text style={[AppStyles.baseLinkText]}>Clear date</Text>
+          </TouchableOpacity>
+        );
+      } else {
+        dateString = "Select a due date";
+        dateStringStyle.push(AppStyles.linkText);
+      }
+
+      return (
+        <View>
+          <Text style={[AppStyles.baseText]}>Due Date</Text>
+          <TextInput
+            style={[AppStyles.baseTextLight, dateStringStyle]}
+            onFocus={() => {
+              this.setState({
+                displayingDateDialog: true
+              });
+            }}
+            value={dateString}
+          />
+          {clearDateButton}
+        </View>
+      );
+    } else {
       return <View />;
     }
-
-    let dateString = this.state.taskDueDateTimeUtc
-      ? dateFormat(this.state.taskDueDateTimeUtc, "ddd, mmm dS, yyyy")
-      : "";
-
-    return (
-      <View style={[AppStyles.paddingVertical]}>
-        <Text style={[AppStyles.baseText]}>Due Date</Text>
-        <TextInput
-          multiline={true}
-          style={[AppStyles.baseTextLight]}
-          onFocus={() => {
-            this.setState({
-              displayingDateDialog: true
-            });
-          }}
-          value={dateString}
-        />
-      </View>
-    );
   };
 
   _constructNavbar = () => {
@@ -362,7 +444,7 @@ class CreateTask extends Component {
         </View>
 
         {this._constructNotesTextEdit()}
-        {this._constructDatePicker()}
+        {this._dateSelectionView()}
 
         <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
           {this.state.creationError}
@@ -423,6 +505,13 @@ const styles = StyleSheet.create({
   },
   selectedIcon: {
     color: "green"
+  },
+  iosDateSelectorRow: {
+    flexDirection: "row",
+    flex: 1
+  },
+  iosDateSave: {
+    marginHorizontal: 40
   }
 });
 

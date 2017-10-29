@@ -5,12 +5,16 @@
 
 import AppConstants from "./constants";
 
+import { Platform } from "react-native";
+
 import Dimensions from "Dimensions";
 var window = Dimensions.get("window");
 
 export default {
   appName: AppConstants.APP_NAME,
-  baseFont: "Roboto",
+
+  // TODO - ideally we should try to unify fonts across platforms
+  baseFont: Platform.OS === "ios" ? "Arial" : "Roboto",
   baseFontSize: 18,
   loadingOpacity: 0.6,
   primaryColor: "#3436a5",

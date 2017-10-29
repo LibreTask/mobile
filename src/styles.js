@@ -15,6 +15,12 @@ module.exports = StyleSheet.create({
     color: AppConfig.linkColor,
     fontSize: AppConfig.baseFontSize * 0.8
   },
+  baseLinkTextLarge: {
+    fontFamily: AppConfig.baseFont,
+    fontWeight: "400",
+    color: AppConfig.linkColor,
+    fontSize: AppConfig.baseFontSize
+  },
   baseTextSmall: {
     fontFamily: AppConfig.baseFont,
     fontWeight: "500",
