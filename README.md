@@ -1,6 +1,6 @@
 ## Running Android Code
 1. Set ANDROID_PATH environment variable
-    * If necessary, source ~/.bashrc
+    * If necessary, source ~/.bashrc (eg, /Users/$USER/Library/Android/sdk)
 2. Run `react-native run-android`
 
 ## Running iOS Code
