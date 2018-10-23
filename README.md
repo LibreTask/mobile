@@ -12,6 +12,13 @@
 3. Try to access the dev server with browser
 4. DISABLE THE FIREWALL ON YOUR LOCAL MACHINE!!!!!!!!!!!
 
+if error " ERROR  Error watching file for changes: EMFILE" and on mac,
+consider installing watchman: `brew install --HEAD watchman`
+
+https://github.com/facebook/react-native/issues/910
+
+http://localhost:8081/index.android.bundle?platform=android&dev=true&hot=false&minify=false
+
 Algernon, React Native is having trouble connecting.
 
 It seems the IP:PORT, derived from running `ifconfig` is not working.
