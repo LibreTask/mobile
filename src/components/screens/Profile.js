@@ -170,40 +170,6 @@ class Profile extends Component {
       });
   };
 
-  _getAccountStatusButton = () => {
-    let accountStatusButton;
-
-    if (this._hasPremiumSubscription()) {
-      accountStatusButton = (
-        <View style={[AppStyles.row]}>
-          <View style={[AppStyles.button]}>
-            <Button
-              title="Downgrade"
-              onPress={() => {
-                Linking.openURL(AppConstants.ACCOUNT_DOWNGRADE_LINK);
-              }}
-            />
-          </View>
-        </View>
-      );
-    } else {
-      accountStatusButton = (
-        <View style={[AppStyles.row]}>
-          <View style={[AppStyles.button]}>
-            <Button
-              title="Upgrade"
-              onPress={() => {
-                Linking.openURL(AppConstants.ACCOUNT_UPGRADE_LINK);
-              }}
-            />
-          </View>
-        </View>
-      );
-    }
-
-    return accountStatusButton;
-  };
-
   _constructNavbar = () => {
     let title = "Profile";
     let leftNavBarButton = (
@@ -227,39 +193,6 @@ class Profile extends Component {
         />
       </View>
     );
-  };
-
-  _hasPremiumSubscription = () => {
-    let today = new Date();
-
-    return (
-      this.state.myProfile &&
-      this.state.myProfile.currentPlan === "premium" &&
-      new Date(this.state.myProfile.planExpirationDateTimeUtc) > today
-    );
-  };
-
-  _expirationDateDisplay = () => {
-    if (this._hasPremiumSubscription()) {
-      let planExpirationDateTimeUtc = this.state.myProfile
-        .planExpirationDateTimeUtc;
-
-      let formattedExpirationDate = planExpirationDateTimeUtc
-        ? moment(planExpirationDateTimeUtc).format("LLLL")
-        : "An error has occurred, please check back later";
-
-      // Styling here is intended to be identical to a non-disabled TextField.
-      return (
-        <View style={[AppStyles.paddingVertical]}>
-          <Text style={[AppStyles.baseText]}>Premium Plan Expiration</Text>
-          <Text style={[AppStyles.baseTextLight]}>
-            {formattedExpirationDate}
-          </Text>
-        </View>
-      );
-    } else {
-      return <View />;
-    }
   };
 
   _activityIndactor = () => {
@@ -291,13 +224,6 @@ class Profile extends Component {
           </Text>
         </View>
 
-        {/*
-
-          NOTE - hiding expiration during beta
-        {this._expirationDateDisplay()}
-
-        */}
-
         <View style={[AppStyles.row]}>
           <View style={[AppStyles.button]}>
             <Button
@@ -318,13 +244,6 @@ class Profile extends Component {
             />
           </View>
         </View>
-
-        {/*
-
-        NOTE - hiding status button during beta
-
-        {this._getAccountStatusButton()}
-        */}
 
         <Text style={[AppStyles.successText]}>
           {this.state.updateSuccess}
