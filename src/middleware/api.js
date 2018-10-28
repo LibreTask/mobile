@@ -1,12 +1,12 @@
 /*
- * @link https://www.algernon.io/
- * @license https://github.com/AlgernonLabs/mobile/blob/master/LICENSE.md
+ * @link https://libretask.org/
+ * @license https://github.com/LibreTask/mobile/blob/master/LICENSE.md
  */
 
 import RetryableError from "./errors/RetryableError";
 import ErrorCodes from "./errors/ErrorCodes";
 
-const API_ROOT = "https://algernon.io/api/v1/";
+const API_ROOT = "https://libretask.org/api/v1/";
 // TEST ENV - "http://192.168.1.111:3001/api/v1/";
 // PROD ENV - "http://174.138.64.49/api/v1/";
 // (production does not need port due to NGINX proxy)

@@ -1,4 +1,4 @@
-package com.algernon;
+package org.libretask;
 
 import android.app.Application;
 

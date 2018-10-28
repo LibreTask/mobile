@@ -1,6 +1,6 @@
 /*
- * @link https://www.algernon.io/
- * @license https://github.com/AlgernonLabs/mobile/blob/master/LICENSE.md
+ * @link https://libretask.org/
+ * @license https://github.com/LibreTask/mobile/blob/master/LICENSE.md
  */
 
 import React, { Component } from "react";
@@ -20,7 +20,7 @@ class Splash extends Component {
       >
         <View style={[AppStyles.padding]}>
           <Text style={[AppStyles.paddingVertical, styles.splashText]}>
-            Algernon
+            LibreTask
           </Text>
         </View>
       </ScrollView>

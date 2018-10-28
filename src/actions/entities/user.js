@@ -1,12 +1,12 @@
 /*
- * @link https://www.algernon.io/
- * @license https://github.com/AlgernonLabs/mobile/blob/master/LICENSE.md
+ * @link https://libretask.org/
+ * @license https://github.com/LibreTask/mobile/blob/master/LICENSE.md
  */
 
 export const CREATE_OR_UPDATE_PROFILE = "CREATE_OR_UPDATE_PROFILE";
 
 /*
-  Algernon aspires to be an offline-first application (i.e., no internet
+  LibreTask aspires to be an offline-first application (i.e., no internet
   connection is ever required for the basic functionality).
 
   This means that a profile can exist, even if the user is not logged in. This "offline profile" stores the user preferences of those without an account.

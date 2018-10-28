@@ -19,7 +19,7 @@ https://github.com/facebook/react-native/issues/910
 
 http://localhost:8081/index.android.bundle?platform=android&dev=true&hot=false&minify=false
 
-Algernon, React Native is having trouble connecting.
+LibreTask, React Native is having trouble connecting.
 
 It seems the IP:PORT, derived from running `ifconfig` is not working.
 
