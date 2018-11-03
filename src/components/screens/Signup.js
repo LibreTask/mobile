@@ -65,7 +65,7 @@ class Signup extends Component {
 
     let emailValidationError = "";
     let passwordValidationError = "";
-    let confirmPasswordValidationError: "";
+    let confirmPasswordValidationError = "";
 
     if (!Validator.isEmail(email)) {
       emailValidationError = "Email is not valid";
