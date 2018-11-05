@@ -1,65 +1,48 @@
-## Running Android Code
+# LibreTask Mobile
+
+This is the code that powers the LibreTask mobile app. The app is largely considered code-complete. Future improvements will be in the form of documentation and refining existing features.
+
+#### Running android locally
+
 1. Set ANDROID_PATH environment variable
-    * If necessary, source ~/.bashrc (eg, /Users/$USER/Library/Android/sdk)
-2. Run `react-native run-android`
+    - If necessary, source ~/.bashrc (eg, /Users/$USER/Library/Android/sdk)
+2. Install all packages: `npm install`
+3. Run `react-native run-android`
 
-## Running iOS Code
-1. Open XCode, and build (you can determine whether to build production or development version)
 
-## Troubleshooting
+#### Android Troubleshooting
 1. `adb reverse tcp:8081 tcp:8081`
 2. `react-native start reset-cache`
 3. Try to access the dev server with browser
-4. DISABLE THE FIREWALL ON YOUR LOCAL MACHINE!!!!!!!!!!!
+4. Disable the firewall on your local machine
 
-if error " ERROR  Error watching file for changes: EMFILE" and on mac,
+Note, if error " ERROR  Error watching file for changes: EMFILE" and on mac,
 consider installing watchman: `brew install --HEAD watchman`
 
-https://github.com/facebook/react-native/issues/910
+See https://github.com/facebook/react-native/issues/910
 
-http://localhost:8081/index.android.bundle?platform=android&dev=true&hot=false&minify=false
+#### Running iOS Code
+1. Open XCode, and build (you can determine whether to build production or development version)
 
-LibreTask, React Native is having trouble connecting.
+react-native bundle --platform android --dev false --entry-file index.android.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res
 
-It seems the IP:PORT, derived from running `ifconfig` is not working.
-
-I implemented port forwarding (with chrome://inspect/devices). Port 8081 is forwarded to localhost:8081, and I set the React Native application to look for localhost:8081.
-
----
+#### Misc
 
 NOTE: for the Android/IOS build process you might need to link new modules (especially "assets" like images, etc) via `react-native link`
 
----
 
-## Building ANDROID
-https://facebook.github.io/react-native/docs/signed-apk-android.html
+#### Building production android app
 
-replace values with your own naming
+See docs https://facebook.github.io/react-native/docs/signed-apk-android.html
 
-1. `keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000`
+1. Replace values with your own naming `keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000`
+2. Move my-release-key.keystore to android/app directory
+3. Edit the file ~/.gradle/gradle.properties and add the following (replace ***** with the correct keystore password, alias and key password),
+4. Ensure build.grade correctly uses the above global constants
+5. Run `cd android && ./gradlew assembleRelease` which will output the APK
+6. Finally, you can test production version with `react-native run-android --variant=release`
+    - View production logs with `adb logcat`
 
-2. move my-release-key.keystore to android/app
-
-3.     Edit the file ~/.gradle/gradle.properties and add the following (replace ***** with the correct keystore password, alias and key password),
-
-MYAPP_RELEASE_STORE_FILE=my-release-key.keystore
-MYAPP_RELEASE_KEY_ALIAS=my-key-alias
-MYAPP_RELEASE_STORE_PASSWORD=123456
-MYAPP_RELEASE_KEY_PASSWORD=123456
-
-4. (ensure build.grade correctly uses the above global constants)
-
-5. run `cd android && ./gradlew assembleRelease` which will output the APK
-
-6. `react-native run-android --variant=release`
-
----
-
-## Building iOS
+#### Building production iOS app
 
 TODO...
-
-
-## Production logging
-
-* Android: `adb logcat | grep ReactNativeJS`

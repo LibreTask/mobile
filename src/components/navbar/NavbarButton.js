@@ -31,7 +31,7 @@ class NavbarButton extends Component {
     ) {
       style = styles.leftNavButton;
     } else {
-      throw new "Internal error!"(); // TODO - properly handle else-condition
+      throw new Error("Internal error!"); // TODO - properly handle else-condition
     }
 
     return (

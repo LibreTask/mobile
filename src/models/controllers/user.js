@@ -6,7 +6,7 @@
 import { invoke, constructAuthHeader } from "../../middleware/api";
 
 export const canAccessNetwork = profile => {
-  return true;
+  return profile && profile.id && profile.password;
 };
 
 export const login = (email, password) => {

@@ -7,16 +7,14 @@ import RetryableError from "./errors/RetryableError";
 import ErrorCodes from "./errors/ErrorCodes";
 
 const API_ROOT = "https://libretask.org/api/v1/";
-// TEST ENV - "http://192.168.1.111:3001/api/v1/";
-// PROD ENV - "http://174.138.64.49/api/v1/";
-// (production does not need port due to NGINX proxy)
+
 const MAX_RETRIES = 3;
 
 const Buffer = require("buffer").Buffer;
 
 export function constructAuthHeader(userId, password) {
   if (!userId || !password) {
-    throw new "Failed to construct auth header because of invalid arguments!"();
+    throw new Error("Failed to construct auth header because of invalid arguments!");
   }
 
   return "Basic " + new Buffer(userId + ":" + password).toString("base64");

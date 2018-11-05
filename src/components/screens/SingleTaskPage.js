@@ -415,7 +415,7 @@ class SingleTaskPage extends Component {
       });
 
       return <View />; // android datepicker doesn't return a JSX object
-    } catch ({ code, message }) {
+    } catch (err) {
       /* TODO */
     }
   };
@@ -592,10 +592,12 @@ class SingleTaskPage extends Component {
           </Text>
         </View>
 
+        {/*
         <View style={[AppStyles.paddingVertical]}>
           <Text style={[AppStyles.baseText]}>Due Date</Text>
           {this._dateSelectionView()}
         </View>
+        */}
 
         <Text style={[AppStyles.successText]}>
           {this.state.taskSuccess}

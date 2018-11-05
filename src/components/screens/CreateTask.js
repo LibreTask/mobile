@@ -266,20 +266,21 @@ class CreateTask extends Component {
         ? { date: new Date(this.state.taskDueDateTimeUtc) }
         : {};
 
-      const { action, year, month, day } = await DatePickerAndroid.open(
+    DatePickerAndroid.open(
         options
-      );
+      ).then(ret => {
 
-      if (action !== DatePickerAndroid.dismissedAction) {
-        this._onDateUpdate(new Date(year, month, day));
-      }
+        if (ret.action !== DatePickerAndroid.dismissedAction) {
+          this._onDateUpdate(new Date(ret.year, ret.month, ret.day));
+        }
 
-      this.setState({
-        displayingDateDialog: false
+        this.setState({
+          displayingDateDialog: false
+        });
       });
 
-      return <View />; // android datepicker doesn't return a JSX object
-    } catch ({ code, message }) {
+      return (<View />); // android datepicker doesn't return a JSX object
+    } catch (err) {
       /* TODO */
     }
   };
@@ -339,7 +340,7 @@ class CreateTask extends Component {
         </View>
       );
     } else {
-      return <View />;
+      return (<View />);
     }
   };
 
@@ -387,6 +388,7 @@ class CreateTask extends Component {
           />
         </TouchableOpacity>
 
+        {/*
         <TouchableOpacity
           onPress={() => {
             this.setState({
@@ -402,6 +404,7 @@ class CreateTask extends Component {
             color={this.state.calendarIconSelected ? "green" : "black"}
           />
         </TouchableOpacity>
+        */}
       </View>
     );
   };
@@ -444,7 +447,7 @@ class CreateTask extends Component {
         </View>
 
         {this._constructNotesTextEdit()}
-        {this._dateSelectionView()}
+        {/*this._dateSelectionView()*/}
 
         <Text style={[AppStyles.baseTextSmall, AppStyles.errorText]}>
           {this.state.creationError}

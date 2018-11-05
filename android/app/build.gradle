@@ -89,7 +89,7 @@ android {
     defaultConfig {
         applicationId "org.libretask"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 26
         versionCode 3
         versionName "1.1"
         ndk {
